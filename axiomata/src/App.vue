@@ -1,14 +1,14 @@
 <template>
-  <CircleFactory msg="Welcome to Your Vue.js + TypeScript App" />
+  <CourseSelection />
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import CircleFactory from './components/CircleFactory.vue';
+import CourseSelection from './components/CourseSelection.vue';
 
 @Options({
   components: {
-    CircleFactory,
+    CourseSelection,
   },
 })
 export default class App extends Vue { }
