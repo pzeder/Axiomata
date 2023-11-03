@@ -1,21 +1,42 @@
 <template>
-  <button v-for="c in courses"> {{ c }} </button>
+  <button v-for="course in courses" :key="course.id" @click="handleButtonClick(course)"> {{ course }} </button>
 </template>
 
 <script setup lang="ts">
 import { Ref, onMounted, ref } from 'vue';
-import DB from '@/scripts/DB';
+import axios from 'axios';
 
-const courses: Ref<string[]> = ref(["nix"]);
+interface CourseInstance {
+  id: number;
+  courseName: string;
+}
+
+interface LevelInstance {
+  id: number;
+  levelName: string;
+}
+
+const courses: Ref<CourseInstance[]> = ref([]);
+const levels: Ref<LevelInstance[]> = ref([]);
 
 onMounted(() => {
-  fetchData();
+  fetchCourses();
 });
 
-async function fetchData(): Promise<void> {
+function handleButtonClick(course: CourseInstance) {
+  // fetchLevels();
+  console.log(course);
+}
+
+async function fetchCourses(): Promise<void> {
   try {
-    courses.value = [];
-    courses.value = await DB.fetchData();
+    const response = await axios.get('http://localhost:3000/courses');
+    if (response.status === 200) {
+      courses.value = [];
+      courses.value = response.data;
+    } else {
+      console.error('Server responded with status', response.status);
+    }
   } catch (error) {
     console.error('Error fetching data:', error);
   }

@@ -1,15 +1,20 @@
 <template>
-  <CourseSelection />
+  <CourseSelection v-if="showCourseSelection" />
 </template>
 
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+<script setup lang="ts">
+import { Ref, onMounted, ref } from 'vue';
 import CourseSelection from './components/CourseSelection.vue';
 
-@Options({
-  components: {
-    CourseSelection,
-  },
-})
-export default class App extends Vue { }
+const showCourseSelection: Ref<boolean> = ref(true);
+
+onMounted(() => {
+  window.addEventListener('keyup', onKeyUp);
+});
+
+function onKeyUp(event: KeyboardEvent) {
+  if (event.key === 'c') {
+    showCourseSelection.value = !showCourseSelection.value;
+  }
+}
 </script>
