@@ -1,20 +1,20 @@
 <template>
-  <CourseSelection v-if="showCourseSelection" />
+  <CourseSelection v-if="showCourseSelection" @courseSelected="courseSelected" />
+  <LevelSelection v-if="showLevelSelection" :selectedCourse="selectedCourse" />
 </template>
 
 <script setup lang="ts">
-import { Ref, onMounted, ref } from 'vue';
-import CourseSelection from './components/CourseSelection.vue';
+import { Ref, ref } from 'vue';
+import CourseSelection from '@/components/CourseSelection.vue';
+import LevelSelection from '@/components/LevelSelection.vue';
 
 const showCourseSelection: Ref<boolean> = ref(true);
+const showLevelSelection: Ref<boolean> = ref(false);
+const selectedCourse: Ref<string> = ref("");
 
-onMounted(() => {
-  window.addEventListener('keyup', onKeyUp);
-});
-
-function onKeyUp(event: KeyboardEvent) {
-  if (event.key === 'c') {
-    showCourseSelection.value = !showCourseSelection.value;
-  }
+function courseSelected(course: string) {
+  selectedCourse.value = course;
+  showCourseSelection.value = false;
+  showLevelSelection.value = true;
 }
 </script>

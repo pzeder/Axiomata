@@ -1,5 +1,7 @@
 <template>
-  <button v-for="course in courses" :key="course.id" @click="handleButtonClick(course)"> {{ course }} </button>
+  <div class="course-container">
+    <button v-for="course in courses" :key="course.id" @click="handleButtonClick(course)"> {{ course }} </button>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -11,21 +13,14 @@ interface CourseInstance {
   courseName: string;
 }
 
-interface LevelInstance {
-  id: number;
-  levelName: string;
-}
-
 const courses: Ref<CourseInstance[]> = ref([]);
-const levels: Ref<LevelInstance[]> = ref([]);
 
 onMounted(() => {
   fetchCourses();
 });
 
 function handleButtonClick(course: CourseInstance) {
-  // fetchLevels();
-  console.log(course);
+  emit('courseSelected', course);
 }
 
 async function fetchCourses(): Promise<void> {
@@ -41,4 +36,18 @@ async function fetchCourses(): Promise<void> {
     console.error('Error fetching data:', error);
   }
 }
+
+const emit = defineEmits(['courseSelected']);
 </script>
+
+<style>
+.course-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.course-container button {
+  margin-bottom: 10px;
+  /* This adds space between the buttons */
+}
+</style>

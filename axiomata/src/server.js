@@ -26,6 +26,20 @@ app.get('/courses', (req, res) => {
     .catch(error => res.status(500).json({ error: 'An error occurred' }));
 });
 
+app.get('/levels', (req, res) => {
+  const courseName = req.query.courseName;
+
+  if (!courseName) {
+    return res.status(400).json({ error: 'courseName is required' });
+  }
+  db.collection('Levels').find({ courseName: courseName }).toArray()
+    .then(results => {
+      const levelNames = results[0].levels.map(doc => doc.levelName);
+      res.json(levelNames);
+    })
+    .catch(error => res.status(500).json({ error: 'An error occurred' }));
+});
+
 app.listen(3000, function () {
   console.log('listening on 3000');
 });
