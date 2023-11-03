@@ -33,6 +33,7 @@ onMounted(() => {
 
 async function fetchData(): Promise<void> {
   try {
+    circles.value = [];
     circles.value = await DB.fetchData(index.value);
   } catch (error) {
     console.error('Error fetching data:', error);
