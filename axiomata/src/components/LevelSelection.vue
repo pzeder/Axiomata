@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, onMounted, ref, defineProps } from 'vue';
+import { Ref, onMounted, ref, defineProps, defineEmits } from 'vue';
 import axios from 'axios';
 
 interface Props {
@@ -24,12 +24,14 @@ interface ChapterInstance {
 
 const chapters: Ref<ChapterInstance[]> = ref([]);
 
+const emit = defineEmits(['levelSelected']);
+
 onMounted(() => {
   fetchLevels();
 });
 
 function handleButtonClick(levelName: string) {
-  console.log(levelName);
+  emit('levelSelected', levelName);
 }
 
 async function fetchLevels(): Promise<void> {

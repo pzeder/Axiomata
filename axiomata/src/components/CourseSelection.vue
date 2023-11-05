@@ -1,6 +1,6 @@
 <template>
   <div class="course-container">
-    <button v-for="course in courses" :key="course.id" @click="handleButtonClick(course)"> {{ course }} </button>
+    <button v-for="course in courses" :key="course.id" @click="handleButtonClick(course.courseName)"> {{ course.courseName }} </button>
   </div>
 </template>
 
@@ -19,8 +19,8 @@ onMounted(() => {
   fetchCourses();
 });
 
-function handleButtonClick(course: CourseInstance) {
-  emit('courseSelected', course);
+function handleButtonClick(courseName: string) {
+  emit('courseSelected', courseName);
 }
 
 async function fetchCourses(): Promise<void> {

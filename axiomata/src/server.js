@@ -20,7 +20,7 @@ MongoClient.connect(url)
 app.get('/courses', (req, res) => {
   db.collection('Courses').find().toArray()
     .then(results => {
-      const courseNames = results.map(doc => doc.courseName);
+      const courseNames = results.map(a => ({ courseName: a.courseName }));
       res.json(courseNames);
     })
     .catch(error => res.status(500).json({ error: 'An error occurred' }));
