@@ -17,27 +17,29 @@ MongoClient.connect(url)
   })
   .catch(error => console.error(error));
 
-app.get('/courses', (req, res) => {
-  db.collection('Courses').find().toArray()
-    .then(results => {
-      const courseNames = results.map(a => ({ courseName: a.courseName }));
-      res.json(courseNames);
-    })
-    .catch(error => res.status(500).json({ error: 'An error occurred' }));
+app.get('/courses', async (req, res) => {
+  try {
+    const courses = await db.collection('Courses').find().toArray();
+    const courseNames = courses.map(a => ({ courseName: a.courseName }));
+    res.json(courseNames)
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred' });
+  }
 });
 
-app.get('/levels', (req, res) => {
-  const courseName = req.query.courseName;
+app.get('/levels', async (req, res) => {
+  try {
+    const courseName = req.query.courseName;
 
-  if (!courseName) {
-    return res.status(400).json({ error: 'courseName is required' });
+    if (!courseName) {
+      return res.status(400).json({ error: 'courseName is required' });
+    }
+    const course = await db.collection('Courses').findOne({ courseName: courseName });
+    const chapterAndLevelNames = course.chapters.map(a => ({ chapterName: a.chapterName, levelNames: a.levelNames }));
+    res.json(chapterAndLevelNames);
+  } catch(error) {
+    res.status(500).json({ error: 'An error occurred' });
   }
-  db.collection('Courses').find({ courseName: courseName }).toArray()
-    .then(results => {
-      const chapterAndLevelNames = results[0].chapters.map(a => ({ chapterName: a.chapterName, levelNames: a.levelNames }));
-      res.json(chapterAndLevelNames);
-    })
-    .catch(error => res.status(500).json({ error: 'An error occurred' }));
 });
 
 app.listen(3000, function () {
