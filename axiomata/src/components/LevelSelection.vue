@@ -1,11 +1,12 @@
 <template>
-  <div class="level-container">
-    <button v-for="level in levels" :key="level.id" @click="handleButtonClick(level)"> {{ level }} </button>
+  <div class="chapter-container" v-for="chapter in chapters" :key="chapter.id">
+    {{ chapter.chapterName }}
+    <button v-for="level in chapter.levelNames" :key="level.id" @click="handleButtonClick(level)"> {{ level }} </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Ref, onMounted, ref } from 'vue';
+import { Ref, onMounted, ref, defineProps } from 'vue';
 import axios from 'axios';
 
 interface Props {
@@ -15,19 +16,20 @@ interface Props {
 const props = defineProps<Props>();
 const selectedCourse: Ref<string> = ref(props.selectedCourse);
 
-interface LevelInstance {
+interface ChapterInstance {
   id: number;
-  levelName: string;
+  chapterName: string;
+  levelNames: string[];
 }
 
-const levels: Ref<LevelInstance[]> = ref([]);
+const chapters: Ref<ChapterInstance[]> = ref([]);
 
 onMounted(() => {
   fetchLevels();
 });
 
-function handleButtonClick(level: LevelInstance) {
-  console.log(level);
+function handleButtonClick(levelName: string) {
+  console.log(levelName);
 }
 
 async function fetchLevels(): Promise<void> {
@@ -37,8 +39,8 @@ async function fetchLevels(): Promise<void> {
   try {
     const response = await axios.get('http://localhost:3000/levels?courseName=' + selectedCourse.value);
     if (response.status === 200) {
-      levels.value = [];
-      levels.value = response.data;
+      chapters.value = [];
+      chapters.value = response.data;
     } else {
       console.error('Server responded with status', response.status);
     }
@@ -49,12 +51,13 @@ async function fetchLevels(): Promise<void> {
 </script>
 
 <style>
-.level-container {
+.chapter-container {
   display: flex;
   flex-direction: column;
+  font-size: 30px;
 }
 
-.level-container button {
+.chapter-container button {
   margin-bottom: 10px;
   /* This adds space between the buttons */
 }

@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, onMounted, ref } from 'vue';
+import { Ref, onMounted, ref, defineEmits } from 'vue';
 import axios from 'axios';
 
 interface CourseInstance {

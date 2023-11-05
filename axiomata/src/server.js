@@ -18,7 +18,7 @@ MongoClient.connect(url)
   .catch(error => console.error(error));
 
 app.get('/courses', (req, res) => {
-  db.collection('Levels').find().toArray()
+  db.collection('Courses').find().toArray()
     .then(results => {
       const courseNames = results.map(doc => doc.courseName);
       res.json(courseNames);
@@ -32,10 +32,10 @@ app.get('/levels', (req, res) => {
   if (!courseName) {
     return res.status(400).json({ error: 'courseName is required' });
   }
-  db.collection('Levels').find({ courseName: courseName }).toArray()
+  db.collection('Courses').find({ courseName: courseName }).toArray()
     .then(results => {
-      const levelNames = results[0].levels.map(doc => doc.levelName);
-      res.json(levelNames);
+      const chapterAndLevelNames = results[0].chapters.map(a => ({ chapterName: a.chapterName, levelNames: a.levelNames }));
+      res.json(chapterAndLevelNames);
     })
     .catch(error => res.status(500).json({ error: 'An error occurred' }));
 });
