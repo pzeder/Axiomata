@@ -48,6 +48,5 @@ const emit = defineEmits(['courseSelected']);
 
 .course-container button {
   margin-bottom: 10px;
-  /* This adds space between the buttons */
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <CourseSelection v-if="showCourseSelection" @courseSelected="courseSelected" />
-  <LevelSelection v-if="showLevelSelection" @levelSelected="levelSelected" :selectedCourse="selectedCourse" />
-  <PlayWindow v-if="showPlayWindow" :selectedLevel="selectedLevel" />
+  <LevelSelection v-if="showLevelSelection" @levelSelected="levelSelected" @backToCourseMenu="backToCourseMenu" :selectedCourse="selectedCourse" />
+  <PlayWindow v-if="showPlayWindow" @backToLevelMenu="backToLevelMenu" :selectedLevel="selectedLevel" />
 </template>
 
 <script setup lang="ts">
@@ -27,5 +27,16 @@ function levelSelected(levelName: string): void {
   selectedLevel.value = levelName;
   showLevelSelection.value = false;
   showPlayWindow.value = true;
+}
+
+function backToLevelMenu(): void {
+  selectedLevel.value = "";
+  showPlayWindow.value = false;
+  showLevelSelection.value = true;
+}
+
+function backToCourseMenu(): void {
+  showCourseSelection.value = true;
+  showLevelSelection.value = false;  
 }
 </script>

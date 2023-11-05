@@ -3,6 +3,7 @@
     {{ chapter.chapterName }}
     <button v-for="level in chapter.levelNames" :key="level.id" @click="handleButtonClick(level)"> {{ level }} </button>
   </div>
+    <button @click="backToCourseMenu"> zurück </button>
 </template>
 
 <script setup lang="ts">
@@ -24,7 +25,7 @@ interface ChapterInstance {
 
 const chapters: Ref<ChapterInstance[]> = ref([]);
 
-const emit = defineEmits(['levelSelected']);
+const emit = defineEmits(['levelSelected', 'backToCourseMenu']);
 
 onMounted(() => {
   fetchLevels();
@@ -50,6 +51,10 @@ async function fetchLevels(): Promise<void> {
     console.error('Error fetching data:', error);
   }
 }
+
+function backToCourseMenu(): void {
+  emit('backToCourseMenu');
+}
 </script>
 
 <style>
@@ -61,6 +66,5 @@ async function fetchLevels(): Promise<void> {
 
 .chapter-container button {
   margin-bottom: 10px;
-  /* This adds space between the buttons */
 }
 </style>
