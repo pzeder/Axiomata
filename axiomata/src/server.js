@@ -24,7 +24,7 @@ app.listen(3000, function () {
 app.get('/courses', async (req, res) => {
   try {
     const courses = await db.collection('Courses').find().toArray();
-    const courseNames = courses.map(a => ({ courseName: a.courseName }));
+    const courseNames = courses.map(c => ({ courseName: c.courseName }));
     res.json(courseNames)
   } catch (error) {
     res.status(500).json({ error: error });
@@ -33,35 +33,34 @@ app.get('/courses', async (req, res) => {
 
 app.get('/chapters', async (req, res) => {
   try {
-    const userName = req.query.userName;
-    const courseName = req.query.courseName;
+    const { userName, courseName } = req.query;
 
-    let savedCourse = await db.collection('SaveStates').findOne({ userName: userName, courseName: courseName });
+    let courseSave = await db.collection('SaveStates').findOne({ userName: userName, courseName: courseName });
 
-    if (!savedCourse) {
-      const course = await db.collection('Courses').findOne({ courseName: courseName });
+    if (!courseSave) {
+      const courseData = await db.collection('Courses').findOne({ courseName: courseName });
 
       const getLevels = ch => ch.levels.map(e => ({
         levelName: e.levelName,
         status:  'todo'
       }));
 
-      const getChapterIndex = ch => course.chapters.findIndex(item => item.chapterName === ch.chapterName );
+      const getChapterIndex = ch => courseData.chapters.findIndex(item => item.chapterName === ch.chapterName );
 
-      savedCourse = {
+      courseSave = {
         userName: userName,
         courseName: courseName,
-        chapters: course.chapters.map(ch => ({ 
+        chapters: courseData.chapters.map(ch => ({ 
           chapterName: ch.chapterName, 
           unlocked: (getChapterIndex(ch) === 0 ? true : false),
           levels: getLevels(ch)
         }))
       };
 
-      await db.collection('SaveStates').insertOne(savedCourse);
+      await db.collection('SaveStates').insertOne(courseSave);
     }
     
-    res.json(savedCourse.chapters);
+    res.json(courseSave.chapters);
   } catch(error) {
     res.status(500).json({ error: error });
   }
@@ -69,19 +68,13 @@ app.get('/chapters', async (req, res) => {
 
 app.patch('/course', async (req, res) => {
   try {
-    const chapterName = req.body.chapterName;
-    const levelName = req.body.levelName;
-    const newStatus = req.body.newStatus;
+    const { chapterName, levelName, newStatus, userName, courseName } = req.body;
+    const filter = { userName, courseName };
 
-    const filter = { 
-      userName: req.body.userName,
-      courseName: req.body.courseName, 
-    };
+    let courseSave = await db.collection('SaveStates').findOne(filter);
 
-    let course = await db.collection('SaveStates').findOne(filter);
-
-    const chapterIndex = course.chapters.findIndex(ch => ch.chapterName === chapterName);
-    const levelIndex = course.chapters[chapterIndex].levels.findIndex(lev => lev.levelName === levelName);
+    const chapterIndex = courseSave.chapters.findIndex(ch => ch.chapterName === chapterName);
+    const levelIndex = courseSave.chapters[chapterIndex].levels.findIndex(lev => lev.levelName === levelName);
 
     const updateLevel = {
       $set: {}
@@ -95,20 +88,19 @@ app.patch('/course', async (req, res) => {
     }
 
     // check if a new chapter gets unlocked
-    course = await db.collection('SaveStates').findOne(filter);
-    const unfinishedLevels = course.chapters[chapterIndex].levels.filter(lev => !(lev.status === 'done'));
-    if (unfinishedLevels.length === 0) {
-      const nextChapter = course.chapters[chapterIndex + 1];
-      if (nextChapter) {
-        const unlockChapter = {
-            $set: {}
-          };
+
+    courseSave = await db.collection('SaveStates').findOne(filter);
+
+    const nextChapter = courseSave.chapters[chapterIndex + 1];
+    const unfinishedLevels = courseSave.chapters[chapterIndex].levels.filter(lev => !(lev.status === 'done'));
+   
+    if (nextChapter && unfinishedLevels.length === 0) {
+        const unlockChapter = {$set: {}};
         unlockChapter.$set[`chapters.${chapterIndex + 1}.unlocked`] = true;
         result = await db.collection('SaveStates').updateOne(filter, unlockChapter);
         if (result.modifiedCount === 0) {
           return res.status(500).json({ error: 'Failed to update status' });
         }
-      }
     }
 
     res.json({ message: 'Status updated successfully' });

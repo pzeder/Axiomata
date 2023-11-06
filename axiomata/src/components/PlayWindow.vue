@@ -28,7 +28,7 @@ const levelFinsihed: Ref<boolean> = ref(false);
 
 const emit = defineEmits(['backToLevelMenu']);
 
-function finishLevel(event: MouseEvent): void {
+function finishLevel(): void {
     levelFinsihed.value = true;
     updateCourse();
 }
@@ -54,7 +54,7 @@ async function updateCourse(): Promise<void> {
   }
 }
 
-function backToLevelMenu(event: MouseEvent): void {
+function backToLevelMenu(): void {
     emit('backToLevelMenu');
 }
 </script>
