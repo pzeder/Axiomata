@@ -1,7 +1,11 @@
 <template>
   <div class="chapter-container" v-for="chapter in chapters" :key="chapter.id">
     {{ chapter.chapterName }}
-    <button v-for="level in chapter.levelNames" :key="level.id" @click="handleButtonClick(level)"> {{ level }} </button>
+    <button v-for="level in chapter.levels" 
+      :key="level.id" @click="handleButtonClick(chapter.chapterName, level.levelName)"
+      :style="{backgroundColor: (!chapter.unlocked ? 'rgb(150,150,150)' : (level.status === 'todo' ? 'rgb(255,100,100)' : 'rgb(100,255,100)'))}"> 
+        {{ level.levelName }} 
+    </button>
   </div>
     <button @click="backToCourseMenu"> zurück </button>
 </template>
@@ -12,18 +16,27 @@ import axios from 'axios';
 
 interface Props {
   selectedCourse: string;
+  userName: string;
 }
 
 const props = defineProps<Props>();
 const selectedCourse: Ref<string> = ref(props.selectedCourse);
+const userName: Ref<string> = ref(props.userName);
 
 interface ChapterInstance {
   id: number;
   chapterName: string;
-  levelNames: string[];
+  unlocked: boolean;
+  levels: LevelInstance[];
 }
 
-const chapters: Ref<ChapterInstance[]> = ref([]);
+interface LevelInstance {
+  id: number;
+  levelName: string;
+  status: string;
+}
+
+const chapters: Ref<ChapterInstance[]> = ref([]); 
 
 const emit = defineEmits(['levelSelected', 'backToCourseMenu']);
 
@@ -31,8 +44,8 @@ onMounted(() => {
   fetchLevels();
 });
 
-function handleButtonClick(levelName: string) {
-  emit('levelSelected', levelName);
+function handleButtonClick(chapterName: string, levelName: string) {
+  emit('levelSelected', chapterName, levelName);
 }
 
 async function fetchLevels(): Promise<void> {
@@ -40,7 +53,8 @@ async function fetchLevels(): Promise<void> {
     return;
   }
   try {
-    const response = await axios.get('http://localhost:3000/levels?courseName=' + selectedCourse.value);
+    const request: string = '?courseName=' + selectedCourse.value + "&userName=" + userName.value;
+    const response = await axios.get('http://localhost:3000/chapters' + request);
     if (response.status === 200) {
       chapters.value = [];
       chapters.value = response.data;

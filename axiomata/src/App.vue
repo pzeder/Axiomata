@@ -1,7 +1,15 @@
 <template>
-  <CourseSelection v-if="showCourseSelection" @courseSelected="courseSelected" />
-  <LevelSelection v-if="showLevelSelection" @levelSelected="levelSelected" @backToCourseMenu="backToCourseMenu" :selectedCourse="selectedCourse" />
-  <PlayWindow v-if="showPlayWindow" @backToLevelMenu="backToLevelMenu" :selectedLevel="selectedLevel" />
+  <CourseSelection v-if="showCourseSelection" 
+    @courseSelected="courseSelected" />
+  <LevelSelection v-if="showLevelSelection" 
+    @levelSelected="levelSelected" @backToCourseMenu="backToCourseMenu" 
+    :selectedCourse="selectedCourse" :userName="userName"/>
+  <PlayWindow v-if="showPlayWindow" 
+    @backToLevelMenu="backToLevelMenu" 
+    :userName="userName"
+    :selectedCourse="selectedCourse" 
+    :selectedChapter="selectedChapter" 
+    :selectedLevel="selectedLevel" />
 </template>
 
 <script setup lang="ts">
@@ -15,7 +23,10 @@ const showLevelSelection: Ref<boolean> = ref(false);
 const showPlayWindow: Ref<boolean> = ref(false);
 
 const selectedCourse: Ref<string> = ref("");
+const selectedChapter: Ref<string> = ref("");
 const selectedLevel: Ref<string> = ref("");
+
+const userName: Ref<string> = ref("Philippe");
 
 function courseSelected(courseName: string): void {
   selectedCourse.value = courseName;
@@ -23,7 +34,8 @@ function courseSelected(courseName: string): void {
   showLevelSelection.value = true;
 }
 
-function levelSelected(levelName: string): void {
+function levelSelected(chapterName: string, levelName: string): void {
+  selectedChapter.value = chapterName;
   selectedLevel.value = levelName;
   showLevelSelection.value = false;
   showPlayWindow.value = true;
