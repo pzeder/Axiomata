@@ -1,48 +1,43 @@
 <template>
-    <div class="play-container">
-        <div> Du spielst gerade <b> {{ selectedLevel }} </b> </div>
-        <button @click="finishLevel"> klicke hier um zu gewinnen </button>
-        <div v-if="levelFinsihed" style="font-size: 100pt"> Wahnsinn! Du hast es geschafft! </div>
-        <button @click="backToLevelMenu"> zurück zur Levelauswahl </button>
-    </div>
+  <div class="play-container">
+    <div> Du spielst gerade <b> {{ userState.levelName }} </b> </div>
+    <button @click="finishLevel"> klicke hier um zu gewinnen </button>
+    <div v-if="levelFinsihed" style="font-size: 100pt"> Wahnsinn! Du hast es geschafft! </div>
+    <button @click="backToLevelMenu"> zurück zur Levelauswahl </button>
+  </div>
 </template>
 
 <script setup lang=ts>
+import { UserState } from '@/scripts/Interfaces';
 import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits } from 'vue';
 
 interface Props {
-  userName: string;
-  selectedCourse: string;
-  selectedChapter: string;
-  selectedLevel: string;
+  userState: UserState;
 }
 
 const props = defineProps<Props>();
-const userName: Ref<string> = ref(props.userName);
-const selectedCourse: Ref<string> = ref(props.selectedCourse);
-const selectedChapter: Ref<string> = ref(props.selectedChapter);
-const selectedLevel: Ref<string> = ref(props.selectedLevel);
+const userState: Ref<UserState> = ref(props.userState);
 
 const levelFinsihed: Ref<boolean> = ref(false);
 
 const emit = defineEmits(['backToLevelMenu']);
 
 function finishLevel(): void {
-    levelFinsihed.value = true;
-    updateCourse();
+  levelFinsihed.value = true;
+  updateCourse();
 }
 
 async function updateCourse(): Promise<void> {
   try {
     const updatedData = {
-        userName: userName.value,
-        courseName:  selectedCourse.value,
-        chapterName: selectedChapter.value,
-        levelName: selectedLevel.value,
-        newStatus: 'done'
+      userName: userState.value.userName,
+      saveID: userState.value.saveID,
+      chapterName: userState.value.chapterName,
+      levelName: userState.value.levelName,
+      newStatus: 'done'
     };
-    const response = await axios.patch(`http://localhost:3000/course`, updatedData);
+    const response = await axios.patch(`http://localhost:3000/saveState`, updatedData);
     if (response.status === 200) {
       console.log('Course updated successfully:', response.data);
       // Update your Vue state or perform additional actions here
@@ -55,7 +50,7 @@ async function updateCourse(): Promise<void> {
 }
 
 function backToLevelMenu(): void {
-    emit('backToLevelMenu');
+  emit('backToLevelMenu');
 }
 </script>
 

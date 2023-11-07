@@ -1,24 +1,33 @@
-interface CourseData {
+export interface UserState {
+    userID: any;
+    userName: string;
+    saveID: any;
+    chapterName: string;
+    levelName: string;
+}
+
+export interface CourseData {
     courseName: string;
     chapters: ChapterData[];
 }
 
-interface ChapterData {
+export interface ChapterData {
     chapterName: string;
     levels: LevelData[];
 }
 
-interface LevelData {
+export interface LevelData {
     levelName: string;
 }
 
-interface CourseSave {
+export interface CourseSave {
+    _id: any;
     userName: string;
     courseName: string;
     chapters: ChapterSave[];
 }
 
-interface ChapterSave {
+export interface ChapterSave {
     chapterName: string;
     unlocked: boolean;
     levels: LevelSave[];

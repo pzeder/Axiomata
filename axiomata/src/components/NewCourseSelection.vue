@@ -1,29 +1,26 @@
 <template>
   <div class="course-container">
-    <button v-for="course in courses" :key="course.id" @click="handleButtonClick(course.courseName)"> {{ course.courseName }} </button>
+    <button v-for="course in courses" :key="course.id" @click="handleButtonClick(course.id)"> {{ course.courseName
+    }} </button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Ref, onMounted, ref, defineEmits } from 'vue';
 import axios from 'axios';
+import { CourseSave } from '@/scripts/Interfaces';
 
-interface CourseInstance {
-  id: number;
-  courseName: string;
-}
-
-const courses: Ref<CourseInstance[]> = ref([]);
+const courses: Ref<CourseSave[]> = ref([]);
 
 onMounted(() => {
-  fetchCourses();
+  fetchCourseData();
 });
 
 function handleButtonClick(courseName: string) {
   emit('courseSelected', courseName);
 }
 
-async function fetchCourses(): Promise<void> {
+async function fetchCourseData(): Promise<void> {
   try {
     const response = await axios.get('http://localhost:3000/courses');
     if (response.status === 200) {

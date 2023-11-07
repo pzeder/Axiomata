@@ -21,6 +21,28 @@ app.listen(3000, function () {
   console.log('listening on 3000');
 });
 
+app.get('/userState', async (req, res) => {
+  try {
+    const filter = req.query; // filters for userName
+    const userState = await db.collection('UserStates').findOne(filter);
+    res.json(userState)
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
+app.get('/saveStates', async (req, res) => {
+  try {
+    const filter = req.query; // filters for userName
+    const saveStates = await db.collection('SaveStates').find(filter).toArray();
+    const courseNames = saveStates.map(c => ({ courseName: c.courseName }));
+    console.log(filter, saveStates, courseNames);
+    res.json(courseNames)
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
 app.get('/courses', async (req, res) => {
   try {
     const courses = await db.collection('Courses').find().toArray();
@@ -31,37 +53,32 @@ app.get('/courses', async (req, res) => {
   }
 });
 
-app.get('/chapters', async (req, res) => {
+app.post('/newCourseSave', async (req, res) => {
   try {
-    const { userName, courseName } = req.query;
+    const { userID, userName, courseName } = req.data;
 
-    let courseSave = await db.collection('SaveStates').findOne({ userName: userName, courseName: courseName });
+    const courseData = await db.collection('Courses').findOne({ courseName: courseName });
 
-    if (!courseSave) {
-      const courseData = await db.collection('Courses').findOne({ courseName: courseName });
+    const getChapterIndex = ch => courseData.chapters.findIndex(item => item.chapterName === ch.chapterName);
 
-      const getLevels = ch => ch.levels.map(e => ({
-        levelName: e.levelName,
-        status:  'todo'
-      }));
+    const getLevels = ch => ch.levels.map(e => ({
+      levelName: e.levelName,
+      status: 'todo'
+    }));
 
-      const getChapterIndex = ch => courseData.chapters.findIndex(item => item.chapterName === ch.chapterName );
+    const courseSave = {
+      userName: userName,
+      courseName: courseName,
+      chapters: courseData.chapters.map(ch => ({
+        chapterName: ch.chapterName,
+        unlocked: (getChapterIndex(ch) === 0 ? true : false),
+        levels: getLevels(ch)
+      }))
+    };
 
-      courseSave = {
-        userName: userName,
-        courseName: courseName,
-        chapters: courseData.chapters.map(ch => ({ 
-          chapterName: ch.chapterName, 
-          unlocked: (getChapterIndex(ch) === 0 ? true : false),
-          levels: getLevels(ch)
-        }))
-      };
-
-      await db.collection('SaveStates').insertOne(courseSave);
-    }
-    
-    res.json(courseSave.chapters);
-  } catch(error) {
+    await db.collection('SaveStates').insertOne(courseSave);
+    res.json(courseSave.userName + 'created a new saveState for ' + courseSave.courseName);
+  } catch (error) {
     res.status(500).json({ error: error });
   }
 });
@@ -93,18 +110,18 @@ app.patch('/course', async (req, res) => {
 
     const nextChapter = courseSave.chapters[chapterIndex + 1];
     const unfinishedLevels = courseSave.chapters[chapterIndex].levels.filter(lev => !(lev.status === 'done'));
-   
+
     if (nextChapter && unfinishedLevels.length === 0) {
-        const unlockChapter = {$set: {}};
-        unlockChapter.$set[`chapters.${chapterIndex + 1}.unlocked`] = true;
-        result = await db.collection('SaveStates').updateOne(filter, unlockChapter);
-        if (result.modifiedCount === 0) {
-          return res.status(500).json({ error: 'Failed to update status' });
-        }
+      const unlockChapter = { $set: {} };
+      unlockChapter.$set[`chapters.${chapterIndex + 1}.unlocked`] = true;
+      result = await db.collection('SaveStates').updateOne(filter, unlockChapter);
+      if (result.modifiedCount === 0) {
+        return res.status(500).json({ error: 'Failed to update status' });
+      }
     }
 
     res.json({ message: 'Status updated successfully' });
-  } catch(error) {
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 })
