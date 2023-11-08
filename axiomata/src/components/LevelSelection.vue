@@ -2,7 +2,7 @@
   <div class="chapter-container" v-for="chapter in chapters" :key="chapter.chapterName">
     {{ chapter.chapterName }}
     <button v-for="level in chapter.levelHeaders" :key="level.levelName"
-      @click="levelSelected(chapter.chapterName, level.levelName)"
+      @click="trySelectingLevel(chapter.unlocked, chapter.chapterName, level.levelName)"
       :style="{ backgroundColor: (!chapter.unlocked ? 'rgb(150,150,150)' : (level.status === 'todo' ? 'rgb(255,100,100)' : 'rgb(100,255,100)')) }">
       {{ level.levelName }}
     </button>
@@ -41,8 +41,10 @@ onMounted(() => {
 
 const emit = defineEmits(['levelSelected', 'openSaveStateMenu']);
 
-function levelSelected(chapterName: string, levelName: string) {
-  emit('levelSelected', chapterName, levelName);
+function trySelectingLevel(unlocked: boolean, chapterName: string, levelName: string) {
+  if (unlocked) {
+    emit('levelSelected', chapterName, levelName);
+  }
 }
 
 function openSaveStateMenu(): void {

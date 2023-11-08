@@ -68,7 +68,6 @@ app.get('/courses', async (req, res) => {
 app.post('/newSaveState', async (req, res) => {
   try {
     const { userName, courseName } = req.body;
-    console.log(userName, courseName);
     const courseData = await db.collection('Courses').findOne({ courseName: courseName });
     const getChapterIndex = ch => courseData.chapters.findIndex(item => item.chapterName === ch.chapterName);
 
