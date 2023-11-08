@@ -1,14 +1,15 @@
 <template>
   <div class="save-container">
-    <button v-for="state in saveStates" :key="state._id" @click="handleButtonClick(state._id)"> {{ state.courseName
+    <button v-for="ssh in saveStateHeaders" :key="ssh.saveID" @click="handleButtonClick(ssh.saveID)"> {{ ssh.courseName
     }} </button>
   </div>
+  <button @click="openNewCourseMenu"> Neuer Kurs </button>
 </template>
 
 <script setup lang="ts">
 import { Ref, onMounted, ref, defineProps, defineEmits } from 'vue';
 import axios from 'axios';
-import { UserState, CourseSave } from '@/scripts/Interfaces';
+import { UserState } from '@/scripts/Interfaces';
 
 interface Props {
   userState: UserState;
@@ -17,27 +18,34 @@ interface Props {
 const props = defineProps<Props>();
 const userState: Ref<UserState> = ref(props.userState);
 
-const saveStates: Ref<CourseSave[]> = ref([]);
+interface SaveStateHeader {
+    saveID: any;
+    courseName: string;
+}
+
+const saveStateHeaders: Ref<SaveStateHeader[]> = ref([]);
 
 onMounted(() => {
-  console.log('fetching...');
   fetchCourseSaves();
-  console.log(saveStates.value);
 });
 
-const emit = defineEmits(['saveStateSelected']);
+const emit = defineEmits(['saveStateSelected', 'openNewCourseMenu']);
 
-function handleButtonClick(courseName: string) {
-  emit('saveStateSelected', userState.value.saveID);
+function handleButtonClick(newSaveID: any) {
+  emit('saveStateSelected', newSaveID);
+}
+
+function openNewCourseMenu() {
+  emit('openNewCourseMenu');
 }
 
 async function fetchCourseSaves(): Promise<void> {
   try {
-    console.log(userState.value.userName);
-    const response = await axios.get('http://localhost:3000/saveStates?userName=' + userState.value.userName);
+    const query: string = '?userName=' + userState.value.userName;
+    const response = await axios.get('http://localhost:3000/saveStateHeaders' + query);
     if (response.status === 200) {
-      saveStates.value = [];
-      saveStates.value = response.data;
+      saveStateHeaders.value = [];
+      saveStateHeaders.value = response.data;
     } else {
       console.error('Server responded with status', response.status);
     }

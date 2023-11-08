@@ -3,7 +3,7 @@
     <div> Du spielst gerade <b> {{ userState.levelName }} </b> </div>
     <button @click="finishLevel"> klicke hier um zu gewinnen </button>
     <div v-if="levelFinsihed" style="font-size: 100pt"> Wahnsinn! Du hast es geschafft! </div>
-    <button @click="backToLevelMenu"> zurück zur Levelauswahl </button>
+    <button @click="openLevelMenu"> zurück zur Levelauswahl </button>
   </div>
 </template>
 
@@ -15,13 +15,16 @@ import { Ref, ref, defineProps, defineEmits } from 'vue';
 interface Props {
   userState: UserState;
 }
-
 const props = defineProps<Props>();
 const userState: Ref<UserState> = ref(props.userState);
 
 const levelFinsihed: Ref<boolean> = ref(false);
 
-const emit = defineEmits(['backToLevelMenu']);
+const emit = defineEmits(['openLevelMenu']);
+
+function openLevelMenu(): void {
+  emit('openLevelMenu');
+}
 
 function finishLevel(): void {
   levelFinsihed.value = true;
@@ -31,7 +34,6 @@ function finishLevel(): void {
 async function updateCourse(): Promise<void> {
   try {
     const updatedData = {
-      userName: userState.value.userName,
       saveID: userState.value.saveID,
       chapterName: userState.value.chapterName,
       levelName: userState.value.levelName,
@@ -47,10 +49,6 @@ async function updateCourse(): Promise<void> {
   } catch (error) {
     console.error('Error updating data:', error);
   }
-}
-
-function backToLevelMenu(): void {
-  emit('backToLevelMenu');
 }
 </script>
 

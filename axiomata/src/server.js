@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId  } = require('mongodb');
 const cors = require('cors');
 const app = express();
 
@@ -21,23 +21,35 @@ app.listen(3000, function () {
   console.log('listening on 3000');
 });
 
-app.get('/userState', async (req, res) => {
+app.get('/saveStateHeaders', async (req, res) => {
   try {
-    const filter = req.query; // filters for userName
-    const userState = await db.collection('UserStates').findOne(filter);
-    res.json(userState)
+    const filter = { userName: req.query.userName }; 
+    const saveStates = await db.collection('SaveStates').find(filter).toArray();
+    const saveStateHeader = saveStates.map(s => ({ saveID: s._id, courseName: s.courseName }));
+    res.json(saveStateHeader)
   } catch (error) {
     res.status(500).json({ error: error });
   }
 });
 
-app.get('/saveStates', async (req, res) => {
+app.get('/chapterHeaders', async (req, res) => {
   try {
-    const filter = req.query; // filters for userName
-    const saveStates = await db.collection('SaveStates').find(filter).toArray();
-    const courseNames = saveStates.map(c => ({ courseName: c.courseName }));
-    console.log(filter, saveStates, courseNames);
-    res.json(courseNames)
+    const saveID = req.query.saveID;
+    const filter = ({ _id: new ObjectId(req.query.saveID) });
+    const saveState = await db.collection('SaveStates').findOne(filter);
+
+    const getLevelHeaders = ch => ch.levels.map(lev => ({
+      levelName: lev.levelName,
+      status: lev.status
+    }));
+
+    const chapterHeaders = saveState.chapters.map(ch => ({ 
+      chapterName: ch.chapterName, 
+      unlocked: ch.unlocked,
+      levelHeaders: getLevelHeaders(ch)
+    }));
+
+    res.json(chapterHeaders);
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -53,12 +65,11 @@ app.get('/courses', async (req, res) => {
   }
 });
 
-app.post('/newCourseSave', async (req, res) => {
+app.post('/newSaveState', async (req, res) => {
   try {
-    const { userID, userName, courseName } = req.data;
-
+    const { userName, courseName } = req.body;
+    console.log(userName, courseName);
     const courseData = await db.collection('Courses').findOne({ courseName: courseName });
-
     const getChapterIndex = ch => courseData.chapters.findIndex(item => item.chapterName === ch.chapterName);
 
     const getLevels = ch => ch.levels.map(e => ({
@@ -76,22 +87,21 @@ app.post('/newCourseSave', async (req, res) => {
       }))
     };
 
-    await db.collection('SaveStates').insertOne(courseSave);
-    res.json(courseSave.userName + 'created a new saveState for ' + courseSave.courseName);
+    const result = await db.collection('SaveStates').insertOne(courseSave);
+    res.json({saveID: result.insertedId});
   } catch (error) {
     res.status(500).json({ error: error });
   }
 });
 
-app.patch('/course', async (req, res) => {
+app.patch('/saveState', async (req, res) => {
   try {
-    const { chapterName, levelName, newStatus, userName, courseName } = req.body;
-    const filter = { userName, courseName };
+    const { saveID, chapterName, levelName, newStatus } = req.body;
+    const filter = ({ _id: new ObjectId(saveID) });
+    let saveState = await db.collection('SaveStates').findOne(filter);
 
-    let courseSave = await db.collection('SaveStates').findOne(filter);
-
-    const chapterIndex = courseSave.chapters.findIndex(ch => ch.chapterName === chapterName);
-    const levelIndex = courseSave.chapters[chapterIndex].levels.findIndex(lev => lev.levelName === levelName);
+    const chapterIndex = saveState.chapters.findIndex(ch => ch.chapterName === chapterName);
+    const levelIndex = saveState.chapters[chapterIndex].levels.findIndex(lev => lev.levelName === levelName);
 
     const updateLevel = {
       $set: {}

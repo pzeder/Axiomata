@@ -1,9 +1,10 @@
 <template>
-  <SaveStateSelection v-if="showSaveSelection" :userState="userState" @saveStateSelected="saveStateSelected" />
-  <NewCourseSelection v-if="showCourseSelection" />
-  <LevelSelection v-if="showLevelSelection" @levelSelected="levelSelected" @backToCourseMenu="backToCourseMenu"
+  <SaveStateSelection v-if="showSaveSelection" :userState="userState" 
+    @saveStateSelected="saveStateSelected" @openNewCourseMenu="openNewCourseMenu"/>
+  <NewCourseSelection v-if="showNewCourseSelection" @newSaveStateCreated="newSaveStateCreated" :userState="userState"/>
+  <LevelSelection v-if="showLevelSelection" @levelSelected="levelSelected" @openSaveStateMenu="openSaveStateMenu"
     :userState="userState" />
-  <PlayWindow v-if="showPlayWindow" @backToLevelMenu="backToLevelMenu" :userState="userState" />
+  <PlayWindow v-if="showPlayWindow" @openLevelMenu="openLevelMenu" :userState="userState" />
 </template>
 
 <script setup lang="ts">
@@ -16,54 +17,52 @@ import { UserState } from '@/scripts/Interfaces';
 import axios from 'axios';
 
 const showSaveSelection: Ref<boolean> = ref(true);
-const showCourseSelection: Ref<boolean> = ref(false);
+const showNewCourseSelection: Ref<boolean> = ref(false);
 const showLevelSelection: Ref<boolean> = ref(false);
 const showPlayWindow: Ref<boolean> = ref(false);
 
-const defaultUserState = { userID: null, userName: "", saveID: null, chapterName: "", levelName: "" };
+const defaultUserState = { userName: "Philippe", saveID: null, chapterName: "", levelName: "" };
 const userState: Ref<UserState> = ref(defaultUserState);
 
-const userName: Ref<string> = ref("Philippe");
-
-onMounted(() => {
-  fetchUserData();
-});
-
-async function fetchUserData(): Promise<void> {
-  try {
-    const response = await axios.get('http://localhost:3000/userState?userName=' + userName.value);
-    if (response.status === 200) {
-      userState.value = response.data;
-    } else {
-      console.error('Server responded with status', response.status);
-    }
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
+function newSaveStateCreated(newSaveID: any) {
+  userState.value.saveID = newSaveID;
+  openLevelMenu();
 }
 
-function saveStateSelected(id: number): void {
-  userState.value.saveID = id;
-  showCourseSelection.value = false;
+function saveStateSelected(newSaveID: number): void {
+  userState.value.saveID = newSaveID;
+  hideAll();
   showLevelSelection.value = true;
 }
 
 function levelSelected(chapterName: string, levelName: string): void {
   userState.value.chapterName = chapterName;
   userState.value.levelName = levelName;
-  showLevelSelection.value = false;
+  hideAll();
   showPlayWindow.value = true;
 }
 
-function backToLevelMenu(): void {
+function openLevelMenu(): void {
   userState.value.chapterName = "";
   userState.value.levelName = "";
-  showPlayWindow.value = false;
+  hideAll();
   showLevelSelection.value = true;
 }
 
-function backToCourseMenu(): void {
-  showCourseSelection.value = true;
+function openSaveStateMenu(): void {
+  hideAll();
+  showSaveSelection.value = true;
+}
+
+function openNewCourseMenu(): void {
+  hideAll();
+  showNewCourseSelection.value = true;
+}
+
+function hideAll(): void {
+  showSaveSelection.value = false;
+  showNewCourseSelection.value = false;
   showLevelSelection.value = false;
+  showPlayWindow.value = false;
 }
 </script>

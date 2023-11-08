@@ -1,13 +1,13 @@
 <template>
-  <div class="chapter-container" v-for="chapter in chapters" :key="chapter.id">
+  <div class="chapter-container" v-for="chapter in chapters" :key="chapter.chapterName">
     {{ chapter.chapterName }}
-    <button v-for="level in chapter.levels" :key="level.levelName"
-      @click="handleButtonClick(chapter.chapterName, level.levelName)"
+    <button v-for="level in chapter.levelHeaders" :key="level.levelName"
+      @click="levelSelected(chapter.chapterName, level.levelName)"
       :style="{ backgroundColor: (!chapter.unlocked ? 'rgb(150,150,150)' : (level.status === 'todo' ? 'rgb(255,100,100)' : 'rgb(100,255,100)')) }">
       {{ level.levelName }}
     </button>
   </div>
-  <button @click="backToCourseMenu"> zurück </button>
+  <button @click="openSaveStateMenu"> zurück </button>
 </template>
 
 <script setup lang="ts">
@@ -22,35 +22,37 @@ interface Props {
 const props = defineProps<Props>();
 const userState: Ref<UserState> = ref(props.userState);
 
-interface ChapterInstance {
-  id: number;
-  chapterName: string;
-  unlocked: boolean;
-  levels: LevelInstance[];
+interface ChapterHeader {
+    chapterName: string;
+    unlocked: boolean;
+    levelHeaders: LevelHeader[];
 }
 
-interface LevelInstance {
-  id: number;
+interface LevelHeader {
   levelName: string;
   status: string;
 }
 
-const chapters: Ref<ChapterInstance[]> = ref([]);
-
-const emit = defineEmits(['levelSelected', 'backToCourseMenu']);
+const chapters: Ref<ChapterHeader[]> = ref([]);
 
 onMounted(() => {
   fetchChapters();
 });
 
-function handleButtonClick(chapterName: string, levelName: string) {
+const emit = defineEmits(['levelSelected', 'openSaveStateMenu']);
+
+function levelSelected(chapterName: string, levelName: string) {
   emit('levelSelected', chapterName, levelName);
+}
+
+function openSaveStateMenu(): void {
+  emit('openSaveStateMenu');
 }
 
 async function fetchChapters(): Promise<void> {
   try {
     const query: string = '?saveID=' + userState.value.saveID;
-    const response = await axios.get('http://localhost:3000/savedChapters' + query);
+    const response = await axios.get('http://localhost:3000/chapterHeaders' + query);
     if (response.status === 200) {
       chapters.value = [];
       chapters.value = response.data;
@@ -60,10 +62,6 @@ async function fetchChapters(): Promise<void> {
   } catch (error) {
     console.error('Error fetching data:', error);
   }
-}
-
-function backToCourseMenu(): void {
-  emit('backToCourseMenu');
 }
 </script>
 
