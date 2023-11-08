@@ -1,4 +1,5 @@
 <template>
+  <button @click="openStartMenu"> Home </button>
   <div class="chapter-container" v-for="chapter in chapters" :key="chapter.chapterName">
     {{ chapter.chapterName }}
     <button v-for="level in chapter.levelHeaders" :key="level.levelName"
@@ -7,7 +8,7 @@
       {{ level.levelName }}
     </button>
   </div>
-  <button @click="openSaveStateMenu"> zurück </button>
+  <button @click="openSaveStateMenu"> Ladebidschirm </button>
 </template>
 
 <script setup lang="ts">
@@ -23,9 +24,9 @@ const props = defineProps<Props>();
 const userState: Ref<UserState> = ref(props.userState);
 
 interface ChapterHeader {
-    chapterName: string;
-    unlocked: boolean;
-    levelHeaders: LevelHeader[];
+  chapterName: string;
+  unlocked: boolean;
+  levelHeaders: LevelHeader[];
 }
 
 interface LevelHeader {
@@ -39,7 +40,7 @@ onMounted(() => {
   fetchChapters();
 });
 
-const emit = defineEmits(['levelSelected', 'openSaveStateMenu']);
+const emit = defineEmits(['levelSelected', 'openSaveStateMenu', 'openStartMenu']);
 
 function trySelectingLevel(unlocked: boolean, chapterName: string, levelName: string) {
   if (unlocked) {
@@ -49,6 +50,10 @@ function trySelectingLevel(unlocked: boolean, chapterName: string, levelName: st
 
 function openSaveStateMenu(): void {
   emit('openSaveStateMenu');
+}
+
+function openStartMenu() {
+  emit('openStartMenu');
 }
 
 async function fetchChapters(): Promise<void> {

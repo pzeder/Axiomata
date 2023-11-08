@@ -1,6 +1,7 @@
 <template>
+  <button @click="openStartMenu"> Home </button>
   <div class="save-container">
-    <button v-for="ssh in saveStateHeaders" :key="ssh.saveID" @click="handleButtonClick(ssh.saveID)"> {{ ssh.courseName
+    <button v-for="ssh in saveStateHeaders" :key="ssh.saveID" @click="saveStateSelected(ssh.saveID)"> {{ ssh.courseName
     }} </button>
   </div>
   <button @click="openNewCourseMenu"> Neuer Kurs </button>
@@ -19,8 +20,8 @@ const props = defineProps<Props>();
 const userState: Ref<UserState> = ref(props.userState);
 
 interface SaveStateHeader {
-    saveID: any;
-    courseName: string;
+  saveID: any;
+  courseName: string;
 }
 
 const saveStateHeaders: Ref<SaveStateHeader[]> = ref([]);
@@ -29,14 +30,18 @@ onMounted(() => {
   fetchCourseSaves();
 });
 
-const emit = defineEmits(['saveStateSelected', 'openNewCourseMenu']);
+const emit = defineEmits(['saveStateSelected', 'openNewCourseMenu', 'openStartMenu']);
 
-function handleButtonClick(newSaveID: any) {
+function saveStateSelected(newSaveID: any) {
   emit('saveStateSelected', newSaveID);
 }
 
 function openNewCourseMenu() {
   emit('openNewCourseMenu');
+}
+
+function openStartMenu() {
+  emit('openStartMenu');
 }
 
 async function fetchCourseSaves(): Promise<void> {
