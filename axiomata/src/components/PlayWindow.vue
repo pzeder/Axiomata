@@ -6,11 +6,22 @@
       <button @click="openLevelMenu"> zurück zur Levelauswahl </button>
     </div>
   </div>
-  <div class="derivate-bar"> ABLEITUNGEN </div>
-  <div class="axiom-bar"> AXIOME
-    <div class="axiom-container" v-for="axiom in levelData.axioms" :key="axiom"> {{ axiom }}</div>
+  <div class="derivate-bar">
+    <div class="derivate-container" v-for="axiom in levelData.derivates" :key="axiom"> {{ axiom }}
+    </div>
   </div>
-  <div class="goal"> ZIEL </div>
+  <div class="axiom-bar">
+    <div class="axiom-container" v-for="axiom in levelData.axioms" :key="axiom">
+      <div>
+        {{ axiom }}
+      </div>
+    </div>
+  </div>
+  <div class="goal-container">
+    <div>
+      ZIEL
+    </div>
+  </div>
 </template>
 
 <script setup lang=ts>
@@ -26,9 +37,10 @@ const userState: Ref<UserState> = ref(props.userState);
 
 interface LevelData {
   axioms: string[];
+  derivates: string[];
 }
 
-const levelData: Ref<LevelData> = ref({ axioms: [] });
+const levelData: Ref<LevelData> = ref({ axioms: [], derivates: [] });
 
 const levelFinsihed: Ref<boolean> = ref(false);
 
@@ -55,6 +67,7 @@ async function fetchLevel(): Promise<void> {
     const response = await axios.get('http://localhost:3000/level' + query);
     if (response.status === 200) {
       levelData.value = response.data;
+      console.log(levelData.value);
     } else {
       console.error('Server responded with status', response.status);
     }
@@ -119,6 +132,7 @@ async function updateCourse(): Promise<void> {
 }
 
 .derivate-bar {
+  display: flex;
   position: fixed;
   bottom: 0;
   left: 20vw;
@@ -128,7 +142,10 @@ async function updateCourse(): Promise<void> {
   color: #fff;
 }
 
-.goal {
+.goal-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: fixed;
   right: 0;
   top: 0;
@@ -139,10 +156,20 @@ async function updateCourse(): Promise<void> {
 }
 
 .axiom-container {
-  left: 20%;
-  width: 80%;
-  height: 20%;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 25%;
+  outline: 2px solid white;
+}
+
+.derivate-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20%;
+  height: 100%;
   outline: 2px solid white;
 }
 </style>

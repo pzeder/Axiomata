@@ -71,8 +71,9 @@ app.post('/newSaveState', async (req, res) => {
     const courseData = await db.collection('Courses').findOne({ courseName: courseName });
     const getChapterIndex = ch => courseData.chapters.findIndex(item => item.chapterName === ch.chapterName);
 
-    const getLevels = ch => ch.levels.map(e => ({
-      levelName: e.levelName,
+    const getLevels = ch => ch.levels.map(lev => ({
+      levelName: lev.levelName,
+      goal: lev.goal,
       status: 'todo'
     }));
 
@@ -80,6 +81,7 @@ app.post('/newSaveState', async (req, res) => {
       userName: userName,
       courseName: courseName,
       axioms: courseData.chapters[0].newAxioms,
+      derivates: [],
       chapters: courseData.chapters.map(ch => ({
         chapterName: ch.chapterName,
         newAxioms: ch.newAxioms,
@@ -103,7 +105,8 @@ app.get('/level', async (req, res) => {
     const chapter = saveState.chapters.find(ch => ch.chapterName === chapterName);
     const level = chapter.levels.find(lev => lev.levelName === levelName);
     const levelData = ({
-      axioms: saveState.axioms
+      axioms: saveState.axioms,
+      derivates: saveState.derivates
     });
     res.json(levelData);
   } catch (error) {
@@ -116,14 +119,17 @@ app.patch('/levelEnd', async (req, res) => {
     const { saveID, chapterName, levelName, newStatus } = req.body;
     const filter = ({ _id: new ObjectId(saveID) });
     let saveState = await db.collection('SaveStates').findOne(filter);
-
+    const chapter = saveState.chapters.find(ch => ch.chapterName === chapterName);
+    const level = chapter.levels.find(lev => lev.levelName === levelName);
     const chapterIndex = saveState.chapters.findIndex(ch => ch.chapterName === chapterName);
     const levelIndex = saveState.chapters[chapterIndex].levels.findIndex(lev => lev.levelName === levelName);
 
     const updateLevel = {
-      $set: {}
+      $set: { [`chapters.${chapterIndex}.levels.${levelIndex}.status`]: newStatus },
+      $push: { derivates: level.goal }
     };
-    updateLevel.$set[`chapters.${chapterIndex}.levels.${levelIndex}.status`] = newStatus;
+
+    console.log(level, level.goal);
 
     let result = await db.collection('SaveStates').updateOne(filter, updateLevel);
 
