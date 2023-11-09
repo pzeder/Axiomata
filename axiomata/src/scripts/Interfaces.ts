@@ -4,3 +4,7 @@ export interface UserState {
     chapterName: string;
     levelName: string;
 }
+
+export interface AxiomData {
+    name: string;
+}

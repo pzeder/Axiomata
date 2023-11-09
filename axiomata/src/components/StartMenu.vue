@@ -11,12 +11,10 @@ import { defineEmits } from 'vue';
 const emit = defineEmits(['openNewCourseMenu', 'openSaveStateMenu']);
 
 function openNewCourseMenu(): void {
-  console.log('neuesSpiel');
   emit('openNewCourseMenu');
 }
 
 function openSaveStateMenu(): void {
-  console.log('laden');
   emit('openSaveStateMenu');
 }
 </script>

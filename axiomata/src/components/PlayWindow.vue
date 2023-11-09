@@ -7,12 +7,13 @@
     </div>
   </div>
   <div class="derivate-bar">
-    <div class="derivate-container" v-for="axiom in levelData.derivates" :key="axiom"> {{ axiom }}
+    <div class="derivate-container" v-for="axiom in levelData.derivates" :key="axiom.name">
+      <Axiom :axiomData="axiom" @mousedown="selectAxiom(axiom)" />
     </div>
   </div>
   <div class="axiom-bar">
-    <div class="axiom-container" v-for="axiom in levelData.axioms" :key="axiom">
-      <Axiom :name="axiom" />
+    <div class="axiom-container" v-for="axiom in levelData.axioms" :key="axiom.name">
+      <Axiom :axiomData="axiom" @mousedown="selectAxiom(axiom)" />
     </div>
   </div>
   <div class="goal-container">
@@ -20,11 +21,22 @@
       ZIEL
     </div>
   </div>
+  <div v-if="showSelectedAxiom" :style="{
+    display: 'flex',
+    position: 'absolute',
+    left: (mouseX - 50) + 'px',
+    top: (mouseY - 50) + 'px',
+    width: 100 + 'px',
+    height: 100 + 'px',
+    background: 'black'
+  }" @mousemove="updateMousePos" @mouseup="() => { showSelectedAxiom = false }">
+    <Axiom :axiomData="selectedAxiom" />
+  </div>
 </template>
 
 <script setup lang=ts>
 import Axiom from '@/components/Axiom.vue';
-import { UserState } from '@/scripts/Interfaces';
+import { UserState, AxiomData } from '@/scripts/Interfaces';
 import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted } from 'vue';
 
@@ -35,15 +47,19 @@ const props = defineProps<Props>();
 const userState: Ref<UserState> = ref(props.userState);
 
 interface LevelData {
-  axioms: string[];
-  derivates: string[];
+  axioms: AxiomData[];
+  derivates: AxiomData[];
 }
 
 const levelData: Ref<LevelData> = ref({ axioms: [], derivates: [] });
-
 const levelFinsihed: Ref<boolean> = ref(false);
+const selectedAxiom: Ref<AxiomData> = ref({ name: "" });
+const mouseX: Ref<number> = ref(0);
+const mouseY: Ref<number> = ref(0);
+const showSelectedAxiom: Ref<boolean> = ref(false);
 
 onMounted(() => {
+  window.addEventListener('mousemove', updateMousePos);
   fetchLevel();
 });
 
@@ -66,7 +82,6 @@ async function fetchLevel(): Promise<void> {
     const response = await axios.get('http://localhost:3000/level' + query);
     if (response.status === 200) {
       levelData.value = response.data;
-      console.log(levelData.value);
     } else {
       console.error('Server responded with status', response.status);
     }
@@ -92,6 +107,16 @@ async function updateCourse(): Promise<void> {
   } catch (error) {
     console.error('Error updating data:', error);
   }
+}
+
+function selectAxiom(axiom: AxiomData): void {
+  selectedAxiom.value = axiom;
+  showSelectedAxiom.value = true;
+}
+
+function updateMousePos(event: MouseEvent) {
+  mouseX.value = event.clientX;
+  mouseY.value = event.clientY;
 }
 </script>
 
