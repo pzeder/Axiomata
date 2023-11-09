@@ -1,10 +1,12 @@
 <template>
-  <div class="play-container">
-    <div> Du spielst gerade <b> {{ userState.levelName }} </b> </div>
-    <button @click="finishLevel"> klicke hier um zu gewinnen </button>
-    <div v-if="levelFinsihed" style="font-size: 100pt"> Wahnsinn! Du hast es geschafft! </div>
-    <button @click="openLevelMenu"> zurück zur Levelauswahl </button>
+  <div> {{ userState.levelName }} </div>
+  <div class="centered-container">
+    <button class="magic" v-if="!levelFinsihed" @click="finishLevel"> Magischer Knopf </button>
+    <div class="finish" v-if="levelFinsihed"> Level geschafft! <br>
+      <button @click="openLevelMenu"> zurück zur Levelauswahl </button>
+    </div>
   </div>
+  <div class="toolbar"> TOOLBAR </div>
 </template>
 
 <script setup lang=ts>
@@ -42,7 +44,6 @@ async function updateCourse(): Promise<void> {
     const response = await axios.patch(`http://localhost:3000/saveState`, updatedData);
     if (response.status === 200) {
       console.log('Course updated successfully:', response.data);
-      // Update your Vue state or perform additional actions here
     } else {
       console.error('Server responded with status:', response.status);
     }
@@ -53,12 +54,32 @@ async function updateCourse(): Promise<void> {
 </script>
 
 <style>
-.play-container {
+.centered-container {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
 }
 
-.play-container button {
-  margin-bottom: 10px;
+.magic {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: gold;
+  cursor: pointer;
+}
+
+.finish {
+  position: absolute;
+  font-size: 100pt;
+  color: rgb(255, 157, 0);
+}
+
+.toolbar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 30vh;
+  background-color: #333;
+  color: #fff;
 }
 </style>

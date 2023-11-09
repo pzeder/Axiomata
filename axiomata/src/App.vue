@@ -75,3 +75,19 @@ function hideAll(): void {
   showPlayWindow.value = false;
 }
 </script>
+
+<style>
+body,
+html {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Fredoka One', cursive;
+}
+
+button {
+  font-family: 'Fredoka One', cursive;
+}
+</style>
