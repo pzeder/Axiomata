@@ -12,9 +12,7 @@
   </div>
   <div class="axiom-bar">
     <div class="axiom-container" v-for="axiom in levelData.axioms" :key="axiom">
-      <div>
-        {{ axiom }}
-      </div>
+      <Axiom :name="axiom" />
     </div>
   </div>
   <div class="goal-container">
@@ -25,6 +23,7 @@
 </template>
 
 <script setup lang=ts>
+import Axiom from '@/components/Axiom.vue';
 import { UserState } from '@/scripts/Interfaces';
 import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted } from 'vue';
