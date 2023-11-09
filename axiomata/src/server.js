@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient, ObjectId  } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const cors = require('cors');
 const app = express();
 
@@ -23,7 +23,7 @@ app.listen(3000, function () {
 
 app.get('/saveStateHeaders', async (req, res) => {
   try {
-    const filter = { userName: req.query.userName }; 
+    const filter = { userName: req.query.userName };
     const saveStates = await db.collection('SaveStates').find(filter).toArray();
     const saveStateHeader = saveStates.map(s => ({ saveID: s._id, courseName: s.courseName }));
     res.json(saveStateHeader)
@@ -35,7 +35,7 @@ app.get('/saveStateHeaders', async (req, res) => {
 app.get('/chapterHeaders', async (req, res) => {
   try {
     const saveID = req.query.saveID;
-    const filter = ({ _id: new ObjectId(req.query.saveID) });
+    const filter = ({ _id: new ObjectId(saveID) });
     const saveState = await db.collection('SaveStates').findOne(filter);
 
     const getLevelHeaders = ch => ch.levels.map(lev => ({
@@ -43,8 +43,8 @@ app.get('/chapterHeaders', async (req, res) => {
       status: lev.status
     }));
 
-    const chapterHeaders = saveState.chapters.map(ch => ({ 
-      chapterName: ch.chapterName, 
+    const chapterHeaders = saveState.chapters.map(ch => ({
+      chapterName: ch.chapterName,
       unlocked: ch.unlocked,
       levelHeaders: getLevelHeaders(ch)
     }));
@@ -79,21 +79,39 @@ app.post('/newSaveState', async (req, res) => {
     const courseSave = {
       userName: userName,
       courseName: courseName,
+      axioms: courseData.chapters[0].newAxioms,
       chapters: courseData.chapters.map(ch => ({
         chapterName: ch.chapterName,
+        newAxioms: ch.newAxioms,
         unlocked: (getChapterIndex(ch) === 0 ? true : false),
         levels: getLevels(ch)
       }))
     };
 
     const result = await db.collection('SaveStates').insertOne(courseSave);
-    res.json({saveID: result.insertedId});
+    res.json({ saveID: result.insertedId });
   } catch (error) {
     res.status(500).json({ error: error });
   }
 });
 
-app.patch('/saveState', async (req, res) => {
+app.get('/level', async (req, res) => {
+  try {
+    const { saveID, chapterName, levelName } = req.query;
+    const filter = ({ _id: new ObjectId(saveID) });
+    const saveState = await db.collection('SaveStates').findOne(filter);
+    const chapter = saveState.chapters.find(ch => ch.chapterName === chapterName);
+    const level = chapter.levels.find(lev => lev.levelName === levelName);
+    const levelData = ({
+      axioms: saveState.axioms
+    });
+    res.json(levelData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
+app.patch('/levelEnd', async (req, res) => {
   try {
     const { saveID, chapterName, levelName, newStatus } = req.body;
     const filter = ({ _id: new ObjectId(saveID) });
@@ -121,8 +139,10 @@ app.patch('/saveState', async (req, res) => {
     const unfinishedLevels = courseSave.chapters[chapterIndex].levels.filter(lev => !(lev.status === 'done'));
 
     if (nextChapter && unfinishedLevels.length === 0) {
-      const unlockChapter = { $set: {} };
-      unlockChapter.$set[`chapters.${chapterIndex + 1}.unlocked`] = true;
+      const unlockChapter = {
+        $set: { [`chapters.${chapterIndex + 1}.unlocked`]: true },
+        $push: { axioms: { $each: nextChapter.newAxioms } }
+      };
       result = await db.collection('SaveStates').updateOne(filter, unlockChapter);
       if (result.modifiedCount === 0) {
         return res.status(500).json({ error: 'Failed to update status' });
