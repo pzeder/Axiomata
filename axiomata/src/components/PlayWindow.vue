@@ -1,27 +1,33 @@
 <template>
-  <div class="headbar">
+  <div class="headbar" :style="{ height: headBarHeight + 'vh' }">
     <button :style="{ position: 'relative' }" @click="openLevelMenu"> Zurück </button>
     <div :style="{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 100 + '%' }">
       <div :style="{ color: 'white' }"> {{ userState.levelName }} </div>
     </div>
   </div>
-  <div class="workbench">
+  <div class="workbench" :style="{
+    left: workbenchX + 'vw',
+    top: workbenchY + 'vh',
+    width: workbenchWidth + 'vw',
+    height: workbenchHeight + 'vh'
+  }" @mouseenter="() => { mouseOverWorkbench = true }" @mouseleave="() => { mouseOverWorkbench = false }">
     <button class="magic" v-if="!levelFinsihed" @click="finishLevel"> Magischer Knopf </button>
     <div class="finish" v-if="levelFinsihed"> Level geschafft! <br>
       <button @click="openLevelMenu"> zurück zur Levelauswahl </button>
     </div>
   </div>
-  <div class="derivate-bar">
+  <div class="derivate-bar"
+    :style="{ left: derivateBarX + 'vw', width: derivateBarWidth + 'vw', height: derivateBarHeight + 'vh' }">
     <div class="derivate-container" v-for="axiom in levelData.derivates" :key="axiom.name">
       <Axiom :axiomData="axiom" @mousedown="selectAxiom(axiom)" />
     </div>
   </div>
-  <div class="axiom-bar">
+  <div class="axiom-bar" :style="{ top: axiomBarY + 'vh', width: axiomBarWidth + 'vw', height: axiomBarHeight + 'vh' }">
     <div class="axiom-container" v-for="axiom in levelData.axioms" :key="axiom.name">
       <Axiom :axiomData="axiom" @mousedown="selectAxiom(axiom)" />
     </div>
   </div>
-  <div class="goal-container">
+  <div class="goal-container" :style="{ top: goalY + 'vh', width: goalWidth + 'vw', height: goalHeight + 'vw' }">
     <div>
       ZIEL
     </div>
@@ -35,8 +41,8 @@
     top: (selectedAxiomY - 50) + 'px',
     width: 70 + 'px',
     height: 70 + 'px',
-    background: 'black',
-  }" @mouseup="() => { draggingAxiom = false }" @mousedown="() => { draggingAxiom = true }">
+    backgroundColor: 'black',
+  }" @mouseup="handleMouseUp" @mousedown="() => { draggingAxiom = true }">
     <Axiom :axiomData="selectedAxiom" :key="selectedAxiom.name" />
   </div>
 </template>
@@ -45,7 +51,7 @@
 import Axiom from '@/components/Axiom.vue';
 import { UserState, AxiomData } from '@/scripts/Interfaces';
 import axios from 'axios';
-import { Ref, ref, defineProps, defineEmits, onMounted } from 'vue';
+import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef } from 'vue';
 
 interface Props {
   userState: UserState;
@@ -58,13 +64,30 @@ interface LevelData {
   derivates: AxiomData[];
 }
 
+// Layout variables
+const headBarHeight: Ref<number> = ref(5);
+const axiomBarY: Ref<number> = ref(5);
+const axiomBarWidth: Ref<number> = ref(20);
+const axiomBarHeight: Ref<number> = ref(100);
+const derivateBarX: Ref<number> = ref(20);
+const derivateBarWidth: Ref<number> = ref(100);
+const derivateBarHeight: Ref<number> = ref(25);
+const workbenchX: Ref<number> = ref(20);
+const workbenchY: Ref<number> = ref(5);
+const workbenchWidth: Ref<number> = ref(80);
+const workbenchHeight: Ref<number> = ref(65);
+const goalY: Ref<number> = ref(5);
+const goalWidth: Ref<number> = ref(10);
+const goalHeight: Ref<number> = ref(10);
+
+// Data variables
 const levelData: Ref<LevelData> = ref({ axioms: [], derivates: [] });
 const levelFinsihed: Ref<boolean> = ref(false);
 const selectedAxiom: Ref<AxiomData> = ref({ name: "" });
 const selectedAxiomX: Ref<number> = ref(0);
 const selectedAxiomY: Ref<number> = ref(0);
 const draggingAxiom: Ref<boolean> = ref(false);
-
+const mouseOverWorkbench: Ref<boolean> = ref(false);
 
 onMounted(() => {
   window.addEventListener('mousemove', updateSelectedAxiomPos);
@@ -75,6 +98,23 @@ const emit = defineEmits(['openLevelMenu']);
 
 function openLevelMenu(): void {
   emit('openLevelMenu');
+}
+
+function handleMouseUp(event: MouseEvent) {
+  draggingAxiom.value = false;
+  if (!isOnWorkbench(event.clientX, event.clientY)) {
+    selectedAxiom.value.name = '';
+  }
+}
+
+function isOnWorkbench(xpos: number, ypos: number): boolean {
+  const vx: number = xpos / window.innerWidth * 100;
+  const vy: number = ypos / window.innerWidth * 100;
+  if (vx > workbenchX.value && vx < workbenchX.value + workbenchWidth.value
+    && vy > workbenchY.value && vy < workbenchY.value + workbenchHeight.value) {
+    return true;
+  }
+  return false;
 }
 
 function finishLevel(): void {
@@ -118,12 +158,12 @@ async function updateCourse(): Promise<void> {
 }
 
 function selectAxiom(axiom: AxiomData): void {
-  selectedAxiom.value = axiom;
+  selectedAxiom.value.name = axiom.name;
   draggingAxiom.value = true;
 }
 
 function updateSelectedAxiomPos(event: MouseEvent) {
-  console.log(draggingAxiom.value, selectedAxiom.value.name, selectedAxiom.value.name !== '');
+  console.log(mouseOverWorkbench.value, derivateBarX.value);
   if (draggingAxiom.value) {
     selectedAxiomX.value = event.clientX;
     selectedAxiomY.value = event.clientY;
@@ -134,20 +174,18 @@ function updateSelectedAxiomPos(event: MouseEvent) {
 <style>
 .headbar {
   display: flex;
+  top: 0;
+  left: 0;
   width: 100vw;
-  height: 5vh;
   background: rgb(89, 204, 245);
+  position: absolute
 }
 
 .workbench {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: fixed;
-  left: 20vw;
-  top: 5vh;
-  height: 62.5vh;
-  width: 80vw;
+  position: absolute;
 }
 
 .magic {
@@ -166,22 +204,16 @@ function updateSelectedAxiomPos(event: MouseEvent) {
 }
 
 .axiom-bar {
-  position: relative;
+  position: absolute;
   left: 0;
-  top: 0;
-  width: 20vw;
-  height: 100vh;
   background: rgb(252, 223, 203);
   color: #fff;
 }
 
 .derivate-bar {
   display: flex;
-  position: fixed;
+  position: absolute;
   bottom: 0;
-  left: 20vw;
-  width: 100%;
-  height: 30vh;
   background: rgb(208, 237, 248);
   color: #fff;
 }
@@ -192,9 +224,6 @@ function updateSelectedAxiomPos(event: MouseEvent) {
   align-items: center;
   position: absolute;
   right: 0;
-  top: 5vh;
-  width: 10vw;
-  height: 10vw;
   background-color: #333;
   color: #fff;
 }

@@ -16,6 +16,6 @@ const axiomData: Ref<AxiomData> = ref(props.axiomData);
 .container {
   width: 100%;
   height: 100%;
-  background-color: red;
+  background-color: rgb(50, 116, 60);
 }
 </style>
