@@ -26,18 +26,18 @@
       ZIEL
     </div>
   </div>
-  <div v-if="showSelectedAxiom" :style="{
+  <div v-if="selectedAxiom.name !== ''" :style="{
     display: 'grid',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-    left: (mouseX - 50) + 'px',
-    top: (mouseY - 50) + 'px',
+    left: (selectedAxiomX - 50) + 'px',
+    top: (selectedAxiomY - 50) + 'px',
     width: 70 + 'px',
     height: 70 + 'px',
     background: 'black',
-  }" @mousemove="updateMousePos" @mouseup="() => { showSelectedAxiom = false }">
-    <Axiom :axiomData="selectedAxiom" />
+  }" @mouseup="() => { draggingAxiom = false }" @mousedown="() => { draggingAxiom = true }">
+    <Axiom :axiomData="selectedAxiom" :key="selectedAxiom.name" />
   </div>
 </template>
 
@@ -61,12 +61,13 @@ interface LevelData {
 const levelData: Ref<LevelData> = ref({ axioms: [], derivates: [] });
 const levelFinsihed: Ref<boolean> = ref(false);
 const selectedAxiom: Ref<AxiomData> = ref({ name: "" });
-const mouseX: Ref<number> = ref(0);
-const mouseY: Ref<number> = ref(0);
-const showSelectedAxiom: Ref<boolean> = ref(false);
+const selectedAxiomX: Ref<number> = ref(0);
+const selectedAxiomY: Ref<number> = ref(0);
+const draggingAxiom: Ref<boolean> = ref(false);
+
 
 onMounted(() => {
-  window.addEventListener('mousemove', updateMousePos);
+  window.addEventListener('mousemove', updateSelectedAxiomPos);
   fetchLevel();
 });
 
@@ -118,12 +119,15 @@ async function updateCourse(): Promise<void> {
 
 function selectAxiom(axiom: AxiomData): void {
   selectedAxiom.value = axiom;
-  showSelectedAxiom.value = true;
+  draggingAxiom.value = true;
 }
 
-function updateMousePos(event: MouseEvent) {
-  mouseX.value = event.clientX;
-  mouseY.value = event.clientY;
+function updateSelectedAxiomPos(event: MouseEvent) {
+  console.log(draggingAxiom.value, selectedAxiom.value.name, selectedAxiom.value.name !== '');
+  if (draggingAxiom.value) {
+    selectedAxiomX.value = event.clientX;
+    selectedAxiomY.value = event.clientY;
+  }
 }
 </script>
 
@@ -141,12 +145,13 @@ function updateMousePos(event: MouseEvent) {
   align-items: center;
   position: fixed;
   left: 20vw;
-  top: 0;
-  height: 70vh;
+  top: 5vh;
+  height: 62.5vh;
   width: 80vw;
 }
 
 .magic {
+  width: 100%;
   padding: 10px 20px;
   font-size: 16px;
   background-color: gold;
