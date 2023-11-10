@@ -1,5 +1,4 @@
 <template>
-  <button @click="openStartMenu"> Home </button>
   <div class="save-container">
     <button v-for="ssh in saveStateHeaders" :key="ssh.saveID" @click="saveStateSelected(ssh.saveID)"> {{ ssh.courseName
     }} </button>

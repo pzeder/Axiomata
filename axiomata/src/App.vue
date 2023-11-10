@@ -1,4 +1,5 @@
 <template>
+  <button v-if="showHomeButton" @click="openStartMenu"> Home </button>
   <StartMenu v-if="showStartMenu" @openNewCourseMenu="openNewCourseMenu" @openSaveStateMenu="openSaveStateMenu" />
   <SaveStateSelection v-if="showSaveSelection" :userState="userState" @saveStateSelected="saveStateSelected"
     @openNewCourseMenu="openNewCourseMenu" @openStartMenu="openStartMenu" />
@@ -18,6 +19,7 @@ import LevelSelection from '@/components/LevelSelection.vue';
 import PlayWindow from '@/components/PlayWindow.vue';
 import { UserState } from '@/scripts/Interfaces';
 
+const showHomeButton: Ref<boolean> = ref(false);
 const showStartMenu: Ref<boolean> = ref(true);
 const showSaveSelection: Ref<boolean> = ref(false);
 const showNewCourseSelection: Ref<boolean> = ref(false);
@@ -35,6 +37,7 @@ function newSaveStateCreated(newSaveID: any) {
 function saveStateSelected(newSaveID: number): void {
   userState.value.saveID = newSaveID;
   hideAll();
+  showHomeButton.value = true;
   showLevelSelection.value = true;
 }
 
@@ -49,6 +52,7 @@ function openLevelMenu(): void {
   userState.value.chapterName = "";
   userState.value.levelName = "";
   hideAll();
+  showHomeButton.value = true;
   showLevelSelection.value = true;
 }
 
@@ -59,15 +63,18 @@ function openStartMenu(): void {
 
 function openSaveStateMenu(): void {
   hideAll();
+  showHomeButton.value = true;
   showSaveSelection.value = true;
 }
 
 function openNewCourseMenu(): void {
   hideAll();
+  showHomeButton.value = true;
   showNewCourseSelection.value = true;
 }
 
 function hideAll(): void {
+  showHomeButton.value = false;
   showStartMenu.value = false;
   showSaveSelection.value = false;
   showNewCourseSelection.value = false;
@@ -89,5 +96,6 @@ body {
 
 button {
   font-family: 'Fredoka One', cursive;
+  border-radius: 20pt;
 }
 </style>

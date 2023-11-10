@@ -1,5 +1,10 @@
 <template>
-  <div> {{ userState.levelName }} </div>
+  <div class="headbar">
+    <button :style="{ position: 'relative' }" @click="openLevelMenu"> Zurück </button>
+    <div :style="{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 100 + '%' }">
+      <div :style="{ color: 'white' }"> {{ userState.levelName }} </div>
+    </div>
+  </div>
   <div class="workbench">
     <button class="magic" v-if="!levelFinsihed" @click="finishLevel"> Magischer Knopf </button>
     <div class="finish" v-if="levelFinsihed"> Level geschafft! <br>
@@ -22,13 +27,15 @@
     </div>
   </div>
   <div v-if="showSelectedAxiom" :style="{
-    display: 'flex',
+    display: 'grid',
+    justifyContent: 'center',
+    alignItems: 'center',
     position: 'absolute',
     left: (mouseX - 50) + 'px',
     top: (mouseY - 50) + 'px',
-    width: 100 + 'px',
-    height: 100 + 'px',
-    background: 'black'
+    width: 70 + 'px',
+    height: 70 + 'px',
+    background: 'black',
   }" @mousemove="updateMousePos" @mouseup="() => { showSelectedAxiom = false }">
     <Axiom :axiomData="selectedAxiom" />
   </div>
@@ -121,6 +128,13 @@ function updateMousePos(event: MouseEvent) {
 </script>
 
 <style>
+.headbar {
+  display: flex;
+  width: 100vw;
+  height: 5vh;
+  background: rgb(89, 204, 245);
+}
+
 .workbench {
   display: flex;
   justify-content: center;
@@ -136,6 +150,7 @@ function updateMousePos(event: MouseEvent) {
   padding: 10px 20px;
   font-size: 16px;
   background-color: gold;
+  border-radius: 20pt;
   cursor: pointer;
 }
 
@@ -146,12 +161,12 @@ function updateMousePos(event: MouseEvent) {
 }
 
 .axiom-bar {
-  position: fixed;
+  position: relative;
   left: 0;
   top: 0;
   width: 20vw;
   height: 100vh;
-  background-color: #333;
+  background: rgb(252, 223, 203);
   color: #fff;
 }
 
@@ -162,7 +177,7 @@ function updateMousePos(event: MouseEvent) {
   left: 20vw;
   width: 100%;
   height: 30vh;
-  background-color: #5a5a5a;
+  background: rgb(208, 237, 248);
   color: #fff;
 }
 
@@ -170,9 +185,9 @@ function updateMousePos(event: MouseEvent) {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: fixed;
+  position: absolute;
   right: 0;
-  top: 0;
+  top: 5vh;
   width: 10vw;
   height: 10vw;
   background-color: #333;
@@ -185,7 +200,6 @@ function updateMousePos(event: MouseEvent) {
   align-items: center;
   width: 100%;
   height: 25%;
-  outline: 2px solid white;
 }
 
 .derivate-container {
@@ -194,6 +208,5 @@ function updateMousePos(event: MouseEvent) {
   align-items: center;
   width: 20%;
   height: 100%;
-  outline: 2px solid white;
 }
 </style>

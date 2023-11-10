@@ -1,5 +1,4 @@
 <template>
-  <button @click="openStartMenu"> Home </button>
   <div class="course-container">
     <button v-for="c in courses" :key="c.courseName" @click="createNewSaveState(c.courseName)"> {{ c.courseName
     }} </button>

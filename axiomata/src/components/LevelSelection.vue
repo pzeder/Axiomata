@@ -1,5 +1,4 @@
 <template>
-  <button @click="openStartMenu"> Home </button>
   <div class="chapter-container" v-for="chapter in chapters" :key="chapter.chapterName">
     {{ chapter.chapterName }}
     <button v-for="level in chapter.levelHeaders" :key="level.levelName"
