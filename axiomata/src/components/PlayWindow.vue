@@ -109,7 +109,7 @@ function handleMouseUp(event: MouseEvent) {
 
 function isOnWorkbench(xpos: number, ypos: number): boolean {
   const vx: number = xpos / window.innerWidth * 100;
-  const vy: number = ypos / window.innerWidth * 100;
+  const vy: number = ypos / window.innerHeight * 100;
   if (vx > workbenchX.value && vx < workbenchX.value + workbenchWidth.value
     && vy > workbenchY.value && vy < workbenchY.value + workbenchHeight.value) {
     return true;
@@ -163,7 +163,6 @@ function selectAxiom(axiom: AxiomData): void {
 }
 
 function updateSelectedAxiomPos(event: MouseEvent) {
-  console.log(mouseOverWorkbench.value, derivateBarX.value);
   if (draggingAxiom.value) {
     selectedAxiomX.value = event.clientX;
     selectedAxiomY.value = event.clientY;
