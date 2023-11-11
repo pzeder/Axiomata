@@ -12,11 +12,11 @@
 
 <script setup lang="ts">
 import { Ref, onMounted, ref } from 'vue';
-import StartMenu from '@/components/StartMenu.vue';
-import SaveStateSelection from '@/components/SaveStateSelection.vue';
-import NewCourseSelection from '@/components/NewCourseSelection.vue';
-import LevelSelection from '@/components/LevelSelection.vue';
-import PlayWindow from '@/components/PlayWindow.vue';
+import StartMenu from '@/components/menus/StartMenu.vue';
+import SaveStateSelection from '@/components/menus/SaveStateSelection.vue';
+import NewCourseSelection from '@/components/menus/NewCourseSelection.vue';
+import LevelSelection from '@/components/menus/LevelSelection.vue';
+import PlayWindow from '@/components/play/PlayWindow.vue';
 import { UserState } from '@/scripts/Interfaces';
 
 const showHomeButton: Ref<boolean> = ref(false);

@@ -1,21 +1,26 @@
 <template>
-  <div class="container"> {{ axiomData.name }} </div>
+  <div class="container" :style="{
+    width: (symbolWidth) + 'vw',
+    height: (3 * symbolHeight) + 'vh',
+  }" >
+  {{ axiomData.name }} </div>
 </template>
 
 <script setup lang="ts">
 import { defineProps, Ref, ref } from 'vue';
 import { AxiomData } from '@/scripts/Interfaces';
+
 interface Props {
+  symbolWidth: number;
+  symbolHeight: number;
   axiomData: AxiomData;
 }
 const props = defineProps<Props>();
-const axiomData: Ref<AxiomData> = ref(props.axiomData);
 </script>
 
 <style>
 .container {
-  width: 100%;
-  height: 100%;
+  position: absolute;
   background-color: rgb(50, 116, 60);
 }
 </style>
