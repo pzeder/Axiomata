@@ -1,13 +1,13 @@
 <template>
   <button v-if="showHomeButton" @click="openStartMenu"> Home </button>
   <StartMenu v-if="showStartMenu" @openNewCourseMenu="openNewCourseMenu" @openSaveStateMenu="openSaveStateMenu" />
-  <SaveStateSelection v-if="showSaveSelection" :userState="userState" @saveStateSelected="saveStateSelected"
+  <SaveStateSelection v-if="showSaveSelection" :sessionState="sessionState" @saveStateSelected="saveStateSelected"
     @openNewCourseMenu="openNewCourseMenu" @openStartMenu="openStartMenu" />
   <NewCourseSelection v-if="showNewCourseSelection" @newSaveStateCreated="newSaveStateCreated"
-    @openStartMenu="openStartMenu" :userState="userState" />
+    @openStartMenu="openStartMenu" :sessionState="sessionState" />
   <LevelSelection v-if="showLevelSelection" @openStartMenu="openStartMenu" @levelSelected="levelSelected"
-    @openSaveStateMenu="openSaveStateMenu" :userState="userState" />
-  <PlayWindow v-if="showPlayWindow" @openLevelMenu="openLevelMenu" :userState="userState" />
+    @openSaveStateMenu="openSaveStateMenu" :sessionState="sessionState" />
+  <PlayWindow v-if="showPlayWindow" @openLevelMenu="openLevelMenu" :sessionState="sessionState" />
 </template>
 
 <script setup lang="ts">
@@ -17,7 +17,7 @@ import SaveStateSelection from '@/components/menus/SaveStateSelection.vue';
 import NewCourseSelection from '@/components/menus/NewCourseSelection.vue';
 import LevelSelection from '@/components/menus/LevelSelection.vue';
 import PlayWindow from '@/components/play/PlayWindow.vue';
-import { UserState } from '@/scripts/Interfaces';
+import { SessionState } from '@/scripts/Interfaces';
 
 const showHomeButton: Ref<boolean> = ref(false);
 const showStartMenu: Ref<boolean> = ref(true);
@@ -26,31 +26,30 @@ const showNewCourseSelection: Ref<boolean> = ref(false);
 const showLevelSelection: Ref<boolean> = ref(false);
 const showPlayWindow: Ref<boolean> = ref(false);
 
-const defaultUserState = { userName: "Philippe", saveID: null, chapterName: "", levelName: "" };
-const userState: Ref<UserState> = ref(defaultUserState);
+const sessionState: Ref<SessionState> = ref({ userName: "Philippe", saveID: null, chapterName: "", levelName: "" });
 
 function newSaveStateCreated(newSaveID: any) {
-  userState.value.saveID = newSaveID;
+  sessionState.value.saveID = newSaveID;
   openLevelMenu();
 }
 
 function saveStateSelected(newSaveID: number): void {
-  userState.value.saveID = newSaveID;
+  sessionState.value.saveID = newSaveID;
   hideAll();
   showHomeButton.value = true;
   showLevelSelection.value = true;
 }
 
 function levelSelected(chapterName: string, levelName: string): void {
-  userState.value.chapterName = chapterName;
-  userState.value.levelName = levelName;
+  sessionState.value.chapterName = chapterName;
+  sessionState.value.levelName = levelName;
   hideAll();
   showPlayWindow.value = true;
 }
 
 function openLevelMenu(): void {
-  userState.value.chapterName = "";
-  userState.value.levelName = "";
+  sessionState.value.chapterName = "";
+  sessionState.value.levelName = "";
   hideAll();
   showHomeButton.value = true;
   showLevelSelection.value = true;

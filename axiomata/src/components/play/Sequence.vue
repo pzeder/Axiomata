@@ -1,19 +1,23 @@
 <template>
     <div class="sequence" :style="{
-        width: (symbols.length * symbolWidth) + 'vw',
+        width: (symbolIndices.length * symbolWidth) + 'vw',
         height: symbolHeight + 'vh'
     }"> 
-        <div v-for="symbol in symobls" :key="symbol"> {{ symbol }} </div>
+        <Symbol v-for="(si, key) in symbolIndices" :key="key" 
+            :symbolWidth="symbolWidth" :symbolHeight="symbolHeight" :symbolData="symbolAlphabet[si]" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
+import { defineProps, onMounted } from "vue";
+import Symbol from '@/components/play/Symbol.vue'
+import { SymbolData } from "@/scripts/Interfaces";
 
 interface Props {
   symbolWidth: number;
   symbolHeight: number;
-  symbols: number[];
+  symbolIndices: number[];
+  symbolAlphabet: SymbolData[];
 }
 const props = defineProps<Props>();
 </script>
@@ -21,7 +25,12 @@ const props = defineProps<Props>();
 <style scoped>
 .sequence {
     display: flex;
-    background-color: red;
+    background-color: none;
     color: white;
+}
+
+.sequence > :first-child {
+  margin-left: 0; 
+  margin-top: 0; 
 }
 </style>

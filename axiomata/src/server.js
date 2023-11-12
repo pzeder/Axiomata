@@ -80,6 +80,7 @@ app.post('/newSaveState', async (req, res) => {
     const courseSave = {
       userName: userName,
       courseName: courseName,
+      symbolAlphabet: courseData.symbolAlphabet,
       axioms: courseData.chapters[0].newAxioms,
       derivates: [],
       chapters: courseData.chapters.map(ch => ({
@@ -105,6 +106,7 @@ app.get('/level', async (req, res) => {
     const chapter = saveState.chapters.find(ch => ch.chapterName === chapterName);
     const level = chapter.levels.find(lev => lev.levelName === levelName);
     const levelData = ({
+      symbolAlphabet: saveState.symbolAlphabet,
       axioms: saveState.axioms,
       derivates: saveState.derivates
     });
@@ -128,8 +130,6 @@ app.patch('/levelEnd', async (req, res) => {
       $set: { [`chapters.${chapterIndex}.levels.${levelIndex}.status`]: newStatus },
       $push: { derivates: level.goal }
     };
-
-    console.log(level, level.goal);
 
     let result = await db.collection('SaveStates').updateOne(filter, updateLevel);
 

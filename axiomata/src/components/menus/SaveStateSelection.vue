@@ -9,14 +9,14 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref, defineProps, defineEmits } from 'vue';
 import axios from 'axios';
-import { UserState } from '@/scripts/Interfaces';
+import { SessionState } from '@/scripts/Interfaces';
 
 interface Props {
-  userState: UserState;
+  sessionState: SessionState;
 }
 
 const props = defineProps<Props>();
-const userState: Ref<UserState> = ref(props.userState);
+const sessionState: Ref<SessionState> = ref(props.sessionState);
 
 interface SaveStateHeader {
   saveID: any;
@@ -45,7 +45,7 @@ function openStartMenu() {
 
 async function fetchCourseSaves(): Promise<void> {
   try {
-    const query: string = '?userName=' + userState.value.userName;
+    const query: string = '?userName=' + sessionState.value.userName;
     const response = await axios.get('http://localhost:3000/saveStateHeaders' + query);
     if (response.status === 200) {
       saveStateHeaders.value = [];

@@ -2,7 +2,7 @@
   <div class="headbar" :style="{ height: headBarHeight + 'vh' }">
     <button :style="{ position: 'relative' }" @click="openLevelMenu"> Zurück </button>
     <div :style="{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 100 + '%' }">
-      <div :style="{ color: 'white' }"> {{ userState.levelName }} </div>
+      <div :style="{ color: 'white' }"> {{ sessionState.levelName }} </div>
     </div>
   </div>
   <div class="workbench" :style="{
@@ -12,7 +12,7 @@
     height: workbenchHeight + 'vh'
   }" @mouseenter="() => { mouseOverWorkbench = true }" @mouseleave="() => { mouseOverWorkbench = false }">
     <button class="magic" v-if="!levelFinsihed" @click="finishLevel"> Magischer Knopf </button>
-    <Sequence :symbols="workSequence" :symbolWidth="symbolWidth" :symbolHeight="symbolHeight" :style="{
+    <Sequence :symbolWidth="symbolWidth" :symbolHeight="symbolHeight" :symbolIndices="workSequence" :symbolAlphabet="levelData.symbolAlphabet" :style="{
       position: 'absolute',
       left: ((workbenchWidth - workSequence.length * symbolWidth) / 2) + 'vw',
       top: ((workbenchHeight - symbolHeight) / 2) + 'vh'
@@ -49,17 +49,18 @@
 <script setup lang=ts>
 import Axiom from '@/components/play/Axiom.vue';
 import Sequence from '@/components/play/Sequence.vue';
-import { UserState, AxiomData } from '@/scripts/Interfaces';
+import { SessionState, AxiomData, SymbolData } from '@/scripts/Interfaces';
 import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef } from 'vue';
 
 interface Props {
-  userState: UserState;
+  sessionState: SessionState;
 }
 const props = defineProps<Props>();
-const userState: Ref<UserState> = ref(props.userState);
+const sessionState: Ref<SessionState> = ref(props.sessionState);
 
 interface LevelData {
+  symbolAlphabet: SymbolData[];
   axioms: AxiomData[];
   derivates: AxiomData[];
 }
@@ -80,17 +81,17 @@ const goalY: Ref<number> = ref(5);
 const goalWidth: Ref<number> = ref(10);
 const goalHeight: Ref<number> = ref(10);
 const symbolWidth: Ref<number> = ref(5);
-const symbolHeight: Ref<number> = ref(5);
+const symbolHeight: Ref<number> = ref(symbolWidth.value * window.innerWidth / window.innerHeight);
 
 // Data variables
-const levelData: Ref<LevelData> = ref({ axioms: [], derivates: [] });
+const levelData: Ref<LevelData> = ref({ symbolAlphabet: [], axioms: [], derivates: [] });
 const levelFinsihed: Ref<boolean> = ref(false);
 const selectedAxiom: Ref<AxiomData> = ref({ name: "" });
 const selectedAxiomX: Ref<number> = ref(0);
 const selectedAxiomY: Ref<number> = ref(0);
 const draggingAxiom: Ref<boolean> = ref(false);
 const mouseOverWorkbench: Ref<boolean> = ref(false);
-const workSequence: Ref<number[]> = ref([0,1,2,3]);
+const workSequence: Ref<number[]> = ref([0,1,0,1]);
 
 onMounted(() => {
   window.addEventListener('mousemove', updateSelectedAxiomPos);
@@ -136,9 +137,9 @@ function finishLevel(): void {
 
 async function fetchLevel(): Promise<void> {
   try {
-    const query: string = '?saveID=' + userState.value.saveID
-      + '&chapterName=' + userState.value.chapterName
-      + '&levelName=' + userState.value.levelName;
+    const query: string = '?saveID=' + sessionState.value.saveID
+      + '&chapterName=' + sessionState.value.chapterName
+      + '&levelName=' + sessionState.value.levelName;
     const response = await axios.get('http://localhost:3000/level' + query);
     if (response.status === 200) {
       levelData.value = response.data;
@@ -153,9 +154,9 @@ async function fetchLevel(): Promise<void> {
 async function updateCourse(): Promise<void> {
   try {
     const updatedData = {
-      saveID: userState.value.saveID,
-      chapterName: userState.value.chapterName,
-      levelName: userState.value.levelName,
+      saveID: sessionState.value.saveID,
+      chapterName: sessionState.value.chapterName,
+      levelName: sessionState.value.levelName,
       newStatus: 'done'
     };
     const response = await axios.patch(`http://localhost:3000/levelEnd`, updatedData);

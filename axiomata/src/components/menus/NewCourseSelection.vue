@@ -8,13 +8,13 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref, defineProps, defineEmits } from 'vue';
 import axios from 'axios';
-import { UserState } from '@/scripts/Interfaces';
+import { SessionState } from '@/scripts/Interfaces';
 
 interface Props {
-  userState: UserState;
+  sessionState: SessionState;
 }
 const props = defineProps<Props>();
-const userState: Ref<UserState> = ref(props.userState);
+const sessionState: Ref<SessionState> = ref(props.sessionState);
 
 interface CourseHeader {
   courseName: string;
@@ -34,13 +34,12 @@ function openStartMenu(): void {
 async function createNewSaveState(courseName: string) {
   try {
     const data = ({
-      userName: userState.value.userName,
+      userName: sessionState.value.userName,
       courseName: courseName
     });
     const response = await axios.post('http://localhost:3000/newSaveState', data);
-    console.log(data);
     if (response.status === 200) {
-      emit('newSaveStateCreated', response.data.saveID);
+      emit('newSaveStateCreated', response.data.saveID, response.data.symbolAlphabet);
     } else {
       console.error('Server responded with status', response.status);
     }
