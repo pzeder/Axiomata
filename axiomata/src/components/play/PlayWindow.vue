@@ -185,7 +185,10 @@ async function updateCourse(): Promise<void> {
 }
 
 function selectAxiom(axiom: AxiomData): void {
-  selectedAxiom.value = axiom;
+  selectedAxiom.value = ({
+    upperSequence: [...axiom.upperSequence],
+    lowerSequence: [...axiom.lowerSequence]
+  });
   draggingAxiom.value = true;
 }
 
