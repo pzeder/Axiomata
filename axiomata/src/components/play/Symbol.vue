@@ -13,20 +13,20 @@ import { defineProps } from "vue";
 
 interface Props {
   symbolWidth: number;
-  symbolHeight: number;
   symbolData: SymbolData;
 }
 const props = defineProps<Props>();
+
+const symbolHeight: number = props.symbolWidth * window.innerWidth / window.innerHeight;
 </script>
 
 <style scoped>
 .symbol {
   display: grid;
   place-items: center;
-  border: 0.5vw solid black;
+  border: 0.5vw solid rgb(187, 187, 187);
   border-radius: 1vw;
   margin-left: -0.5vw;
-  color: black;
   user-select: none;
 }
 </style>

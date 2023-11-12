@@ -4,7 +4,7 @@
         height: symbolHeight + 'vh'
     }"> 
         <Symbol v-for="(si, key) in symbolIndices" :key="key" 
-            :symbolWidth="symbolWidth" :symbolHeight="symbolHeight" :symbolData="symbolAlphabet[si]" />
+            :symbolWidth="symbolWidth" :symbolData="symbolAlphabet[si]" />
     </div>
 </template>
 
@@ -15,16 +15,18 @@ import { SymbolData } from "@/scripts/Interfaces";
 
 interface Props {
   symbolWidth: number;
-  symbolHeight: number;
   symbolIndices: number[];
   symbolAlphabet: SymbolData[];
 }
 const props = defineProps<Props>();
+
+const symbolHeight: number = props.symbolWidth * window.innerWidth / window.innerHeight;
 </script>
 
 <style scoped>
 .sequence {
     display: flex;
+    position: absolute;
     background-color: none;
     color: white;
 }

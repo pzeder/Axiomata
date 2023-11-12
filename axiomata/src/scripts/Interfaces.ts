@@ -6,7 +6,8 @@ export interface SessionState {
   }
 
 export interface AxiomData {
-    name: string;
+    upperSequence: number[];
+    lowerSequence: number[];
 }
 
 export interface SymbolData {

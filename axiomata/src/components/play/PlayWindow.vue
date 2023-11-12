@@ -12,10 +12,10 @@
     height: workbenchHeight + 'vh'
   }" @mouseenter="() => { mouseOverWorkbench = true }" @mouseleave="() => { mouseOverWorkbench = false }">
     <button class="magic" v-if="!levelFinsihed" @click="finishLevel"> Magischer Knopf </button>
-    <Sequence :symbolWidth="symbolWidth" :symbolHeight="symbolHeight" :symbolIndices="workSequence" :symbolAlphabet="levelData.symbolAlphabet" :style="{
+    <Sequence :symbolWidth="symbolWidth" :symbolIndices="workSequence" :symbolAlphabet="levelData.symbolAlphabet" :style="{
       position: 'absolute',
       left: ((workbenchWidth - workSequence.length * symbolWidth) / 2) + 'vw',
-      top: ((workbenchHeight - symbolHeight) / 2) + 'vh'
+      top: ((workbenchHeight - symbolWidth * screenWidth / screenHeight) / 2) + 'vh'
     }"/>
     <div class="finish" v-if="levelFinsihed"> Level geschafft! <br>
       <button @click="openLevelMenu"> zurück zur Levelauswahl </button>
@@ -28,8 +28,8 @@
     </div>
   </div>
   <div class="axiom-bar" :style="{ top: axiomBarY + 'vh', width: axiomBarWidth + 'vw', height: axiomBarHeight + 'vh' }">
-    <div class="axiom-container" v-for="axiom in levelData.axioms" :key="axiom.name">
-      <Axiom :axiomData="axiom" @mousedown="selectAxiom(axiom)" />
+    <div class="axiom-container" v-for="(axiom, key) in levelData.axioms" :key="key">
+      <Axiom :symbolWidth="5" :axiomData="axiom" :symbolAlphabet="levelData.symbolAlphabet" @mousedown="selectAxiom(axiom)" />
     </div>
   </div>
   <div class="goal-container" :style="{ top: goalY + 'vh', width: goalWidth + 'vw', height: goalHeight + 'vw' }">
@@ -40,8 +40,8 @@
     left: selectedAxiomX + 'vw',
     top: selectedAxiomY + 'vh'
   }">
-    <Axiom v-if="selectedAxiom.name !== ''" 
-      :key="selectedAxiom.name" :symbolWidth="symbolWidth" :symbolHeight="symbolHeight" :axiomData="selectedAxiom"
+    <Axiom v-if="selectedAxiom.upperSequence.length !== 0" 
+      :symbolWidth="symbolWidth" :axiomData="selectedAxiom" :symbolAlphabet="levelData.symbolAlphabet"
       @mouseup="handleMouseUp" @mousedown="() => { draggingAxiom = true }" />
   </div>
 </template>
@@ -81,12 +81,13 @@ const goalY: Ref<number> = ref(5);
 const goalWidth: Ref<number> = ref(10);
 const goalHeight: Ref<number> = ref(10);
 const symbolWidth: Ref<number> = ref(5);
-const symbolHeight: Ref<number> = ref(symbolWidth.value * window.innerWidth / window.innerHeight);
+const screenWidth: Ref<number> = ref(window.innerWidth);
+const screenHeight: Ref<number> = ref(window.innerHeight);
 
 // Data variables
 const levelData: Ref<LevelData> = ref({ symbolAlphabet: [], axioms: [], derivates: [] });
 const levelFinsihed: Ref<boolean> = ref(false);
-const selectedAxiom: Ref<AxiomData> = ref({ name: "" });
+const selectedAxiom: Ref<AxiomData> = ref({ upperSequence: [], lowerSequence: [] });
 const selectedAxiomX: Ref<number> = ref(0);
 const selectedAxiomY: Ref<number> = ref(0);
 const draggingAxiom: Ref<boolean> = ref(false);
@@ -112,19 +113,20 @@ function handleMouseUp(event: MouseEvent) {
 
   if (!(vx > workbenchX.value && vx < workbenchX.value + workbenchWidth.value
     && vy > workbenchY.value && vy < workbenchY.value + workbenchHeight.value)) {
-    selectedAxiom.value.name = '';
+    selectedAxiom.value.upperSequence = [];
   } 
 
   /* Check if selected Axiom is in the upper or lower half of the workbench and 
     snap it to the workSequence accordingly */
 
   const workbenchCenterY: number = workbenchY.value + workbenchHeight.value / 2;
+  const symbolHeight: number = symbolWidth.value * window.innerWidth / window.innerHeight;
   if (vy < workbenchCenterY) {
     // Upper Half
-    selectedAxiomY.value = workbenchCenterY - 7 * symbolHeight.value / 2 ;
+    selectedAxiomY.value = workbenchCenterY - 6 * symbolHeight / 2 ;
   } else {
     // Lower half
-    selectedAxiomY.value = workbenchCenterY + symbolHeight.value / 2;
+    selectedAxiomY.value = workbenchCenterY + symbolHeight / 2;
   }
   
   draggingAxiom.value = false;
@@ -171,15 +173,21 @@ async function updateCourse(): Promise<void> {
 }
 
 function selectAxiom(axiom: AxiomData): void {
-  selectedAxiom.value.name = axiom.name;
+  selectedAxiom.value = axiom;
   draggingAxiom.value = true;
 }
 
 function updateSelectedAxiomPos(event: MouseEvent) {
   if (draggingAxiom.value) {
-    selectedAxiomX.value = event.clientX / window.innerWidth * 100;
-    selectedAxiomY.value = event.clientY / window.innerHeight * 100;
+    const x: number = event.clientX / window.innerWidth * 100;
+    const y: number = event.clientY / window.innerHeight * 100;
+    selectedAxiomX.value = x - maxSequence(selectedAxiom.value) * symbolWidth.value / 2;
+    selectedAxiomY.value = y - symbolWidth.value * screenWidth.value / screenHeight.value * 1.25; 
   }
+}
+
+function maxSequence(axiom: AxiomData): number {
+  return Math.max(axiom.upperSequence.length, axiom.lowerSequence.length);
 }
 </script>
 
