@@ -12,7 +12,7 @@
     height: workbenchHeight + 'vh'
   }" @mouseenter="() => { mouseOverWorkbench = true }" @mouseleave="() => { mouseOverWorkbench = false }">
     <button class="magic" v-if="!levelFinsihed" @click="finishLevel"> Magischer Knopf </button>
-    <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="workSequence" :symbolAlphabet="levelData.symbolAlphabet" :style="{
+    <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="workSequence" :highlights="[true, false, true, false]" :symbolAlphabet="levelData.symbolAlphabet" :style="{
       position: 'absolute',
       left: ((workbenchWidth - workSequence.length * symbolWidth) / 2) + 'vw',
       top: ((workbenchHeight - symbolWidth * screenRatio) / 2) + 'vh'
@@ -42,7 +42,7 @@
   }">
     <Axiom v-if="selectedAxiom.upperSequence.length !== 0" 
       :symbolWidth="symbolWidth" :screenRatio="screenRatio" :axiomData="selectedAxiom" :symbolAlphabet="levelData.symbolAlphabet"
-      @mouseup="docking" @mousedown="() => { draggingAxiom = true }" />
+      @mouseup="handleMouseUp" @mousedown="() => { draggingAxiom = true }" />
   </div>
 </template>
 
@@ -92,6 +92,7 @@ const selectedAxiomY: Ref<number> = ref(0);
 const draggingAxiom: Ref<boolean> = ref(false);
 const mouseOverWorkbench: Ref<boolean> = ref(false);
 const workSequence: Ref<number[]> = ref([0,1,0,1]);
+const dockIndex: Ref<number> = ref(0);
 
 onMounted(() => {
   window.addEventListener('mousemove', updateSelectedAxiomPos);
@@ -112,12 +113,17 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize);
 });
 
-function handleResize() {
-  screenRatio.value = window.innerWidth / window.innerHeight;
+function handleMouseUp() {
   docking();
+  checkMatching();
 }
 
-function docking() {
+function handleResize() {
+  screenRatio.value = window.innerWidth / window.innerHeight;
+  handleMouseUp();
+}
+
+function docking(): void {
   const vx: number = selectedAxiomX.value;
   const vy: number = selectedAxiomY.value;
 
@@ -132,16 +138,39 @@ function docking() {
     snap it to the workSequence accordingly */
 
   const workbenchCenterY: number = workbenchY.value + workbenchHeight.value / 2;
-  const symbolHeight: number = symbolWidth.value * window.innerWidth / window.innerHeight;
+  const workSequenceX: number = workbenchX.value + (workbenchWidth.value - workSequence.value.length * symbolWidth.value) / 2;
+  const symbolHeight: number = symbolWidth.value * screenRatio.value;
+  const upperLength: number = selectedAxiom.value.upperSequence.length;
+  const lowerLength: number = selectedAxiom.value.lowerSequence.length;
+  let axiomOffset: number;
   if (vy < workbenchCenterY) {
     // Upper Half
-    selectedAxiomY.value = workbenchCenterY - 6 * symbolHeight / 2 ;
+    axiomOffset = (upperLength <= lowerLength) ? 0 : ((upperLength - lowerLength) / 2 * symbolWidth.value);
+    selectedAxiomY.value = workbenchCenterY - 6 * symbolHeight / 2;
   } else {
     // Lower half
+    axiomOffset = (lowerLength <= upperLength) ? 0 : ((lowerLength - upperLength) / 2 * symbolWidth.value);
     selectedAxiomY.value = workbenchCenterY + symbolHeight / 2;
   }
+
+  dockIndex.value = Math.round((vx + axiomOffset - workSequenceX) / symbolWidth.value);
+  selectedAxiomX.value = workSequenceX + dockIndex.value * symbolWidth.value - axiomOffset;
   
   draggingAxiom.value = false;
+}
+
+function checkMatching(): void {
+  let workIndex: number = dockIndex.value;
+  let axiomIndex = 0;
+
+  if (workIndex < 0) {
+    axiomIndex -= workIndex;
+    workIndex = 0;
+  }
+
+  // const nearSequence: number[] = 
+
+  //while (workIndex < workSequence.value.length && axiomIndex < )   
 }
 
 function finishLevel(): void {
@@ -164,6 +193,8 @@ async function fetchLevel(): Promise<void> {
     console.error('Error fetching data:', error);
   }
 }
+
+function addHighlights(): AxiomData
 
 async function updateCourse(): Promise<void> {
   try {

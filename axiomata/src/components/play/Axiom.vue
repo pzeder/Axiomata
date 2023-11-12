@@ -31,7 +31,7 @@ interface Props {
 }
 const props = defineProps<Props>();
 
-const maxSequence: number = Math.max(props.axiomData.upperSequence.length, props.axiomData.lowerSequence.length);
+const maxSequence = computed(() => Math.max(props.axiomData.upperSequence.length, props.axiomData.lowerSequence.length)); 
 const symbolHeight = computed(() => props.symbolWidth * props.screenRatio);
 </script>
 

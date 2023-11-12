@@ -4,7 +4,7 @@
             height: symbolHeight + 'hw',
             backgroundColor: symbolData.backgroundColor,
             color: symbolData.textColor
-        }"> {{ symbolData.text }} </div>
+        }"> {{ symbolData.text }} {{ highlight }} </div>
 </template>
 
 <script setup lang="ts">
@@ -14,6 +14,7 @@ import { computed, defineProps } from "vue";
 interface Props {
   symbolWidth: number;
   screenRatio: number;
+  highlight: boolean;
   symbolData: SymbolData;
 }
 const props = defineProps<Props>();
