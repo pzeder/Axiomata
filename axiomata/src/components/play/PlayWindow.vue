@@ -12,7 +12,7 @@
     height: workbenchHeight + 'vh'
   }" @mouseenter="() => { mouseOverWorkbench = true }" @mouseleave="() => { mouseOverWorkbench = false }">
     <button class="magic" v-if="!levelFinsihed" @click="finishLevel"> Magischer Knopf </button>
-    <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="workSequence" :highlights="[true, false, true, false]" :symbolAlphabet="levelData.symbolAlphabet" :style="{
+    <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="workSequence" :highlights="workHighlights" :symbolAlphabet="levelData.symbolAlphabet" :style="{
       position: 'absolute',
       left: ((workbenchWidth - workSequence.length * symbolWidth) / 2) + 'vw',
       top: ((workbenchHeight - symbolWidth * screenRatio) / 2) + 'vh'
@@ -42,7 +42,8 @@
   }">
     <Axiom v-if="selectedAxiom.upperSequence.length !== 0" 
       :symbolWidth="symbolWidth" :screenRatio="screenRatio" :axiomData="selectedAxiom" :symbolAlphabet="levelData.symbolAlphabet"
-      @mouseup="handleMouseUp" @mousedown="() => { draggingAxiom = true }" />
+      :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
+      @mouseup="handleMouseUp" @mousedown="handleMouseDown" />
   </div>
 </template>
 
@@ -89,10 +90,13 @@ const levelFinsihed: Ref<boolean> = ref(false);
 const selectedAxiom: Ref<AxiomData> = ref({ upperSequence: [], lowerSequence: [] });
 const selectedAxiomX: Ref<number> = ref(0);
 const selectedAxiomY: Ref<number> = ref(0);
-const draggingAxiom: Ref<boolean> = ref(false);
+const dragging: Ref<boolean> = ref(false);
 const mouseOverWorkbench: Ref<boolean> = ref(false);
 const workSequence: Ref<number[]> = ref([0,1,0,1]);
 const dockIndex: Ref<number> = ref(0);
+const workHighlights: Ref<boolean[]> = ref([]);
+const upperHighlights: Ref<boolean[]> = ref([]);
+const lowerHighlights: Ref<boolean[]> = ref([]);
 
 onMounted(() => {
   window.addEventListener('mousemove', updateSelectedAxiomPos);
@@ -113,14 +117,26 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize);
 });
 
+function handleMouseDown() {
+  dragging.value = true;
+  resetHighlights();
+}
+
 function handleMouseUp() {
   docking();
-  checkMatching();
+  updateMatching();
 }
 
 function handleResize() {
   screenRatio.value = window.innerWidth / window.innerHeight;
   handleMouseUp();
+}
+
+function resetHighlights() {
+  workHighlights.value = new Array(workSequence.value.length).fill(false);
+  upperHighlights.value = new Array(selectedAxiom.value.upperSequence.length).fill(false);
+  lowerHighlights.value = new Array(selectedAxiom.value.lowerSequence.length).fill(false);
+  console.log(upperHighlights.value, lowerHighlights.value);
 }
 
 function docking(): void {
@@ -156,21 +172,35 @@ function docking(): void {
   dockIndex.value = Math.round((vx + axiomOffset - workSequenceX) / symbolWidth.value);
   selectedAxiomX.value = workSequenceX + dockIndex.value * symbolWidth.value - axiomOffset;
   
-  draggingAxiom.value = false;
+  dragging.value = false;
 }
 
-function checkMatching(): void {
+function updateMatching(): void {
+  let nearSequence: number[];
+  let nearHighlights: Ref<boolean[]>;
+  if (selectedAxiomY.value <  workbenchY.value + workbenchHeight.value / 2) {
+    nearSequence = selectedAxiom.value.lowerSequence;
+    nearHighlights = lowerHighlights;
+  } else {
+    nearSequence = selectedAxiom.value.upperSequence;
+    nearHighlights = upperHighlights;
+  }
+
   let workIndex: number = dockIndex.value;
-  let axiomIndex = 0;
+  let nearIndex = 0;
 
   if (workIndex < 0) {
-    axiomIndex -= workIndex;
+    nearIndex -= workIndex;
     workIndex = 0;
   }
 
-  // const nearSequence: number[] = 
-
-  //while (workIndex < workSequence.value.length && axiomIndex < )   
+  while (workIndex < workSequence.value.length && nearIndex < nearSequence.length) {
+    let b = workSequence.value[workIndex] === nearSequence[nearIndex];
+    workHighlights.value[workIndex] = b;
+    nearHighlights.value[nearIndex] = b;
+    workIndex++;
+    nearIndex++;
+  } 
 }
 
 function finishLevel(): void {
@@ -193,8 +223,6 @@ async function fetchLevel(): Promise<void> {
     console.error('Error fetching data:', error);
   }
 }
-
-function addHighlights(): AxiomData
 
 async function updateCourse(): Promise<void> {
   try {
@@ -220,11 +248,11 @@ function selectAxiom(axiom: AxiomData): void {
     upperSequence: [...axiom.upperSequence],
     lowerSequence: [...axiom.lowerSequence]
   });
-  draggingAxiom.value = true;
+  handleMouseDown();
 }
 
 function updateSelectedAxiomPos(event: MouseEvent) {
-  if (draggingAxiom.value) {
+  if (dragging.value) {
     const x: number = event.clientX / window.innerWidth * 100;
     const y: number = event.clientY / window.innerHeight * 100;
     selectedAxiomX.value = x - maxSequence(selectedAxiom.value) * symbolWidth.value / 2;

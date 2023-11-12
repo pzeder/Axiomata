@@ -3,8 +3,9 @@
             width: symbolWidth + 'vw',
             height: symbolHeight + 'hw',
             backgroundColor: symbolData.backgroundColor,
-            color: symbolData.textColor
-        }"> {{ symbolData.text }} {{ highlight }} </div>
+            color: symbolData.textColor,
+            borderColor: (highlight) ? 'rgb(222, 222, 222)' : 'rgb(150, 150, 150)'
+        }"> {{ symbolData.text }} </div>
 </template>
 
 <script setup lang="ts">
@@ -26,7 +27,8 @@ const symbolHeight = computed(() => props.symbolWidth * props.screenRatio);
 .symbol {
   display: grid;
   place-items: center;
-  border: 0.5vw solid rgb(187, 187, 187);
+  border-width: 0.5vw ;
+  border-style: solid;
   border-radius: 1vw;
   margin-left: -0.5vw;
   user-select: none;

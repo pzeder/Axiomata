@@ -7,11 +7,11 @@
     left: (maxSequence * symbolWidth / 2 - symbolWidth / 4) + 'vw',   
     width: (symbolWidth / 2) + 'vw'
     }"/>
-  <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="axiomData.upperSequence" :symbolAlphabet="symbolAlphabet" :style="{
+  <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="axiomData.upperSequence" :symbolAlphabet="symbolAlphabet" :highlights="upperHighlights" :style="{
     left: (symbolWidth * (maxSequence - axiomData.upperSequence.length) / 2) + 'vw',
     top: 0
     }"/>
-  <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="axiomData.lowerSequence" :symbolAlphabet="symbolAlphabet" :style="{
+  <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="axiomData.lowerSequence" :symbolAlphabet="symbolAlphabet" :highlights="lowerHighlights" :style="{
     left: (symbolWidth * (maxSequence - axiomData.lowerSequence.length) / 2) + 'vw',
     top: (1.5 * symbolHeight) + 'vh'
     }"/>
@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, Ref, ref } from 'vue';
+import { computed, defineProps, Ref, ref, withDefaults } from 'vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import Sequence from '@/components/play/Sequence.vue';
 
@@ -28,8 +28,13 @@ interface Props {
   screenRatio: number;
   axiomData: AxiomData;
   symbolAlphabet: SymbolData[];
+  upperHighlights: boolean[];
+  lowerHighlights: boolean[];
 }
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  upperHighlights: () => [],
+  lowerHighlights: () => []
+});
 
 const maxSequence = computed(() => Math.max(props.axiomData.upperSequence.length, props.axiomData.lowerSequence.length)); 
 const symbolHeight = computed(() => props.symbolWidth * props.screenRatio);

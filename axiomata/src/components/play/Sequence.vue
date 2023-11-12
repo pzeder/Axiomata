@@ -21,7 +21,7 @@ interface Props {
   symbolAlphabet: SymbolData[];
 }
 const props = withDefaults(defineProps<Props>(), {
-  highlights: () => [] // setting default value for highlights as an empty array
+  highlights: () => []
 });
 const symbolHeight = computed(() => props.symbolWidth * props.screenRatio);
 </script>
