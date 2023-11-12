@@ -4,23 +4,23 @@
         height: symbolHeight + 'vh'
     }"> 
         <Symbol v-for="(si, key) in symbolIndices" :key="key" 
-            :symbolWidth="symbolWidth" :symbolData="symbolAlphabet[si]" />
+            :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolData="symbolAlphabet[si]" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, onMounted } from "vue";
+import { computed, defineProps, onMounted } from "vue";
 import Symbol from '@/components/play/Symbol.vue'
 import { SymbolData } from "@/scripts/Interfaces";
 
 interface Props {
   symbolWidth: number;
+  screenRatio: number;
   symbolIndices: number[];
   symbolAlphabet: SymbolData[];
 }
 const props = defineProps<Props>();
-
-const symbolHeight: number = props.symbolWidth * window.innerWidth / window.innerHeight;
+const symbolHeight = computed(() => props.symbolWidth * props.screenRatio);
 </script>
 
 <style scoped>

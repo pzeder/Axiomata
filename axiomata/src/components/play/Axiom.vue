@@ -7,11 +7,11 @@
     left: (maxSequence * symbolWidth / 2 - symbolWidth / 4) + 'vw',   
     width: (symbolWidth / 2) + 'vw'
     }"/>
-  <Sequence :symbolWidth="symbolWidth" :symbolIndices="axiomData.upperSequence" :symbolAlphabet="symbolAlphabet" :style="{
+  <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="axiomData.upperSequence" :symbolAlphabet="symbolAlphabet" :style="{
     left: (symbolWidth * (maxSequence - axiomData.upperSequence.length) / 2) + 'vw',
     top: 0
     }"/>
-  <Sequence :symbolWidth="symbolWidth" :symbolIndices="axiomData.lowerSequence" :symbolAlphabet="symbolAlphabet" :style="{
+  <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="axiomData.lowerSequence" :symbolAlphabet="symbolAlphabet" :style="{
     left: (symbolWidth * (maxSequence - axiomData.lowerSequence.length) / 2) + 'vw',
     top: (1.5 * symbolHeight) + 'vh'
     }"/>
@@ -19,19 +19,20 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, Ref, ref } from 'vue';
+import { computed, defineProps, Ref, ref } from 'vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import Sequence from '@/components/play/Sequence.vue';
 
 interface Props {
   symbolWidth: number;
+  screenRatio: number;
   axiomData: AxiomData;
   symbolAlphabet: SymbolData[];
 }
 const props = defineProps<Props>();
 
 const maxSequence: number = Math.max(props.axiomData.upperSequence.length, props.axiomData.lowerSequence.length);
-const symbolHeight: number = props.symbolWidth * window.innerWidth / window.innerHeight;
+const symbolHeight = computed(() => props.symbolWidth * props.screenRatio);
 </script>
 
 <style>
@@ -41,7 +42,7 @@ const symbolHeight: number = props.symbolWidth * window.innerWidth / window.inne
 }
 
 .connection {
-  position: absolute;
+  position:relative;
   top: 10%;
   height: 80%;
   background-color: rgb(160, 160, 160);

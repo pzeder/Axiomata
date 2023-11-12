@@ -9,15 +9,16 @@
 
 <script setup lang="ts">
 import { SymbolData } from "@/scripts/Interfaces";
-import { defineProps } from "vue";
+import { computed, defineProps } from "vue";
 
 interface Props {
   symbolWidth: number;
+  screenRatio: number;
   symbolData: SymbolData;
 }
 const props = defineProps<Props>();
 
-const symbolHeight: number = props.symbolWidth * window.innerWidth / window.innerHeight;
+const symbolHeight = computed(() => props.symbolWidth * props.screenRatio);
 </script>
 
 <style scoped>

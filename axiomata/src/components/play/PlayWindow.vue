@@ -1,6 +1,6 @@
 <template>
   <div class="headbar" :style="{ height: headBarHeight + 'vh' }">
-    <button :style="{ position: 'relative' }" @click="openLevelMenu"> Zurück </button>
+    <button :style="{ position: 'relative', width: 5 + 'vw' }" @click="openLevelMenu"> Zurück </button>
     <div :style="{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 100 + '%' }">
       <div :style="{ color: 'white' }"> {{ sessionState.levelName }} </div>
     </div>
@@ -12,10 +12,10 @@
     height: workbenchHeight + 'vh'
   }" @mouseenter="() => { mouseOverWorkbench = true }" @mouseleave="() => { mouseOverWorkbench = false }">
     <button class="magic" v-if="!levelFinsihed" @click="finishLevel"> Magischer Knopf </button>
-    <Sequence :symbolWidth="symbolWidth" :symbolIndices="workSequence" :symbolAlphabet="levelData.symbolAlphabet" :style="{
+    <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="workSequence" :symbolAlphabet="levelData.symbolAlphabet" :style="{
       position: 'absolute',
       left: ((workbenchWidth - workSequence.length * symbolWidth) / 2) + 'vw',
-      top: ((workbenchHeight - symbolWidth * screenWidth / screenHeight) / 2) + 'vh'
+      top: ((workbenchHeight - symbolWidth * screenRatio) / 2) + 'vh'
     }"/>
     <div class="finish" v-if="levelFinsihed"> Level geschafft! <br>
       <button @click="openLevelMenu"> zurück zur Levelauswahl </button>
@@ -29,7 +29,7 @@
   </div>
   <div class="axiom-bar" :style="{ top: axiomBarY + 'vh', width: axiomBarWidth + 'vw', height: axiomBarHeight + 'vh' }">
     <div class="axiom-container" v-for="(axiom, key) in levelData.axioms" :key="key">
-      <Axiom :symbolWidth="5" :axiomData="axiom" :symbolAlphabet="levelData.symbolAlphabet" @mousedown="selectAxiom(axiom)" />
+      <Axiom :symbolWidth="5" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="levelData.symbolAlphabet" @mousedown="selectAxiom(axiom)" />
     </div>
   </div>
   <div class="goal-container" :style="{ top: goalY + 'vh', width: goalWidth + 'vw', height: goalHeight + 'vw' }">
@@ -41,8 +41,8 @@
     top: selectedAxiomY + 'vh'
   }">
     <Axiom v-if="selectedAxiom.upperSequence.length !== 0" 
-      :symbolWidth="symbolWidth" :axiomData="selectedAxiom" :symbolAlphabet="levelData.symbolAlphabet"
-      @mouseup="handleMouseUp" @mousedown="() => { draggingAxiom = true }" />
+      :symbolWidth="symbolWidth" :screenRatio="screenRatio" :axiomData="selectedAxiom" :symbolAlphabet="levelData.symbolAlphabet"
+      @mouseup="docking" @mousedown="() => { draggingAxiom = true }" />
   </div>
 </template>
 
@@ -51,7 +51,7 @@ import Axiom from '@/components/play/Axiom.vue';
 import Sequence from '@/components/play/Sequence.vue';
 import { SessionState, AxiomData, SymbolData } from '@/scripts/Interfaces';
 import axios from 'axios';
-import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef } from 'vue';
+import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef, onBeforeUnmount } from 'vue';
 
 interface Props {
   sessionState: SessionState;
@@ -81,8 +81,7 @@ const goalY: Ref<number> = ref(5);
 const goalWidth: Ref<number> = ref(10);
 const goalHeight: Ref<number> = ref(10);
 const symbolWidth: Ref<number> = ref(5);
-const screenWidth: Ref<number> = ref(window.innerWidth);
-const screenHeight: Ref<number> = ref(window.innerHeight);
+const screenRatio: Ref<number> = ref(window.innerWidth / window.innerHeight);
 
 // Data variables
 const levelData: Ref<LevelData> = ref({ symbolAlphabet: [], axioms: [], derivates: [] });
@@ -105,9 +104,22 @@ function openLevelMenu(): void {
   emit('openLevelMenu');
 }
 
-function handleMouseUp(event: MouseEvent) {
-  const vx: number = event.clientX / window.innerWidth * 100;
-  const vy: number = event.clientY / window.innerHeight * 100;
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize);
+});
+
+function handleResize() {
+  screenRatio.value = window.innerWidth / window.innerHeight;
+  docking();
+}
+
+function docking() {
+  const vx: number = selectedAxiomX.value;
+  const vy: number = selectedAxiomY.value;
 
   // Drop the selected Axiom if the mouse is NOT inside workbench
 
@@ -182,7 +194,7 @@ function updateSelectedAxiomPos(event: MouseEvent) {
     const x: number = event.clientX / window.innerWidth * 100;
     const y: number = event.clientY / window.innerHeight * 100;
     selectedAxiomX.value = x - maxSequence(selectedAxiom.value) * symbolWidth.value / 2;
-    selectedAxiomY.value = y - symbolWidth.value * screenWidth.value / screenHeight.value * 1.25; 
+    selectedAxiomY.value = y - symbolWidth.value * screenRatio.value * 1.25; 
   }
 }
 
@@ -223,6 +235,8 @@ function maxSequence(axiom: AxiomData): number {
 }
 
 .axiom-bar {
+  display: grid;
+  place-items: center;
   position: absolute;
   left: 0;
   background: rgb(252, 223, 203);
@@ -252,7 +266,7 @@ function maxSequence(axiom: AxiomData): number {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 25%;
+  height: 20vh;
 }
 
 .derivate-container {
