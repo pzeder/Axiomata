@@ -43,7 +43,16 @@
     <Axiom v-if="selectedAxiom.upperSequence.length !== 0" 
       :symbolWidth="symbolWidth" :screenRatio="screenRatio" :axiomData="selectedAxiom" :symbolAlphabet="levelData.symbolAlphabet"
       :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
-      @mouseup="handleMouseUp" @mousedown="handleMouseDown" />
+      @mouseup="handleMouseUp" @mousedown="handleMouseDown"> </Axiom>
+    <div class="swap-button" v-if="perfectMatch" @click="swap" :style="{
+      display: 'grid',
+      placeItems: 'center',
+      position: 'absolute',
+      left: ((Math.max(selectedAxiom.upperSequence.length, selectedAxiom.lowerSequence.length) - 1) * symbolWidth / 2) + 'vw',
+      top: (centerDirectionY > 0 ? (-symbolWidth * screenRatio * 1.5) : (symbolWidth * screenRatio * 3)) + 'vh',
+      width: symbolWidth + 'vw',
+      height: (symbolWidth * screenRatio) + 'vh',
+      }"> SWAP </div>
   </div>
 </template>
 
@@ -97,6 +106,11 @@ const dockIndex: Ref<number> = ref(0);
 const workHighlights: Ref<boolean[]> = ref([]);
 const upperHighlights: Ref<boolean[]> = ref([]);
 const lowerHighlights: Ref<boolean[]> = ref([]);
+const perfectMatch: Ref<boolean> = ref(false);
+const centerDirectionY: Ref<number> = ref(0);
+
+let nearSequence: number[];
+let nearHighlights: Ref<boolean[]>;
 
 onMounted(() => {
   window.addEventListener('mousemove', updateSelectedAxiomPos);
@@ -120,11 +134,13 @@ onBeforeUnmount(() => {
 function handleMouseDown() {
   dragging.value = true;
   resetHighlights();
+  perfectMatch.value = false;
 }
 
 function handleMouseUp() {
   docking();
   updateMatching();
+  checkPerfectMatch();
 }
 
 function handleResize() {
@@ -136,7 +152,6 @@ function resetHighlights() {
   workHighlights.value = new Array(workSequence.value.length).fill(false);
   upperHighlights.value = new Array(selectedAxiom.value.upperSequence.length).fill(false);
   lowerHighlights.value = new Array(selectedAxiom.value.lowerSequence.length).fill(false);
-  console.log(upperHighlights.value, lowerHighlights.value);
 }
 
 function docking(): void {
@@ -163,10 +178,16 @@ function docking(): void {
     // Upper Half
     axiomOffset = (upperLength <= lowerLength) ? 0 : ((upperLength - lowerLength) / 2 * symbolWidth.value);
     selectedAxiomY.value = workbenchCenterY - 6 * symbolHeight / 2;
+    nearSequence = selectedAxiom.value.lowerSequence;
+    nearHighlights = lowerHighlights;
+    centerDirectionY.value = 1;
   } else {
     // Lower half
     axiomOffset = (lowerLength <= upperLength) ? 0 : ((lowerLength - upperLength) / 2 * symbolWidth.value);
     selectedAxiomY.value = workbenchCenterY + symbolHeight / 2;
+    nearSequence = selectedAxiom.value.upperSequence;
+    nearHighlights = upperHighlights;
+    centerDirectionY.value = -1;
   }
 
   dockIndex.value = Math.round((vx + axiomOffset - workSequenceX) / symbolWidth.value);
@@ -176,16 +197,6 @@ function docking(): void {
 }
 
 function updateMatching(): void {
-  let nearSequence: number[];
-  let nearHighlights: Ref<boolean[]>;
-  if (selectedAxiomY.value <  workbenchY.value + workbenchHeight.value / 2) {
-    nearSequence = selectedAxiom.value.lowerSequence;
-    nearHighlights = lowerHighlights;
-  } else {
-    nearSequence = selectedAxiom.value.upperSequence;
-    nearHighlights = upperHighlights;
-  }
-
   let workIndex: number = dockIndex.value;
   let nearIndex = 0;
 
@@ -263,6 +274,17 @@ function updateSelectedAxiomPos(event: MouseEvent) {
 function maxSequence(axiom: AxiomData): number {
   return Math.max(axiom.upperSequence.length, axiom.lowerSequence.length);
 }
+
+function checkPerfectMatch(): void {
+  if (!nearHighlights || nearHighlights.value.length === 0) {
+    return;
+  }
+  perfectMatch.value = (nearHighlights.value.filter(b => !b).length === 0);
+}
+
+function swap(): void {
+  console.log("swap");
+}
 </script>
 
 <style>
@@ -337,5 +359,12 @@ function maxSequence(axiom: AxiomData): number {
   align-items: center;
   width: 20%;
   height: 100%;
+}
+
+.swap-button {
+  width: 10vw;
+  height: 10vw;
+  border-radius: 50%;
+  background-color: green;
 }
 </style>
