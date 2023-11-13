@@ -108,7 +108,8 @@ app.get('/level', async (req, res) => {
     const levelData = ({
       symbolAlphabet: saveState.symbolAlphabet,
       axioms: saveState.axioms,
-      derivates: saveState.derivates
+      derivates: saveState.derivates,
+      goal: level.goal
     });
     res.json(levelData);
   } catch (error) {

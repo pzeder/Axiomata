@@ -73,6 +73,7 @@ interface LevelData {
   symbolAlphabet: SymbolData[];
   axioms: AxiomData[];
   derivates: AxiomData[];
+  goal: AxiomData;
 }
 
 // Layout variables
@@ -94,7 +95,7 @@ const symbolWidth: Ref<number> = ref(5);
 const screenRatio: Ref<number> = ref(window.innerWidth / window.innerHeight);
 
 // Data variables
-const levelData: Ref<LevelData> = ref({ symbolAlphabet: [], axioms: [], derivates: [] });
+const levelData: Ref<LevelData> = ref({ symbolAlphabet: [], axioms: [], derivates: [], goal: {upperSequence: [], lowerSequence: []} });
 const levelFinsihed: Ref<boolean> = ref(false);
 const selectedAxiom: Ref<AxiomData> = ref({ upperSequence: [], lowerSequence: [] });
 const selectedAxiomX: Ref<number> = ref(0);
@@ -107,8 +108,8 @@ const upperHighlights: Ref<boolean[]> = ref([]);
 const lowerHighlights: Ref<boolean[]> = ref([]);
 const perfectMatch: Ref<boolean> = ref(false);
 const centerDirectionY: Ref<number> = ref(0);
-const sequenceHistory: Ref<number[][]> = ref([[0,1,0,1]]);
-const workSequence: Ref<number[]> = ref(sequenceHistory.value[sequenceHistory.value.length-1]);
+const sequenceHistory: Ref<number[][]> = ref([[]]);
+const workSequence: Ref<number[]> = ref([]);
 
 let nearSequence: number[];
 let farSequence: number[];
@@ -231,6 +232,8 @@ async function fetchLevel(): Promise<void> {
     const response = await axios.get('http://localhost:3000/level' + query);
     if (response.status === 200) {
       levelData.value = response.data;
+      sequenceHistory.value = [levelData.value.goal.upperSequence];
+      workSequence.value = levelData.value.goal.upperSequence;
     } else {
       console.error('Server responded with status', response.status);
     }
