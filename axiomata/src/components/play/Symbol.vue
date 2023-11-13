@@ -4,7 +4,7 @@
             height: symbolHeight + 'hw',
             backgroundColor: symbolData.backgroundColor,
             color: symbolData.textColor,
-            borderColor: (highlight) ? 'rgb(222, 222, 222)' : 'rgb(150, 150, 150)'
+            borderColor: (highlight) ? 'rgb(180, 180, 180)' : 'rgb(100, 100, 100)'
         }"> {{ symbolData.text }} </div>
 </template>
 

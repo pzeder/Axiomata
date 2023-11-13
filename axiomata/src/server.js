@@ -73,7 +73,7 @@ app.post('/newSaveState', async (req, res) => {
 
     const getLevels = ch => ch.levels.map(lev => ({
       levelName: lev.levelName,
-      goal: lev.goal,
+      goalAxiom: lev.goalAxiom,
       status: 'todo'
     }));
 
@@ -109,7 +109,7 @@ app.get('/level', async (req, res) => {
       symbolAlphabet: saveState.symbolAlphabet,
       axioms: saveState.axioms,
       derivates: saveState.derivates,
-      goal: level.goal
+      goalAxiom: level.goalAxiom
     });
     res.json(levelData);
   } catch (error) {

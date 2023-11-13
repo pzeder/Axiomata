@@ -12,7 +12,7 @@
     height: workbenchHeight + 'vh'
   }" @mouseenter="() => { mouseOverWorkbench = true }" @mouseleave="() => { mouseOverWorkbench = false }">
     <button class="magic" v-if="!levelFinsihed" @click="finishLevel"> Magischer Knopf </button>
-    <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="workSequence" :highlights="workHighlights" :symbolAlphabet="levelData.symbolAlphabet" :style="{
+    <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="workSequence" :highlights="workHighlights" :symbolAlphabet="symbolAlphabet" :style="{
       position: 'absolute',
       left: ((workbenchWidth - workSequence.length * symbolWidth) / 2) + 'vw',
       top: ((workbenchHeight - symbolWidth * screenRatio) / 2) + 'vh'
@@ -23,17 +23,17 @@
   </div>
   <div class="derivate-bar"
     :style="{ left: derivateBarX + 'vw', width: derivateBarWidth + 'vw', height: derivateBarHeight + 'vh' }">
-    <div class="derivate-container" v-for="axiom in levelData.derivates" :key="axiom.name">
+    <div class="derivate-container" v-for="axiom in derivates" :key="axiom.name">
       <Axiom :axiomData="axiom" @mousedown="selectAxiom(axiom)" />
     </div>
   </div>
   <div class="axiom-bar" :style="{ top: axiomBarY + 'vh', width: axiomBarWidth + 'vw', height: axiomBarHeight + 'vh' }">
-    <div class="axiom-container" v-for="(axiom, key) in levelData.axioms" :key="key">
-      <Axiom :symbolWidth="5" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="levelData.symbolAlphabet" @mousedown="selectAxiom(axiom)" />
+    <div class="axiom-container" v-for="(axiom, key) in axioms" :key="key">
+      <Axiom :symbolWidth="5" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="symbolAlphabet" @mousedown="selectAxiom(axiom)" />
     </div>
   </div>
   <div class="goal-container" :style="{ top: goalY + 'vh', width: goalWidth + 'vw', height: goalHeight + 'vw' }">
-      ZIEL
+      <Sequence :symbolWidth="4" :screenRatio="screenRatio" :symbolIndices="goalAxiom.lowerSequence" :symbolAlphabet="symbolAlphabet" />
   </div>
   <div :style="{
     position: 'absolute',
@@ -41,7 +41,7 @@
     top: selectedAxiomY + 'vh'
   }">
     <Axiom v-if="selectedAxiom.upperSequence.length !== 0" 
-      :symbolWidth="symbolWidth" :screenRatio="screenRatio" :axiomData="selectedAxiom" :symbolAlphabet="levelData.symbolAlphabet"
+      :symbolWidth="symbolWidth" :screenRatio="screenRatio" :axiomData="selectedAxiom" :symbolAlphabet="symbolAlphabet"
       :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
       @mouseup="handleMouseUp" @mousedown="handleMouseDown"> </Axiom>
     <div class="swap-button" v-if="perfectMatch" @click="swap" :style="{
@@ -60,7 +60,7 @@
 import Axiom from '@/components/play/Axiom.vue';
 import Sequence from '@/components/play/Sequence.vue';
 import { SessionState, AxiomData, SymbolData } from '@/scripts/Interfaces';
-import axios from 'axios';
+import axios, { AxiosProgressEvent } from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef, onBeforeUnmount } from 'vue';
 
 interface Props {
@@ -68,13 +68,6 @@ interface Props {
 }
 const props = defineProps<Props>();
 const sessionState: Ref<SessionState> = ref(props.sessionState);
-
-interface LevelData {
-  symbolAlphabet: SymbolData[];
-  axioms: AxiomData[];
-  derivates: AxiomData[];
-  goal: AxiomData;
-}
 
 // Layout variables
 const headBarHeight: Ref<number> = ref(5);
@@ -94,23 +87,29 @@ const goalHeight: Ref<number> = ref(10);
 const symbolWidth: Ref<number> = ref(5);
 const screenRatio: Ref<number> = ref(window.innerWidth / window.innerHeight);
 
-// Data variables
-const levelData: Ref<LevelData> = ref({ symbolAlphabet: [], axioms: [], derivates: [], goal: {upperSequence: [], lowerSequence: []} });
+// Level variables
+const symbolAlphabet: Ref<SymbolData[]> = ref([]);
+const axioms: Ref<AxiomData[]> = ref([]);
+const derivates: Ref<AxiomData[]> = ref([]);
+const goalAxiom: Ref<AxiomData> = ref({upperSequence: [], lowerSequence: []});
 const levelFinsihed: Ref<boolean> = ref(false);
+const sequenceHistory: Ref<number[][]> = ref([[]]);
+
+// Cursor variables
 const selectedAxiom: Ref<AxiomData> = ref({ upperSequence: [], lowerSequence: [] });
 const selectedAxiomX: Ref<number> = ref(0);
 const selectedAxiomY: Ref<number> = ref(0);
 const dragging: Ref<boolean> = ref(false);
 const mouseOverWorkbench: Ref<boolean> = ref(false);
+
+// Workbench variables
 const dockIndex: Ref<number> = ref(0);
 const workHighlights: Ref<boolean[]> = ref([]);
 const upperHighlights: Ref<boolean[]> = ref([]);
 const lowerHighlights: Ref<boolean[]> = ref([]);
 const perfectMatch: Ref<boolean> = ref(false);
 const centerDirectionY: Ref<number> = ref(0);
-const sequenceHistory: Ref<number[][]> = ref([[]]);
 const workSequence: Ref<number[]> = ref([]);
-
 let nearSequence: number[];
 let farSequence: number[];
 let nearHighlights: Ref<boolean[]>;
@@ -231,9 +230,12 @@ async function fetchLevel(): Promise<void> {
       + '&levelName=' + sessionState.value.levelName;
     const response = await axios.get('http://localhost:3000/level' + query);
     if (response.status === 200) {
-      levelData.value = response.data;
-      sequenceHistory.value = [levelData.value.goal.upperSequence];
-      workSequence.value = levelData.value.goal.upperSequence;
+      symbolAlphabet.value = response.data.symbolAlphabet;
+      axioms.value = response.data.axioms;
+      derivates.value = response.data.derivates;
+      goalAxiom.value = response.data.goalAxiom;
+      sequenceHistory.value = [goalAxiom.value.upperSequence];
+      workSequence.value = goalAxiom.value.upperSequence;
     } else {
       console.error('Server responded with status', response.status);
     }
@@ -314,8 +316,6 @@ function swap(): void {
 
   sequenceHistory.value.push(newSequence);
   workSequence.value = newSequence;
-
-  console.log(sequenceHistory.value);
 }
 </script>
 
