@@ -101,15 +101,17 @@ const selectedAxiomX: Ref<number> = ref(0);
 const selectedAxiomY: Ref<number> = ref(0);
 const dragging: Ref<boolean> = ref(false);
 const mouseOverWorkbench: Ref<boolean> = ref(false);
-const workSequence: Ref<number[]> = ref([0,1,0,1]);
 const dockIndex: Ref<number> = ref(0);
 const workHighlights: Ref<boolean[]> = ref([]);
 const upperHighlights: Ref<boolean[]> = ref([]);
 const lowerHighlights: Ref<boolean[]> = ref([]);
 const perfectMatch: Ref<boolean> = ref(false);
 const centerDirectionY: Ref<number> = ref(0);
+const sequenceHistory: Ref<number[][]> = ref([[0,1,0,1]]);
+const workSequence: Ref<number[]> = ref(sequenceHistory.value[sequenceHistory.value.length-1]);
 
 let nearSequence: number[];
+let farSequence: number[];
 let nearHighlights: Ref<boolean[]>;
 
 onMounted(() => {
@@ -179,6 +181,7 @@ function docking(): void {
     axiomOffset = (upperLength <= lowerLength) ? 0 : ((upperLength - lowerLength) / 2 * symbolWidth.value);
     selectedAxiomY.value = workbenchCenterY - 6 * symbolHeight / 2;
     nearSequence = selectedAxiom.value.lowerSequence;
+    farSequence = selectedAxiom.value.upperSequence;
     nearHighlights = lowerHighlights;
     centerDirectionY.value = 1;
   } else {
@@ -186,6 +189,7 @@ function docking(): void {
     axiomOffset = (lowerLength <= upperLength) ? 0 : ((lowerLength - upperLength) / 2 * symbolWidth.value);
     selectedAxiomY.value = workbenchCenterY + symbolHeight / 2;
     nearSequence = selectedAxiom.value.upperSequence;
+    farSequence = selectedAxiom.value.lowerSequence;
     nearHighlights = upperHighlights;
     centerDirectionY.value = -1;
   }
@@ -283,7 +287,32 @@ function checkPerfectMatch(): void {
 }
 
 function swap(): void {
-  console.log("swap");
+  selectedAxiom.value.upperSequence = [];
+  resetHighlights();
+  perfectMatch.value = false;
+  const newLength: number = workSequence.value.length - nearSequence.length + farSequence.length;
+  let newSequence: number[] = [];
+
+  // Keep all symbols left of the match
+
+  for (let i = 0; i < dockIndex.value; i++) {
+    newSequence.push(workSequence.value[i]);
+  }
+
+  // Replace the matching part with farSequence
+
+  newSequence.push(...farSequence);
+
+  // Keep all symbols left of the match
+
+  for (let i = dockIndex.value + nearSequence.length; i < workSequence.value.length; i++) {
+    newSequence.push(workSequence.value[i]);
+  }
+
+  sequenceHistory.value.push(newSequence);
+  workSequence.value = newSequence;
+
+  console.log(sequenceHistory.value);
 }
 </script>
 
