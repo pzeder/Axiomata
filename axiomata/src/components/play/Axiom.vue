@@ -39,7 +39,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const maxSequence = computed(() => Math.max(props.axiomData.upperSequence.length, props.axiomData.lowerSequence.length));
-const symbolHeight = computed(() => props.symbolWidth * props.screenRatio);kkkjbk
+const symbolHeight = computed(() => props.symbolWidth * props.screenRatio);
 </script>
 
 <style>
