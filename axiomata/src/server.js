@@ -127,9 +127,13 @@ app.patch('/levelEnd', async (req, res) => {
     const chapterIndex = saveState.chapters.findIndex(ch => ch.chapterName === chapterName);
     const levelIndex = saveState.chapters[chapterIndex].levels.findIndex(lev => lev.levelName === levelName);
 
+    if (level.status === 'done') {
+      return res.status(400).json({ error: 'Level already finished' });
+    }
+
     const updateLevel = {
       $set: { [`chapters.${chapterIndex}.levels.${levelIndex}.status`]: newStatus },
-      $push: { derivates: level.goal }
+      $push: { derivates: level.goalAxiom }
     };
 
     let result = await db.collection('SaveStates').updateOne(filter, updateLevel);

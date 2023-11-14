@@ -11,7 +11,6 @@
     width: workbenchWidth + 'vw',
     height: workbenchHeight + 'vh'
   }" @mouseenter="() => { mouseOverWorkbench = true }" @mouseleave="() => { mouseOverWorkbench = false }">
-    <button class="magic" v-if="!levelFinsihed" @click="finishLevel"> Magischer Knopf </button>
     <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="workSequence" :highlights="workHighlights" :symbolAlphabet="symbolAlphabet" :style="{
       position: 'absolute',
       left: ((workbenchWidth - workSequence.length * symbolWidth) / 2) + 'vw',
@@ -23,13 +22,13 @@
   </div>
   <div class="derivate-bar"
     :style="{ left: derivateBarX + 'vw', width: derivateBarWidth + 'vw', height: derivateBarHeight + 'vh' }">
-    <div class="derivate-container" v-for="axiom in derivates" :key="axiom.name">
-      <Axiom :axiomData="axiom" @mousedown="selectAxiom(axiom)" />
+    <div class="derivate-container" v-for="(axiom, index) in derivates" :key="index">
+      <Axiom :symbolWidth="3" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="symbolAlphabet" @mousedown="selectAxiom(axiom)" />
     </div>
   </div>
   <div class="axiom-bar" :style="{ top: axiomBarY + 'vh', width: axiomBarWidth + 'vw', height: axiomBarHeight + 'vh' }">
     <div class="axiom-container" v-for="(axiom, key) in axioms" :key="key">
-      <Axiom :symbolWidth="5" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="symbolAlphabet" @mousedown="selectAxiom(axiom)" />
+      <Axiom :symbolWidth="3" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="symbolAlphabet" @mousedown="selectAxiom(axiom)" />
     </div>
   </div>
   <div class="goal-container" :style="{ top: goalY + 'vh', width: goalWidth + 'vw', height: goalHeight + 'vw' }">
@@ -44,7 +43,7 @@
       :symbolWidth="symbolWidth" :screenRatio="screenRatio" :axiomData="selectedAxiom" :symbolAlphabet="symbolAlphabet"
       :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
       @mouseup="handleMouseUp" @mousedown="handleMouseDown"> </Axiom>
-    <div class="swap-button" v-if="perfectMatch" @click="swap" :style="{
+    <div class="swap-button" v-if="workMatch" @click="handleSwapButton" :style="{
       display: 'grid',
       placeItems: 'center',
       position: 'absolute',
@@ -107,7 +106,7 @@ const dockIndex: Ref<number> = ref(0);
 const workHighlights: Ref<boolean[]> = ref([]);
 const upperHighlights: Ref<boolean[]> = ref([]);
 const lowerHighlights: Ref<boolean[]> = ref([]);
-const perfectMatch: Ref<boolean> = ref(false);
+const workMatch: Ref<boolean> = ref(false);
 const centerDirectionY: Ref<number> = ref(0);
 const workSequence: Ref<number[]> = ref([]);
 let nearSequence: number[];
@@ -136,13 +135,13 @@ onBeforeUnmount(() => {
 function handleMouseDown() {
   dragging.value = true;
   resetHighlights();
-  perfectMatch.value = false;
+  workMatch.value = false;
 }
 
 function handleMouseUp() {
   docking();
   updateMatching();
-  checkPerfectMatch();
+  workMatch.value = checkWorkMatch();
 }
 
 function handleResize() {
@@ -255,6 +254,8 @@ async function updateCourse(): Promise<void> {
     const response = await axios.patch(`http://localhost:3000/levelEnd`, updatedData);
     if (response.status === 200) {
       console.log('Course updated successfully:', response.data);
+    } else if (response.status === 400) {
+      console.error(response.data.message);
     } else {
       console.error('Server responded with status:', response.status);
     }
@@ -284,17 +285,24 @@ function maxSequence(axiom: AxiomData): number {
   return Math.max(axiom.upperSequence.length, axiom.lowerSequence.length);
 }
 
-function checkPerfectMatch(): void {
+function checkWorkMatch(): boolean {
   if (!nearHighlights || nearHighlights.value.length === 0) {
-    return;
+    return false;
   }
-  perfectMatch.value = (nearHighlights.value.filter(b => !b).length === 0);
+  return (nearHighlights.value.filter(b => !b).length === 0);
+}
+
+function handleSwapButton(): void {
+  swap();
+  if (endOfGame()) {
+    finishLevel();
+  }
+  selectedAxiom.value.upperSequence = [];
+  resetHighlights();
+  workMatch.value = false;
 }
 
 function swap(): void {
-  selectedAxiom.value.upperSequence = [];
-  resetHighlights();
-  perfectMatch.value = false;
   const newLength: number = workSequence.value.length - nearSequence.length + farSequence.length;
   let newSequence: number[] = [];
 
@@ -316,6 +324,18 @@ function swap(): void {
 
   sequenceHistory.value.push(newSequence);
   workSequence.value = newSequence;
+}
+
+function endOfGame(): boolean {
+  if (workSequence.value.length !== goalAxiom.value.lowerSequence.length) {
+    return false;
+  }
+  for (let i = 0; i < workSequence.value.length; i++) {
+    if (workSequence.value[i] !== goalAxiom.value.lowerSequence[i]) {
+      return false;
+    }
+  }
+  return true;
 }
 </script>
 
