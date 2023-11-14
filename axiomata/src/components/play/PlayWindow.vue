@@ -59,8 +59,9 @@ import Axiom from '@/components/play/Axiom.vue';
 import Sequence from '@/components/play/Sequence.vue';
 import AxiomBar from './AxiomBar.vue';
 import { SessionState, AxiomData, SymbolData } from '@/scripts/Interfaces';
-import axios, { AxiosProgressEvent } from 'axios';
+import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef, onBeforeUnmount } from 'vue';
+import { axiomHeight, axiomWidth } from '@/scripts/AxiomMethods';
 
 interface Props {
   sessionState: SessionState;
@@ -83,7 +84,7 @@ const workbenchHeight: Ref<number> = ref(70);
 const goalY: Ref<number> = ref(5);
 const goalWidth: Ref<number> = ref(10);
 const goalHeight: Ref<number> = ref(10);
-const symbolWidth: Ref<number> = ref(5);
+const symbolWidth: Ref<number> = ref(3);
 const screenRatio: Ref<number> = ref(window.innerWidth / window.innerHeight);
 
 // Level variables
@@ -169,10 +170,6 @@ function axiomDrop(): void {
   docking();
   updateMatching();
   workMatch.value = checkWorkMatch();
-}
-
-function maxSequenceLength(axiom: AxiomData): number {
-  return Math.max(axiom.upperSequence.length, axiom.lowerSequence.length);
 }
 
 function docking(): void {
@@ -294,14 +291,6 @@ function updateSelectedAxiomPos(event: MouseEvent) {
     selectedAxiomX.value = mouseX - width / 2;
     selectedAxiomY.value = mouseY - height / 2;
   }
-}
-
-function axiomWidth(axiom: AxiomData, symbolWidth: number) {
-  return maxSequenceLength(axiom) * symbolWidth;
-}
-
-function axiomHeight(symbolWidth: number, screenRatio: number) {
-  return symbolWidth * screenRatio * 2.5;
 }
 
 function checkWorkMatch(): boolean {

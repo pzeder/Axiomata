@@ -4,7 +4,10 @@
     height: symbolHeight + 'hw',
     backgroundColor: symbolData.backgroundColor,
     color: symbolData.textColor,
-    borderColor: (highlight) ? 'rgb(180, 180, 180)' : 'rgb(100, 100, 100)'
+    borderColor: (highlight) ? 'rgb(180, 180, 180)' : 'rgb(100, 100, 100)',
+    borderWidth: (symbolWidth / 13) + 'vw',
+    borderRadius: (symbolWidth / 5) + 'vw',
+    marginLeft: (-symbolWidth / 13) + 'vw'
   }"> {{ symbolData.text }} </div>
 </template>
 

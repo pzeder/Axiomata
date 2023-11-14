@@ -49,7 +49,7 @@ const symbolHeight = computed(() => props.symbolWidth * props.screenRatio);
 }
 
 .connection {
-  position: relative;
+  position: absolute;
   top: 10%;
   height: 80%;
   background-color: rgb(160, 160, 160);

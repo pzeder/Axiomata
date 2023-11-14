@@ -1,6 +1,6 @@
 <template>
   <div class="axiom-bar" :style="{ top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
-    <AxiomContainer v-for="(axiom, index) in axioms" :key="index" :posX="posX" :posY="posY" :width="width"
+    <AxiomContainer v-for="(axiom, index) in axioms" :key="index" :posX="posX" :posY="posY + index * (width * screenRatio)" :width="width"
       :height="containerHeight" :screenRatio="screenRatio" :axiom="axiom" :symbolAlphabet="symbolAlphabet"
       @selectAxiom="selectAxiom" />
   </div>
@@ -34,8 +34,6 @@ const containerHeight = computed(() => props.width * props.screenRatio);
 
 <style>
 .axiom-bar {
-  display: grid;
-  place-items: center;
   position: absolute;
   left: 0;
   background: rgb(252, 223, 203);

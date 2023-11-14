@@ -1,14 +1,15 @@
 <template>
-  <div class="axiom-container">
-    <Axiom :symbolWidth="3" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="symbolAlphabet"
+  <div class="axiom-container" :style="{ left: posX, top: posY, width: width, height: height }">
+    <Axiom :symbolWidth="symbolWidth" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="symbolAlphabet"
       @mousedown="selectAxiom(axiom)" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, computed } from 'vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import Axiom from '@/components/play/Axiom.vue';
+import { maxSequenceLength } from '@/scripts/AxiomMethods';
 
 interface Props {
   posX: number;
@@ -27,6 +28,12 @@ function selectAxiom(axiom: AxiomData): void {
   console.log('child');
   emit('selectAxiom', axiom);
 }
+
+const symbolWidth = computed(() => {
+  const w: number = props.width * 0.8 / maxSequenceLength(props.axiom);
+  const maxWidth: number = props.height * 0.15 / props.screenRatio;
+  return Math.min(w, maxWidth);
+});
 </script>
 
 <style>
