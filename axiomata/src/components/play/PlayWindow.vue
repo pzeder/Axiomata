@@ -28,12 +28,8 @@
         @mousedown="selectAxiom(axiom)" />
     </div>
   </div>
-  <div class="axiom-bar" :style="{ top: axiomBarY + 'vh', width: axiomBarWidth + 'vw', height: axiomBarHeight + 'vh' }">
-    <div class="axiom-container" v-for="(axiom, key) in axioms" :key="key">
-      <Axiom :symbolWidth="3" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="symbolAlphabet"
-        @mousedown="selectAxiom(axiom)" />
-    </div>
-  </div>
+  <AxiomBar :posX="0" :posY="axiomBarY" :width="axiomBarWidth" :height="axiomBarHeight" :screenRatio="screenRatio"
+    :axioms="axioms" :symbolAlphabet="symbolAlphabet" @selectAxiom="selectAxiom" />
   <div class="goal-container" :style="{ top: goalY + 'vh', width: goalWidth + 'vw', height: goalHeight + 'vw' }">
     <Sequence :symbolWidth="4" :screenRatio="screenRatio" :symbolIndices="goalAxiom.lowerSequence"
       :symbolAlphabet="symbolAlphabet" />
@@ -61,6 +57,7 @@
 <script setup lang=ts>
 import Axiom from '@/components/play/Axiom.vue';
 import Sequence from '@/components/play/Sequence.vue';
+import AxiomBar from './AxiomBar.vue';
 import { SessionState, AxiomData, SymbolData } from '@/scripts/Interfaces';
 import axios, { AxiosProgressEvent } from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef, onBeforeUnmount } from 'vue';
@@ -375,30 +372,10 @@ function endOfGame(): boolean {
   position: absolute;
 }
 
-.magic {
-  position: absolute;
-  left: 0;
-  top: 0;
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: gold;
-  border-radius: 20pt;
-  cursor: pointer;
-}
-
 .finish {
   position: absolute;
   font-size: 80pt;
   color: rgb(255, 157, 0);
-}
-
-.axiom-bar {
-  display: grid;
-  place-items: center;
-  position: absolute;
-  left: 0;
-  background: rgb(252, 223, 203);
-  color: #fff;
 }
 
 .derivate-bar {
@@ -417,14 +394,6 @@ function endOfGame(): boolean {
   right: 0;
   background-color: #333;
   color: #fff;
-}
-
-.axiom-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 20vh;
 }
 
 .derivate-container {
