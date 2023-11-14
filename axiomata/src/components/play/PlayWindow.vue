@@ -45,7 +45,7 @@
   }">
     <Axiom v-if="selectedAxiom.upperSequence.length !== 0" :symbolWidth="symbolWidth" :screenRatio="screenRatio"
       :axiomData="selectedAxiom" :symbolAlphabet="symbolAlphabet" :upperHighlights="upperHighlights"
-      :lowerHighlights="lowerHighlights" @mouseup="handleMouseUp" @mousedown="handleMouseDown"> </Axiom>
+      :lowerHighlights="lowerHighlights" @mouseup="axiomDrop" @mousedown="handleMouseDown"> </Axiom>
     <div class="swap-button" v-if="workMatch" @click="handleSwapButton" :style="{
       display: 'grid',
       placeItems: 'center',
@@ -142,15 +142,9 @@ function handleMouseDown() {
   workMatch.value = false;
 }
 
-function handleMouseUp() {
-  docking();
-  updateMatching();
-  workMatch.value = checkWorkMatch();
-}
-
 function handleResize() {
   screenRatio.value = window.innerWidth / window.innerHeight;
-  handleMouseUp();
+  axiomDrop();
 }
 
 function resetHighlights() {
@@ -159,16 +153,34 @@ function resetHighlights() {
   lowerHighlights.value = new Array(selectedAxiom.value.lowerSequence.length).fill(false);
 }
 
+function axiomDrop(): void {
+  if (selectedAxiom.value.upperSequence.length === 0) {
+    return;
+  }
+
+  const centerX: number = selectedAxiomX.value + axiomWidth(selectedAxiom.value, symbolWidth.value) / 2;
+  const centerY: number = selectedAxiomY.value + axiomHeight(symbolWidth.value, screenRatio.value) / 2;
+
+  // Remove the selected Axiom if the mouse is NOT inside workbench
+
+  if (!(centerX > workbenchX.value && centerX < workbenchX.value + workbenchWidth.value
+    && centerY > workbenchY.value && centerY < workbenchY.value + workbenchHeight.value)) {
+    selectedAxiom.value.upperSequence = [];
+    return;
+  }
+
+  docking();
+  updateMatching();
+  workMatch.value = checkWorkMatch();
+}
+
+function maxSequenceLength(axiom: AxiomData): number {
+  return Math.max(axiom.upperSequence.length, axiom.lowerSequence.length);
+}
+
 function docking(): void {
   const vx: number = selectedAxiomX.value;
   const vy: number = selectedAxiomY.value;
-
-  // Drop the selected Axiom if the mouse is NOT inside workbench
-
-  if (!(vx > workbenchX.value && vx < workbenchX.value + workbenchWidth.value
-    && vy > workbenchY.value && vy < workbenchY.value + workbenchHeight.value)) {
-    selectedAxiom.value.upperSequence = [];
-  }
 
   /* Check if selected Axiom is in the upper or lower half of the workbench and
     snap it to the workSequence accordingly */
@@ -278,15 +290,21 @@ function selectAxiom(axiom: AxiomData): void {
 
 function updateSelectedAxiomPos(event: MouseEvent) {
   if (dragging.value) {
-    const x: number = event.clientX / window.innerWidth * 100;
-    const y: number = event.clientY / window.innerHeight * 100;
-    selectedAxiomX.value = x - maxSequence(selectedAxiom.value) * symbolWidth.value / 2;
-    selectedAxiomY.value = y - symbolWidth.value * screenRatio.value * 1.25;
+    const mouseX: number = event.clientX / window.innerWidth * 100;
+    const mouseY: number = event.clientY / window.innerHeight * 100;
+    const width: number = axiomWidth(selectedAxiom.value, symbolWidth.value);
+    const height: number = axiomHeight(symbolWidth.value, screenRatio.value);
+    selectedAxiomX.value = mouseX - width / 2;
+    selectedAxiomY.value = mouseY - height / 2;
   }
 }
 
-function maxSequence(axiom: AxiomData): number {
-  return Math.max(axiom.upperSequence.length, axiom.lowerSequence.length);
+function axiomWidth(axiom: AxiomData, symbolWidth: number) {
+  return maxSequenceLength(axiom) * symbolWidth;
+}
+
+function axiomHeight(symbolWidth: number, screenRatio: number) {
+  return symbolWidth * screenRatio * 2.5;
 }
 
 function checkWorkMatch(): boolean {
