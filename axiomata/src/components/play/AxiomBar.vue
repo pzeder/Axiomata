@@ -1,16 +1,15 @@
 <template>
   <div class="axiom-bar" :style="{ top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
-    <div class="axiom-container" v-for="(axiom, key) in axioms" :key="key">
-      <Axiom :symbolWidth="3" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="symbolAlphabet"
-        @mousedown="selectAxiom(axiom)" />
-    </div>
+    <AxiomContainer v-for="(axiom, index) in axioms" :key="index" :posX="posX" :posY="posY" :width="width"
+      :height="containerHeight" :screenRatio="screenRatio" :axiom="axiom" :symbolAlphabet="symbolAlphabet"
+      @selectAxiom="selectAxiom" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
-import { defineEmits, defineProps } from 'vue';
-import Axiom from '@/components/play/Axiom.vue';
+import { computed, defineProps, defineEmits } from 'vue';
+import AxiomContainer from '@/components/play/AxiomContainer.vue'
 
 interface Props {
   posX: number;
@@ -26,8 +25,11 @@ const props = defineProps<Props>();
 const emit = defineEmits(['selectAxiom']);
 
 function selectAxiom(axiom: AxiomData): void {
+  console.log('parent');
   emit('selectAxiom', axiom);
 }
+
+const containerHeight = computed(() => props.width * props.screenRatio);
 </script>
 
 <style>
@@ -38,13 +40,5 @@ function selectAxiom(axiom: AxiomData): void {
   left: 0;
   background: rgb(252, 223, 203);
   color: #fff;
-}
-
-.axiom-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 20vh;
 }
 </style>
