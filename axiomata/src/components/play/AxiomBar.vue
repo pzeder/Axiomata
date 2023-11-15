@@ -25,7 +25,6 @@ const props = defineProps<Props>();
 const emit = defineEmits(['selectAxiom', 'mouseOver']);
 
 function selectAxiom(axiom: AxiomData): void {
-  console.log('parent');
   emit('selectAxiom', axiom);
 }
 
