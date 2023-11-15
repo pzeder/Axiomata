@@ -29,8 +29,8 @@
     </div>
   </div>
   <AxiomBar :posX="0" :posY="axiomBarY" :width="axiomBarWidth" :height="axiomBarHeight" :screenRatio="screenRatio"
-    :axioms="axioms" :symbolAlphabet="symbolAlphabet" @selectAxiom="selectAxiom"
-    @mouseOver="index => axiomBarMouseOver('axiom', index)" />
+    :axioms="axioms" :symbolAlphabet="symbolAlphabet" :isInserting="true" :insertionIndex="hoverBarIndex"
+    @selectAxiom="selectAxiom" @mouseOver="index => axiomBarMouseOver('axiom', index)" />
   <div class="goal-container" :style="{ top: goalY + 'vh', width: goalWidth + 'vw', height: goalHeight + 'vw' }">
     <Sequence :symbolWidth="4" :screenRatio="screenRatio" :symbolIndices="goalAxiom.lowerSequence"
       :symbolAlphabet="symbolAlphabet" />
@@ -253,8 +253,8 @@ async function fetchLevel(): Promise<void> {
       axioms.value = response.data.axioms;
       derivates.value = response.data.derivates;
       goalAxiom.value = response.data.goalAxiom;
-      sequenceHistory.value = [goalAxiom.value.upperSequence];
-      workSequence.value = goalAxiom.value.upperSequence;
+      sequenceHistory.value = response.data.sequenceHistory;
+      workSequence.value = sequenceHistory.value[sequenceHistory.value.length - 1];
     } else {
       console.error('Server responded with status', response.status);
     }
@@ -342,6 +342,27 @@ function swap(): void {
 
   sequenceHistory.value.push(newSequence);
   workSequence.value = newSequence;
+
+  updateSequenceHistory();
+}
+
+async function updateSequenceHistory(): Promise<void> {
+  try {
+    const updatedData = {
+      saveID: sessionState.value.saveID,
+      chapterName: sessionState.value.chapterName,
+      levelName: sessionState.value.levelName,
+      newHistory: sequenceHistory.value
+    };
+    const response = await axios.patch(`http://localhost:3000/sequenceHistory`, updatedData);
+    if (response.status === 200) {
+      console.log('Course updated successfully:', response.data);
+    } else {
+      console.error('Server responded with status:', response.status);
+    }
+  } catch (error) {
+    console.error('Error updating data:', error);
+  }
 }
 
 function endOfGame(): boolean {

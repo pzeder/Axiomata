@@ -19,6 +19,8 @@ interface Props {
   screenRatio: number;
   axioms: AxiomData[];
   symbolAlphabet: SymbolData[];
+  isInserting: boolean;
+  insertionIndex: number;
 }
 const props = defineProps<Props>();
 

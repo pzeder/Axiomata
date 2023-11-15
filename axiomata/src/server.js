@@ -74,7 +74,8 @@ app.post('/newSaveState', async (req, res) => {
     const getLevels = ch => ch.levels.map(lev => ({
       levelName: lev.levelName,
       goalAxiom: lev.goalAxiom,
-      status: 'todo'
+      status: 'todo',
+      sequenceHistory: [lev.goalAxiom.upperSequence]
     }));
 
     const courseSave = {
@@ -109,9 +110,36 @@ app.get('/level', async (req, res) => {
       symbolAlphabet: saveState.symbolAlphabet,
       axioms: saveState.axioms,
       derivates: saveState.derivates,
-      goalAxiom: level.goalAxiom
+      goalAxiom: level.goalAxiom,
+      sequenceHistory: level.sequenceHistory
     });
     res.json(levelData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
+app.patch('/sequenceHistory', async (req, res) => {
+  try {
+    const { saveID, chapterName, levelName, newHistory } = req.body;
+    const filter = ({ _id: new ObjectId(saveID) });
+    let saveState = await db.collection('SaveStates').findOne(filter);
+    const chapter = saveState.chapters.find(ch => ch.chapterName === chapterName);
+    const level = chapter.levels.find(lev => lev.levelName === levelName);
+    const chapterIndex = saveState.chapters.findIndex(ch => ch.chapterName === chapterName);
+    const levelIndex = saveState.chapters[chapterIndex].levels.findIndex(lev => lev.levelName === levelName);
+
+    const updateLevel = {
+      $set: { [`chapters.${chapterIndex}.levels.${levelIndex}.sequenceHistory`]: newHistory },
+    };
+
+    let result = await db.collection('SaveStates').updateOne(filter, updateLevel);
+
+    if (result.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to update status' });
+    }
+
+    res.json({ message: 'SequenceHistory updated successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
