@@ -29,7 +29,8 @@
     </div>
   </div>
   <AxiomBar :posX="0" :posY="axiomBarY" :width="axiomBarWidth" :height="axiomBarHeight" :screenRatio="screenRatio"
-    :axioms="axioms" :symbolAlphabet="symbolAlphabet" @selectAxiom="selectAxiom" />
+    :axioms="axioms" :symbolAlphabet="symbolAlphabet" @selectAxiom="selectAxiom"
+    @mouseOver="index => axiomBarMouseOver('axiom', index)" />
   <div class="goal-container" :style="{ top: goalY + 'vh', width: goalWidth + 'vw', height: goalHeight + 'vw' }">
     <Sequence :symbolWidth="4" :screenRatio="screenRatio" :symbolIndices="goalAxiom.lowerSequence"
       :symbolAlphabet="symbolAlphabet" />
@@ -114,6 +115,10 @@ let nearSequence: number[];
 let farSequence: number[];
 let nearHighlights: Ref<boolean[]>;
 
+// AxiomBar variables
+const hoverBarName: Ref<string> = ref("");
+const hoverBarIndex: Ref<number> = ref(-1);
+
 onMounted(() => {
   document.body.classList.add('no-scroll');
   window.addEventListener('resize', handleResize);
@@ -143,6 +148,11 @@ function handleMouseDown() {
 function handleResize() {
   screenRatio.value = window.innerWidth / window.innerHeight;
   axiomDrop();
+}
+
+function axiomBarMouseOver(barName: string, index: number) {
+  hoverBarName.value = barName;
+  hoverBarIndex.value = index;
 }
 
 function resetHighlights() {

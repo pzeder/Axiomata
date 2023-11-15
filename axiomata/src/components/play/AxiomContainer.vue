@@ -2,7 +2,7 @@
   <div class="axiom-container"
     :style="{ left: posX, top: posY + index * (width * screenRatio), width: width, height: height }">
     <Axiom :symbolWidth="symbolWidth" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="symbolAlphabet"
-      @mousedown="selectAxiom(axiom)" />
+      @mousedown="selectAxiom(axiom)" @mouseenter="mouseOver" />
   </div>
 </template>
 
@@ -24,11 +24,15 @@ interface Props {
 }
 const props = defineProps<Props>();
 
-const emit = defineEmits(['selectAxiom']);
+const emit = defineEmits(['selectAxiom', 'mouseOver']);
 
 function selectAxiom(axiom: AxiomData): void {
   console.log('child');
   emit('selectAxiom', axiom);
+}
+
+function mouseOver(): void {
+  emit('mouseOver', props.index);
 }
 
 const symbolWidth = computed(() => {
