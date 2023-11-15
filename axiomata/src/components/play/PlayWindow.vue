@@ -17,9 +17,6 @@
         left: ((workbenchWidth - workSequence.length * symbolWidth) / 2) + 'vw',
         top: ((workbenchHeight - symbolWidth * screenRatio) / 2) + 'vh'
       }" />
-    <div class="finish" v-if="levelFinsihed"> Level geschafft! <br>
-      <button @click="openLevelMenu"> zurück zur Levelauswahl </button>
-    </div>
   </div>
   <div class="derivate-bar"
     :style="{ left: derivateBarX + 'vw', width: derivateBarWidth + 'vw', height: derivateBarHeight + 'vh' }">
@@ -35,6 +32,8 @@
     <Sequence :symbolWidth="4" :screenRatio="screenRatio" :symbolIndices="goalAxiom.lowerSequence"
       :symbolAlphabet="symbolAlphabet" />
   </div>
+  <VictoryWindow v-if="levelFinsihed" :posX="workbenchX" :posY="headBarHeight" :width="workbenchWidth"
+    :height="workbenchHeight" @openLevelMenu="openLevelMenu" />
   <div :style="{
     position: 'absolute',
     left: selectedAxiomX + 'vw',
@@ -59,6 +58,7 @@
 import Axiom from '@/components/play/Axiom.vue';
 import Sequence from '@/components/play/Sequence.vue';
 import AxiomBar from './AxiomBar.vue';
+import VictoryWindow from './VictoryWindow.vue';
 import { SessionState, AxiomData, SymbolData } from '@/scripts/Interfaces';
 import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef, onBeforeUnmount } from 'vue';
@@ -125,7 +125,6 @@ onMounted(() => {
   window.addEventListener('mousemove', updateSelectedAxiomPos);
   fetchLevel();
 });
-
 
 const emit = defineEmits(['openLevelMenu']);
 
@@ -239,7 +238,7 @@ function updateMatching(): void {
 
 function finishLevel(): void {
   levelFinsihed.value = true;
-  updateCourse();
+  updateLevelEnd();
 }
 
 async function fetchLevel(): Promise<void> {
@@ -263,7 +262,7 @@ async function fetchLevel(): Promise<void> {
   }
 }
 
-async function updateCourse(): Promise<void> {
+async function updateLevelEnd(): Promise<void> {
   try {
     const updatedData = {
       saveID: sessionState.value.saveID,
@@ -390,12 +389,6 @@ function endOfGame(): boolean {
 
 .workbench {
   position: absolute;
-}
-
-.finish {
-  position: absolute;
-  font-size: 80pt;
-  color: rgb(255, 157, 0);
 }
 
 .derivate-bar {
