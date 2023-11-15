@@ -33,7 +33,7 @@
       :symbolAlphabet="symbolAlphabet" />
   </div>
   <VictoryWindow v-if="levelFinsihed" :posX="workbenchX" :posY="headBarHeight" :width="workbenchWidth"
-    :height="workbenchHeight" @openLevelMenu="openLevelMenu" />
+    :height="workbenchHeight" @openLevelMenu="openLevelMenu" @nextLevel="nextLevel" />
   <div :style="{
     position: 'absolute',
     left: selectedAxiomX + 'vw',
@@ -102,6 +102,8 @@ const selectedAxiomX: Ref<number> = ref(0);
 const selectedAxiomY: Ref<number> = ref(0);
 const dragging: Ref<boolean> = ref(false);
 const mouseOverWorkbench: Ref<boolean> = ref(false);
+const nextLevelName: Ref<string> = ref("");
+const nextChapterName: Ref<string> = ref("");
 
 // Workbench variables
 const dockIndex: Ref<number> = ref(0);
@@ -123,7 +125,7 @@ onMounted(() => {
   document.body.classList.add('no-scroll');
   window.addEventListener('resize', handleResize);
   window.addEventListener('mousemove', updateSelectedAxiomPos);
-  fetchLevel();
+  fetchLevel(sessionState.value.chapterName, sessionState.value.levelName);
 });
 
 const emit = defineEmits(['openLevelMenu']);
@@ -241,11 +243,11 @@ function finishLevel(): void {
   updateLevelEnd();
 }
 
-async function fetchLevel(): Promise<void> {
+async function fetchLevel(chapterName: string, levelName: string): Promise<void> {
   try {
     const query: string = '?saveID=' + sessionState.value.saveID
-      + '&chapterName=' + sessionState.value.chapterName
-      + '&levelName=' + sessionState.value.levelName;
+      + '&chapterName=' + chapterName
+      + '&levelName=' + levelName;
     const response = await axios.get('http://localhost:3000/level' + query);
     if (response.status === 200) {
       symbolAlphabet.value = response.data.symbolAlphabet;
@@ -254,6 +256,8 @@ async function fetchLevel(): Promise<void> {
       goalAxiom.value = response.data.goalAxiom;
       sequenceHistory.value = response.data.sequenceHistory;
       workSequence.value = sequenceHistory.value[sequenceHistory.value.length - 1];
+      nextChapterName.value = response.data.nextChapterName;
+      nextLevelName.value = response.data.nextLevelName;
     } else {
       console.error('Server responded with status', response.status);
     }
@@ -374,6 +378,11 @@ function endOfGame(): boolean {
     }
   }
   return true;
+}
+
+function nextLevel(): void {
+  levelFinsihed.value = false;
+  fetchLevel(nextChapterName.value, nextLevelName.value);
 }
 </script>
 

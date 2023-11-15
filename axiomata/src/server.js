@@ -106,12 +106,28 @@ app.get('/level', async (req, res) => {
     const saveState = await db.collection('SaveStates').findOne(filter);
     const chapter = saveState.chapters.find(ch => ch.chapterName === chapterName);
     const level = chapter.levels.find(lev => lev.levelName === levelName);
+    const chapterIndex = saveState.chapters.findIndex(ch => ch.chapterName === chapterName);
+    const levelIndex = saveState.chapters[chapterIndex].levels.findIndex(lev => lev.levelName === levelName);
+    let nextChapterIndex = chapterIndex;
+    let nextLevelIndex = levelIndex + 1;
+    let nextChapterName = "";
+    let nextLevelName = "";
+    if (levelIndex >= chapter.levels.length) {
+      nextChapterIndex++;
+      nextLevelIndex = 0;
+    }
+    if (nextChapterIndex < saveState.chapters) {
+      nextChapterName = saveState.chapters[nextChapterIndex];
+      nextLevelName = saveState.chapters[nextChapterIndex].levels[0]
+    }
     const levelData = ({
       symbolAlphabet: saveState.symbolAlphabet,
       axioms: saveState.axioms,
       derivates: saveState.derivates,
       goalAxiom: level.goalAxiom,
-      sequenceHistory: level.sequenceHistory
+      sequenceHistory: level.sequenceHistory,
+      nextChapterName: nextChapterName,
+      nextLevelName: nextLevelName
     });
     res.json(levelData);
   } catch (error) {
@@ -124,8 +140,6 @@ app.patch('/sequenceHistory', async (req, res) => {
     const { saveID, chapterName, levelName, newHistory } = req.body;
     const filter = ({ _id: new ObjectId(saveID) });
     let saveState = await db.collection('SaveStates').findOne(filter);
-    const chapter = saveState.chapters.find(ch => ch.chapterName === chapterName);
-    const level = chapter.levels.find(lev => lev.levelName === levelName);
     const chapterIndex = saveState.chapters.findIndex(ch => ch.chapterName === chapterName);
     const levelIndex = saveState.chapters[chapterIndex].levels.findIndex(lev => lev.levelName === levelName);
 
