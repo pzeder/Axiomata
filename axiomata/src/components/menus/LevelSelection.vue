@@ -13,14 +13,13 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref, defineProps, defineEmits } from 'vue';
 import axios from 'axios';
-import { SessionState } from '@/scripts/Interfaces';
 
 interface Props {
-  sessionState: SessionState;
+  saveID: any;
 }
 
 const props = defineProps<Props>();
-const sessionState: Ref<SessionState> = ref(props.sessionState);
+const saveID: Ref<any> = ref(props.saveID);
 
 interface ChapterHeader {
   chapterName: string;
@@ -57,7 +56,7 @@ function openStartMenu() {
 
 async function fetchChapters(): Promise<void> {
   try {
-    const query: string = '?saveID=' + sessionState.value.saveID;
+    const query: string = '?saveID=' + saveID.value;
     const response = await axios.get('http://localhost:3000/chapterHeaders' + query);
     if (response.status === 200) {
       chapters.value = [];

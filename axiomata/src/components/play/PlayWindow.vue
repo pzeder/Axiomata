@@ -2,7 +2,7 @@
   <div class="headbar" :style="{ height: headBarHeight + 'vh' }">
     <button :style="{ position: 'relative', width: 5 + 'vw' }" @click="openLevelMenu"> Zurück </button>
     <div :style="{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 100 + '%' }">
-      <div :style="{ color: 'white' }"> {{ sessionState.levelName }} </div>
+      <div :style="{ color: 'white' }"> {{ levelName }} </div>
     </div>
   </div>
   <div class="workbench" :style="{
@@ -59,16 +59,17 @@ import Axiom from '@/components/play/Axiom.vue';
 import Sequence from '@/components/play/Sequence.vue';
 import AxiomBar from './AxiomBar.vue';
 import VictoryWindow from './VictoryWindow.vue';
-import { SessionState, AxiomData, SymbolData } from '@/scripts/Interfaces';
+import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef, onBeforeUnmount } from 'vue';
 import { axiomHeight, axiomWidth } from '@/scripts/AxiomMethods';
 
 interface Props {
-  sessionState: SessionState;
+  saveID: any;
+  chapterName: string;
+  levelName: string;
 }
 const props = defineProps<Props>();
-const sessionState: Ref<SessionState> = ref(props.sessionState);
 
 // Layout variables
 const headBarHeight: Ref<number> = ref(5);
@@ -89,6 +90,9 @@ const symbolWidth: Ref<number> = ref(3);
 const screenRatio: Ref<number> = ref(window.innerWidth / window.innerHeight);
 
 // Level variables
+const saveID: Ref<any> = ref(props.saveID);
+const chapterName: Ref<string> = ref(props.chapterName);
+const levelName: Ref<string> = ref(props.levelName);
 const symbolAlphabet: Ref<SymbolData[]> = ref([]);
 const axioms: Ref<AxiomData[]> = ref([]);
 const derivates: Ref<AxiomData[]> = ref([]);
@@ -125,7 +129,7 @@ onMounted(() => {
   document.body.classList.add('no-scroll');
   window.addEventListener('resize', handleResize);
   window.addEventListener('mousemove', updateSelectedAxiomPos);
-  fetchLevel(sessionState.value.chapterName, sessionState.value.levelName);
+  fetchLevel();
 });
 
 const emit = defineEmits(['openLevelMenu']);
@@ -243,11 +247,12 @@ function finishLevel(): void {
   updateLevelEnd();
 }
 
-async function fetchLevel(chapterName: string, levelName: string): Promise<void> {
+async function fetchLevel(): Promise<void> {
   try {
-    const query: string = '?saveID=' + sessionState.value.saveID
-      + '&chapterName=' + chapterName
-      + '&levelName=' + levelName;
+    const query: string = '?saveID=' + saveID.value
+      + '&chapterName=' + chapterName.value
+      + '&levelName=' + levelName.value;
+    console.log(query);
     const response = await axios.get('http://localhost:3000/level' + query);
     if (response.status === 200) {
       symbolAlphabet.value = response.data.symbolAlphabet;
@@ -258,6 +263,7 @@ async function fetchLevel(chapterName: string, levelName: string): Promise<void>
       workSequence.value = sequenceHistory.value[sequenceHistory.value.length - 1];
       nextChapterName.value = response.data.nextChapterName;
       nextLevelName.value = response.data.nextLevelName;
+      console.log(nextChapterName.value, nextLevelName.value);
     } else {
       console.error('Server responded with status', response.status);
     }
@@ -269,9 +275,9 @@ async function fetchLevel(chapterName: string, levelName: string): Promise<void>
 async function updateLevelEnd(): Promise<void> {
   try {
     const updatedData = {
-      saveID: sessionState.value.saveID,
-      chapterName: sessionState.value.chapterName,
-      levelName: sessionState.value.levelName,
+      saveID: saveID.value,
+      chapterName: chapterName.value,
+      levelName: levelName.value,
       newStatus: 'done'
     };
     const response = await axios.patch(`http://localhost:3000/levelEnd`, updatedData);
@@ -324,7 +330,6 @@ function handleSwapButton(): void {
 }
 
 function swap(): void {
-  const newLength: number = workSequence.value.length - nearSequence.length + farSequence.length;
   let newSequence: number[] = [];
 
   // Keep all symbols left of the match
@@ -352,9 +357,9 @@ function swap(): void {
 async function updateSequenceHistory(): Promise<void> {
   try {
     const updatedData = {
-      saveID: sessionState.value.saveID,
-      chapterName: sessionState.value.chapterName,
-      levelName: sessionState.value.levelName,
+      saveID: saveID.value,
+      chapterName: chapterName.value,
+      levelName: levelName.value,
       newHistory: sequenceHistory.value
     };
     const response = await axios.patch(`http://localhost:3000/sequenceHistory`, updatedData);
@@ -382,7 +387,9 @@ function endOfGame(): boolean {
 
 function nextLevel(): void {
   levelFinsihed.value = false;
-  fetchLevel(nextChapterName.value, nextLevelName.value);
+  chapterName.value = nextChapterName.value;
+  levelName.value = nextLevelName.value;
+  fetchLevel();
 }
 </script>
 

@@ -112,13 +112,14 @@ app.get('/level', async (req, res) => {
     let nextLevelIndex = levelIndex + 1;
     let nextChapterName = "";
     let nextLevelName = "";
-    if (levelIndex >= chapter.levels.length) {
+    console.log(nextLevelIndex, chapter.levels.length);
+    if (nextLevelIndex >= chapter.levels.length) {
       nextChapterIndex++;
       nextLevelIndex = 0;
     }
-    if (nextChapterIndex < saveState.chapters) {
-      nextChapterName = saveState.chapters[nextChapterIndex];
-      nextLevelName = saveState.chapters[nextChapterIndex].levels[0]
+    if (nextChapterIndex < saveState.chapters.length) {
+      nextChapterName = saveState.chapters[nextChapterIndex].chapterName;
+      nextLevelName = saveState.chapters[nextChapterIndex].levels[nextLevelIndex].levelName;
     }
     const levelData = ({
       symbolAlphabet: saveState.symbolAlphabet,

@@ -1,10 +1,3 @@
-export interface SessionState {
-    userName: string;
-    saveID: any;
-    chapterName: string;
-    levelName: string;
-  }
-
 export interface AxiomData {
     upperSequence: number[];
     lowerSequence: number[];
