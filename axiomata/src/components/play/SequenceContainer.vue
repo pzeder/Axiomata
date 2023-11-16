@@ -1,13 +1,13 @@
 <template>
   <div class="sequence-container"
     :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vw' }">
-    <Sequence :symbolWidth="4" :screenRatio="screenRatio" :symbolIndices="symbolIndices"
+    <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="symbolIndices"
       :symbolAlphabet="symbolAlphabet" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { computed, defineProps } from 'vue';
 import { SymbolData } from '@/scripts/Interfaces';
 import Sequence from '@/components/play/Sequence.vue';
 
@@ -22,6 +22,11 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const symbolWidth = computed(() => {
+  const w: number = 0.8 * props.width / props.symbolIndices.length;
+  const maxWidth: number = 0.33 * props.width;
+  return Math.min(w, maxWidth);
+});
 </script>
 
 <style>
@@ -30,8 +35,8 @@ const props = defineProps<Props>();
   justify-content: center;
   align-items: center;
   position: absolute;
-  right: 0;
-  background-color: #333;
-  color: #fff;
+  background-color: #ffffff;
+  border: 1vw solid rgb(63, 196, 244);
+  ;
 }
 </style>
