@@ -33,7 +33,8 @@
       :symbolAlphabet="symbolAlphabet" />
   </div>
   <VictoryWindow v-if="levelFinsihed" :posX="workbenchX" :posY="headBarHeight" :width="workbenchWidth"
-    :height="workbenchHeight" @openLevelMenu="openLevelMenu" @nextLevel="nextLevel" />
+    :height="workbenchHeight" :hasNextLevel="nextChapterName != ''" @openLevelMenu="openLevelMenu"
+    @nextLevel="nextLevel" />
   <div :style="{
     position: 'absolute',
     left: selectedAxiomX + 'vw',

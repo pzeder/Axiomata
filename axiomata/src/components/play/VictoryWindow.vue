@@ -1,9 +1,15 @@
 <template>
-  <div class="victory-container" :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }"> 
-    <div class="victory-text" :style="{ left: (width * 0.2) + 'vw', top: (height * 0.3) + 'vh', width: width + 'vw', height: height + 'vh'}"> Level
-    geschafft! </div> 
-    <button class="back" :style="{ left: (width * 0.2) + 'vw', top: (height * 0.65) + 'vh', width: (width * 0.3) + 'vw' }" @click="emit('openLevelMenu')"> Zurück zum Menü </button>
-    <button class="back" :style="{ left: (width * 0.6) + 'vw', top: (height * 0.65) + 'vh', width: (width * 0.3) + 'vw' }" @click="emit('nextLevel')"> Nächstes Level </button>
+  <div class="victory-container"
+    :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
+    <div class="victory-text"
+      :style="{ left: (width * 0.2) + 'vw', top: (height * 0.3) + 'vh', width: width + 'vw', height: height + 'vh' }">
+      Level
+      geschafft! </div>
+    <button class="back" :style="{ left: (width * 0.2) + 'vw', top: (height * 0.65) + 'vh', width: (width * 0.3) + 'vw' }"
+      @click="emit('openLevelMenu')"> Zurück zum Menü </button>
+    <button v-if="hasNextLevel" class="back"
+      :style="{ left: (width * 0.6) + 'vw', top: (height * 0.65) + 'vh', width: (width * 0.3) + 'vw' }"
+      @click="emit('nextLevel')"> Nächstes Level </button>
   </div>
 </template>
 
@@ -15,6 +21,7 @@ interface Props {
   posY: number;
   width: number;
   height: number;
+  hasNextLevel: boolean;
 }
 const props = defineProps<Props>();
 
@@ -38,5 +45,4 @@ const emit = defineEmits(['openLevelMenu', 'nextLevel']);
   position: absolute;
   font-size: 40pt;
   background-color: white;
-}
-</style>
+}</style>

@@ -112,7 +112,6 @@ app.get('/level', async (req, res) => {
     let nextLevelIndex = levelIndex + 1;
     let nextChapterName = "";
     let nextLevelName = "";
-    console.log(nextLevelIndex, chapter.levels.length);
     if (nextLevelIndex >= chapter.levels.length) {
       nextChapterIndex++;
       nextLevelIndex = 0;
