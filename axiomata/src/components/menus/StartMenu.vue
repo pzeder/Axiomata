@@ -6,9 +6,12 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits } from 'vue';
+import { Ref, defineEmits, ref } from 'vue';
 
 const emit = defineEmits(['openNewCourseMenu', 'openSaveStateMenu']);
+
+const screenWidth: Ref<number> = ref(window.innerWidth);
+const screenHeight: Ref<number> = ref(window.innerHeight);
 
 function openNewCourseMenu(): void {
   emit('openNewCourseMenu');
@@ -23,9 +26,12 @@ function openSaveStateMenu(): void {
 .start-container {
   display: flex;
   flex-direction: column;
+  margin-top: 30vh;
 }
 
 .start-container button {
-  margin-bottom: 10px;
+  margin-bottom: 10vw;
+  font-size: 50pt;
+  color: black;
 }
 </style>

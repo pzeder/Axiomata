@@ -1,5 +1,5 @@
 <template>
-  <button v-if="showHomeButton" @click="openStartMenu"> Home </button>
+  <button class="home" v-if="showHomeButton" @click="openStartMenu"> Home </button>
   <StartMenu v-if="showStartMenu" @openNewCourseMenu="openNewCourseMenu" @openSaveStateMenu="openSaveStateMenu" />
   <SaveStateSelection v-if="showSaveSelection" :userName="userName" @saveStateSelected="saveStateSelected"
     @openNewCourseMenu="openNewCourseMenu" @openStartMenu="openStartMenu" />
@@ -100,5 +100,10 @@ body {
 button {
   font-family: 'Fredoka One', cursive;
   border-radius: 20pt;
+}
+
+.home {
+  font-size: 20pt;
+  margin-top: 5vh;
 }
 </style>

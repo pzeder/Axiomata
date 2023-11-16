@@ -66,5 +66,6 @@ async function fetchCourseSaves(): Promise<void> {
 
 .save-container button {
   margin-bottom: 10px;
+  font-size: 40pt;
 }
 </style>

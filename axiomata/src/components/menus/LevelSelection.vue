@@ -7,7 +7,7 @@
       {{ level.levelName }}
     </button>
   </div>
-  <button @click="openSaveStateMenu"> Ladebidschirm </button>
+  <button :style="{fontSize: 20 + 'pt'}" @click="openSaveStateMenu"> Ladebidschirm </button>
 </template>
 
 <script setup lang="ts">
@@ -74,10 +74,11 @@ async function fetchChapterHeaders(): Promise<void> {
 .chapter-container {
   display: flex;
   flex-direction: column;
-  font-size: 30px;
+  font-size: 50pt;
 }
 
 .chapter-container button {
   margin-bottom: 10px;
+  font-size: 30pt;
 }
 </style>

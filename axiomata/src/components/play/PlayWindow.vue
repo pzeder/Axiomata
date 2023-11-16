@@ -65,7 +65,7 @@ import SequenceContainer from '@/components/play/SequenceContainer.vue';
 import VictoryWindow from './VictoryWindow.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import axios from 'axios';
-import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef, onBeforeUnmount } from 'vue';
+import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount } from 'vue';
 import { axiomHeight, axiomWidth } from '@/scripts/AxiomMethods';
 
 interface Props {

@@ -67,9 +67,11 @@ async function fetchCourseHeaders(): Promise<void> {
 .course-container {
   display: flex;
   flex-direction: column;
+  margin-top: 10vh;
 }
 
 .course-container button {
   margin-bottom: 10px;
+  font-size: 40pt;
 }
 </style>

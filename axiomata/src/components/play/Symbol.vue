@@ -35,5 +35,6 @@ const symbolHeight = computed(() => props.symbolWidth * props.screenRatio);
   border-radius: 1vw;
   margin-left: -0.5vw;
   user-select: none;
+  font-size: 20pt;
 }
 </style>
