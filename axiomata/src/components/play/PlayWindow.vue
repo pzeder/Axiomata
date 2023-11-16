@@ -28,10 +28,8 @@
   <AxiomBar :posX="0" :posY="axiomBarY" :width="axiomBarWidth" :height="axiomBarHeight" :screenRatio="screenRatio"
     :axioms="axioms" :symbolAlphabet="symbolAlphabet" :isInserting="true" :insertionIndex="hoverBarIndex"
     @selectAxiom="selectAxiom" @mouseOver="index => axiomBarMouseOver('axiom', index)" />
-  <div class="goal-container" :style="{ top: goalY + 'vh', width: goalWidth + 'vw', height: goalHeight + 'vw' }">
-    <Sequence :symbolWidth="4" :screenRatio="screenRatio" :symbolIndices="goalAxiom.lowerSequence"
-      :symbolAlphabet="symbolAlphabet" />
-  </div>
+  <SequenceContainer :posX="goalX" :posY="goalY" :width="goalWidth" :height="goalHeight" :screenRatio="screenRatio"
+    :symbolIndices="goalAxiom.lowerSequence" :symbolAlphabet="symbolAlphabet" />
   <VictoryWindow v-if="levelFinsihed" :posX="workbenchX" :posY="headBarHeight" :width="workbenchWidth"
     :height="workbenchHeight" :hasNextLevel="nextChapterName != ''" @openLevelMenu="openLevelMenu"
     @nextLevel="nextLevel" />
@@ -59,6 +57,7 @@
 import Axiom from '@/components/play/Axiom.vue';
 import Sequence from '@/components/play/Sequence.vue';
 import AxiomBar from './AxiomBar.vue';
+import SequenceContainer from '@/components/play/SequenceContainer.vue';
 import VictoryWindow from './VictoryWindow.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import axios from 'axios';
@@ -84,6 +83,7 @@ const workbenchX: Ref<number> = ref(20);
 const workbenchY: Ref<number> = ref(5);
 const workbenchWidth: Ref<number> = ref(80);
 const workbenchHeight: Ref<number> = ref(70);
+const goalX: Ref<number> = ref(90);
 const goalY: Ref<number> = ref(5);
 const goalWidth: Ref<number> = ref(10);
 const goalHeight: Ref<number> = ref(10);
@@ -413,16 +413,6 @@ function nextLevel(): void {
   position: absolute;
   bottom: 0;
   background: rgb(208, 237, 248);
-  color: #fff;
-}
-
-.goal-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  right: 0;
-  background-color: #333;
   color: #fff;
 }
 
