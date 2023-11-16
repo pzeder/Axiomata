@@ -51,6 +51,10 @@
       height: (symbolWidth * screenRatio) + 'vh',
     }"> SWAP </div>
   </div>
+  <div v-if="goalMatch" @click="finishLevel"
+    :style="{ position: 'absolute', userSelect: 'none', color: 'black', left: (goalX + goalWidth / 2) + 'vw', top: (goalY + goalHeight / 2) + 'vh', width: (goalWidth) + 'vw', height: goalHeight + 'vh' }">
+    MATCH
+  </div>
 </template>
 
 <script setup lang=ts>
@@ -100,6 +104,7 @@ const derivates: Ref<AxiomData[]> = ref([]);
 const goalAxiom: Ref<AxiomData> = ref({ upperSequence: [], lowerSequence: [] });
 const levelFinsihed: Ref<boolean> = ref(false);
 const sequenceHistory: Ref<number[][]> = ref([[]]);
+const goalMatch: Ref<boolean> = ref(false);
 
 // Cursor variables
 const selectedAxiom: Ref<AxiomData> = ref({ upperSequence: [], lowerSequence: [] });
@@ -245,6 +250,7 @@ function updateMatching(): void {
 
 function finishLevel(): void {
   levelFinsihed.value = true;
+  goalMatch.value = false;
   updateLevelEnd();
 }
 
@@ -322,9 +328,7 @@ function checkWorkMatch(): boolean {
 
 function handleSwapButton(): void {
   swap();
-  if (endOfGame()) {
-    finishLevel();
-  }
+  updateGoalMatch();
   selectedAxiom.value.upperSequence = [];
   resetHighlights();
   workMatch.value = false;
@@ -372,6 +376,10 @@ async function updateSequenceHistory(): Promise<void> {
   } catch (error) {
     console.error('Error updating data:', error);
   }
+}
+
+function updateGoalMatch(): void {
+  goalMatch.value = endOfGame();
 }
 
 function endOfGame(): boolean {
