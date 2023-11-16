@@ -3,7 +3,7 @@
     {{ chapter.chapterName }}
     <button v-for="level in chapter.levelHeaders" :key="level.levelName"
       @click="trySelectingLevel(chapter.unlocked, chapter.chapterName, level.levelName)"
-      :style="{ backgroundColor: (!chapter.unlocked ? 'rgb(150,150,150)' : (level.status === 'todo' ? 'rgb(255,100,100)' : 'rgb(100,255,100)')) }">
+      :style="{ backgroundColor: (!chapter.unlocked ? 'rgb(150,150,150)' : (level.status === 'todo' ? '#F53227' : (level.status === 'busy' ? '#F5AA27' : '#3FB56E'))) }">
       {{ level.levelName }}
     </button>
   </div>
@@ -35,7 +35,7 @@ interface LevelHeader {
 const chapters: Ref<ChapterHeader[]> = ref([]);
 
 onMounted(() => {
-  fetchChapters();
+  fetchChapterHeaders();
 });
 
 const emit = defineEmits(['levelSelected', 'openSaveStateMenu', 'openStartMenu']);
@@ -54,7 +54,7 @@ function openStartMenu() {
   emit('openStartMenu');
 }
 
-async function fetchChapters(): Promise<void> {
+async function fetchChapterHeaders(): Promise<void> {
   try {
     const query: string = '?saveID=' + saveID.value;
     const response = await axios.get('http://localhost:3000/chapterHeaders' + query);

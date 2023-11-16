@@ -40,7 +40,7 @@ app.get('/chapterHeaders', async (req, res) => {
 
     const getLevelHeaders = ch => ch.levels.map(lev => ({
       levelName: lev.levelName,
-      status: lev.status
+      status: (lev.status === 'todo' && lev.sequenceHistory.length > 1) ? 'busy' : lev.status
     }));
 
     const chapterHeaders = saveState.chapters.map(ch => ({
