@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { computed, defineProps, Ref, ref, withDefaults } from 'vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
-import Sequence from '@/components/play/Sequence.vue';
+import Sequence from '@/components/axiom/Sequence.vue';
 
 interface Props {
   symbolWidth: number;

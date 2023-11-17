@@ -53,10 +53,10 @@
 </template>
 
 <script setup lang=ts>
-import Axiom from '@/components/play/Axiom.vue';
-import Sequence from '@/components/play/Sequence.vue';
+import Axiom from '@/components/axiom/Axiom.vue';
+import Sequence from '@/components/axiom/Sequence.vue';
 import AxiomBar from './AxiomBar.vue';
-import SequenceContainer from '@/components/play/SequenceContainer.vue';
+import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import VictoryWindow from './VictoryWindow.vue';
 import HeadBar from '@/components/play/HeadBar.vue'
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';

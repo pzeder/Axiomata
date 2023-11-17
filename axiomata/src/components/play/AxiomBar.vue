@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import { computed, defineProps, defineEmits } from 'vue';
-import AxiomContainer from '@/components/play/AxiomContainer.vue'
+import AxiomContainer from '@/components/axiom/AxiomContainer.vue'
 
 interface Props {
   posX: number;

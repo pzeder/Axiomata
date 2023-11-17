@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 import { SymbolData } from '@/scripts/Interfaces';
-import Sequence from '@/components/play/Sequence.vue';
+import Sequence from '@/components/axiom/Sequence.vue';
 
 interface Props {
   posX: number;

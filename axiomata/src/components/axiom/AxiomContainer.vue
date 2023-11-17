@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, computed } from 'vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
-import Axiom from '@/components/play/Axiom.vue';
+import Axiom from '@/components/axiom/Axiom.vue';
 import { maxSequenceLength } from '@/scripts/AxiomMethods';
 
 interface Props {
