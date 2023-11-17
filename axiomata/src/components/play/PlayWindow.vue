@@ -1,18 +1,8 @@
 <template>
   <HeadBar :height="headBarHeight" :levelName="levelName" @openLevelMenu="emit('openLevelMenu')" />
-  <div class="workbench" :style="{
-    left: workbenchX + 'vw',
-    top: workbenchY + 'vh',
-    width: workbenchWidth + 'vw',
-    height: workbenchHeight + 'vh'
-  }" @mouseenter="() => { mouseOverWorkbench = true }" @mouseleave="() => { mouseOverWorkbench = false }">
-    <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="workSequence"
-      :highlights="workHighlights" :symbolAlphabet="symbolAlphabet" :style="{
-        position: 'absolute',
-        left: ((workbenchWidth - workSequence.length * symbolWidth) / 2) + 'vw',
-        top: ((workbenchHeight - symbolWidth * screenRatio) / 2) + 'vh'
-      }" />
-  </div>
+  <Workbench :posX="workbenchX" :posY="workbenchY" :width="workbenchWidth" :height="workbenchHeight"
+    :symbolWidth="symbolWidth" :screenRatio="screenRatio" :workHighlights="workHighlights" :sequence="workSequence"
+    :symbolAlphabet="symbolAlphabet" />
   <div class="derivate-bar"
     :style="{ left: derivateBarX + 'vw', width: derivateBarWidth + 'vw', height: derivateBarHeight + 'vh' }">
     <div class="derivate-container" v-for="(axiom, index) in derivates" :key="index">
@@ -54,11 +44,11 @@
 
 <script setup lang=ts>
 import Axiom from '@/components/axiom/Axiom.vue';
-import Sequence from '@/components/axiom/Sequence.vue';
 import AxiomBar from './AxiomBar.vue';
 import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import VictoryWindow from './VictoryWindow.vue';
 import HeadBar from '@/components/play/HeadBar.vue'
+import Workbench from '@/components/play/Workbench.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount } from 'vue';
@@ -107,7 +97,6 @@ const selectedAxiom: Ref<AxiomData> = ref({ upperSequence: [], lowerSequence: []
 const selectedAxiomX: Ref<number> = ref(0);
 const selectedAxiomY: Ref<number> = ref(0);
 const dragging: Ref<boolean> = ref(false);
-const mouseOverWorkbench: Ref<boolean> = ref(false);
 const nextLevelName: Ref<string> = ref("");
 const nextChapterName: Ref<string> = ref("");
 
@@ -395,10 +384,6 @@ function nextLevel(): void {
 </script>
 
 <style>
-.workbench {
-  position: absolute;
-}
-
 .derivate-bar {
   display: flex;
   position: absolute;
