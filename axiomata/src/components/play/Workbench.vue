@@ -4,7 +4,7 @@
     top: posY + 'vh',
     width: width + 'vw',
     height: height + 'vh'
-  }" @mouseenter="() => { mouseOverWorkbench = true }" @mouseleave="() => { mouseOverWorkbench = false }">
+  }">
     <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="sequence" :highlights="workHighlights"
       :symbolAlphabet="symbolAlphabet" :style="{
         position: 'absolute',

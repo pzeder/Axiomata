@@ -18,24 +18,10 @@
   <VictoryWindow v-if="levelFinsihed" :posX="workbenchX" :posY="headBarHeight" :width="workbenchWidth"
     :height="workbenchHeight" :hasNextLevel="nextChapterName != ''" @openLevelMenu="emit('openLevelMenu')"
     @nextLevel="nextLevel" />
-  <div :style="{
-    position: 'absolute',
-    left: selectedAxiomX + 'vw',
-    top: selectedAxiomY + 'vh'
-  }">
-    <Axiom v-if="selectedAxiom.upperSequence.length !== 0" :symbolWidth="symbolWidth" :screenRatio="screenRatio"
-      :axiomData="selectedAxiom" :symbolAlphabet="symbolAlphabet" :upperHighlights="upperHighlights"
-      :lowerHighlights="lowerHighlights" @mouseup="axiomDrop" @mousedown="handleMouseDown"> </Axiom>
-    <div class="swap-button" v-if="workMatch" @click="handleSwapButton" :style="{
-      display: 'grid',
-      placeItems: 'center',
-      position: 'absolute',
-      left: ((Math.max(selectedAxiom.upperSequence.length, selectedAxiom.lowerSequence.length) - 1) * symbolWidth / 2) + 'vw',
-      top: (centerDirectionY > 0 ? (-symbolWidth * screenRatio * 1.5) : (symbolWidth * screenRatio * 3)) + 'vh',
-      width: symbolWidth + 'vw',
-      height: (symbolWidth * screenRatio) + 'vh',
-    }"> SWAP </div>
-  </div>
+  <Cursor :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="symbolWidth"
+    :symbolAlphabet="symbolAlphabet" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
+    :centerDirectionY="centerDirectionY" :screenRatio="screenRatio" :workMatch="workMatch" @axiomDrop="axiomDrop"
+    @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
   <div v-if="goalMatch" @click="finishLevel"
     :style="{ position: 'absolute', userSelect: 'none', color: 'black', left: (goalX + goalWidth / 2) + 'vw', top: (goalY + goalHeight / 2) + 'vh', width: (goalWidth) + 'vw', height: goalHeight + 'vh' }">
     MATCH
@@ -49,6 +35,7 @@ import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import VictoryWindow from './VictoryWindow.vue';
 import HeadBar from '@/components/play/HeadBar.vue'
 import Workbench from '@/components/play/Workbench.vue';
+import Cursor from './Cursor.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount } from 'vue';
@@ -93,9 +80,9 @@ const sequenceHistory: Ref<number[][]> = ref([[]]);
 const goalMatch: Ref<boolean> = ref(false);
 
 // Cursor variables
-const selectedAxiom: Ref<AxiomData> = ref({ upperSequence: [], lowerSequence: [] });
-const selectedAxiomX: Ref<number> = ref(0);
-const selectedAxiomY: Ref<number> = ref(0);
+const cursorAxiom: Ref<AxiomData> = ref({ upperSequence: [], lowerSequence: [] });
+const cursorAxiomX: Ref<number> = ref(0);
+const cursorAxiomY: Ref<number> = ref(0);
 const dragging: Ref<boolean> = ref(false);
 const nextLevelName: Ref<string> = ref("");
 const nextChapterName: Ref<string> = ref("");
@@ -119,7 +106,7 @@ const hoverBarIndex: Ref<number> = ref(-1);
 onMounted(() => {
   document.body.classList.add('no-scroll');
   window.addEventListener('resize', handleResize);
-  window.addEventListener('mousemove', updateSelectedAxiomPos);
+  window.addEventListener('mousemove', updateCursorAxiomPos);
   fetchLevel();
 });
 
@@ -128,7 +115,7 @@ const emit = defineEmits(['openLevelMenu']);
 onBeforeUnmount(() => {
   document.body.classList.remove('no-scroll');
   window.removeEventListener('resize', handleResize);
-  window.removeEventListener('mousemove', updateSelectedAxiomPos);
+  window.removeEventListener('mousemove', updateCursorAxiomPos);
 });
 
 function handleMouseDown() {
@@ -149,23 +136,23 @@ function axiomBarMouseOver(barName: string, index: number) {
 
 function resetHighlights() {
   workHighlights.value = new Array(workSequence.value.length).fill(false);
-  upperHighlights.value = new Array(selectedAxiom.value.upperSequence.length).fill(false);
-  lowerHighlights.value = new Array(selectedAxiom.value.lowerSequence.length).fill(false);
+  upperHighlights.value = new Array(cursorAxiom.value.upperSequence.length).fill(false);
+  lowerHighlights.value = new Array(cursorAxiom.value.lowerSequence.length).fill(false);
 }
 
 function axiomDrop(): void {
-  if (selectedAxiom.value.upperSequence.length === 0) {
+  if (cursorAxiom.value.upperSequence.length === 0) {
     return;
   }
 
-  const centerX: number = selectedAxiomX.value + axiomWidth(selectedAxiom.value, symbolWidth.value) / 2;
-  const centerY: number = selectedAxiomY.value + axiomHeight(symbolWidth.value, screenRatio.value) / 2;
+  const centerX: number = cursorAxiomX.value + axiomWidth(cursorAxiom.value, symbolWidth.value) / 2;
+  const centerY: number = cursorAxiomX.value + axiomHeight(symbolWidth.value, screenRatio.value) / 2;
 
   // Remove the selected Axiom if the mouse is NOT inside workbench
 
   if (!(centerX > workbenchX.value && centerX < workbenchX.value + workbenchWidth.value
     && centerY > workbenchY.value && centerY < workbenchY.value + workbenchHeight.value)) {
-    selectedAxiom.value.upperSequence = [];
+    cursorAxiom.value.upperSequence = [];
     return;
   }
 
@@ -175,8 +162,8 @@ function axiomDrop(): void {
 }
 
 function docking(): void {
-  const vx: number = selectedAxiomX.value;
-  const vy: number = selectedAxiomY.value;
+  const vx: number = cursorAxiomX.value;
+  const vy: number = cursorAxiomY.value;
 
   /* Check if selected Axiom is in the upper or lower half of the workbench and
     snap it to the workSequence accordingly */
@@ -184,29 +171,29 @@ function docking(): void {
   const workbenchCenterY: number = workbenchY.value + workbenchHeight.value / 2;
   const workSequenceX: number = workbenchX.value + (workbenchWidth.value - workSequence.value.length * symbolWidth.value) / 2;
   const symbolHeight: number = symbolWidth.value * screenRatio.value;
-  const upperLength: number = selectedAxiom.value.upperSequence.length;
-  const lowerLength: number = selectedAxiom.value.lowerSequence.length;
+  const upperLength: number = cursorAxiom.value.upperSequence.length;
+  const lowerLength: number = cursorAxiom.value.lowerSequence.length;
   let axiomOffset: number;
   if (vy < workbenchCenterY) {
     // Upper Half
     axiomOffset = (upperLength <= lowerLength) ? 0 : ((upperLength - lowerLength) / 2 * symbolWidth.value);
-    selectedAxiomY.value = workbenchCenterY - 6 * symbolHeight / 2;
-    nearSequence = selectedAxiom.value.lowerSequence;
-    farSequence = selectedAxiom.value.upperSequence;
+    cursorAxiomY.value = workbenchCenterY - 6 * symbolHeight / 2;
+    nearSequence = cursorAxiom.value.lowerSequence;
+    farSequence = cursorAxiom.value.upperSequence;
     nearHighlights = lowerHighlights;
     centerDirectionY.value = 1;
   } else {
     // Lower half
     axiomOffset = (lowerLength <= upperLength) ? 0 : ((lowerLength - upperLength) / 2 * symbolWidth.value);
-    selectedAxiomY.value = workbenchCenterY + symbolHeight / 2;
-    nearSequence = selectedAxiom.value.upperSequence;
-    farSequence = selectedAxiom.value.lowerSequence;
+    cursorAxiomY.value = workbenchCenterY + symbolHeight / 2;
+    nearSequence = cursorAxiom.value.upperSequence;
+    farSequence = cursorAxiom.value.lowerSequence;
     nearHighlights = upperHighlights;
     centerDirectionY.value = -1;
   }
 
   dockIndex.value = Math.round((vx + axiomOffset - workSequenceX) / symbolWidth.value);
-  selectedAxiomX.value = workSequenceX + dockIndex.value * symbolWidth.value - axiomOffset;
+  cursorAxiomX.value = workSequenceX + dockIndex.value * symbolWidth.value - axiomOffset;
 
   dragging.value = false;
 }
@@ -282,21 +269,21 @@ async function updateLevelEnd(): Promise<void> {
 }
 
 function selectAxiom(axiom: AxiomData): void {
-  selectedAxiom.value = ({
+  cursorAxiom.value = ({
     upperSequence: [...axiom.upperSequence],
     lowerSequence: [...axiom.lowerSequence]
   });
   handleMouseDown();
 }
 
-function updateSelectedAxiomPos(event: MouseEvent) {
+function updateCursorAxiomPos(event: MouseEvent) {
   if (dragging.value) {
     const mouseX: number = event.clientX / window.innerWidth * 100;
     const mouseY: number = event.clientY / window.innerHeight * 100;
-    const width: number = axiomWidth(selectedAxiom.value, symbolWidth.value);
+    const width: number = axiomWidth(cursorAxiom.value, symbolWidth.value);
     const height: number = axiomHeight(symbolWidth.value, screenRatio.value);
-    selectedAxiomX.value = mouseX - width / 2;
-    selectedAxiomY.value = mouseY - height / 2;
+    cursorAxiomX.value = mouseX - width / 2;
+    cursorAxiomY.value = mouseY - height / 2;
   }
 }
 
@@ -307,15 +294,21 @@ function checkWorkMatch(): boolean {
   return (nearHighlights.value.filter(b => !b).length === 0);
 }
 
-function handleSwapButton(): void {
-  swap();
+function cursorAxiomClicked(): void {
+  dragging.value = true;
+  resetHighlights();
+}
+
+function swap(): void {
+  updateWorkSequence();
+  updateSequenceHistory();
   updateGoalMatch();
-  selectedAxiom.value.upperSequence = [];
+  cursorAxiom.value.upperSequence = [];
   resetHighlights();
   workMatch.value = false;
 }
 
-function swap(): void {
+function updateWorkSequence(): void {
   let newSequence: number[] = [];
 
   // Keep all symbols left of the match
@@ -334,13 +327,11 @@ function swap(): void {
     newSequence.push(workSequence.value[i]);
   }
 
-  sequenceHistory.value.push(newSequence);
   workSequence.value = newSequence;
-
-  updateSequenceHistory();
 }
 
 async function updateSequenceHistory(): Promise<void> {
+  sequenceHistory.value.push(workSequence.value);
   try {
     const updatedData = {
       saveID: saveID.value,
@@ -398,13 +389,6 @@ function nextLevel(): void {
   align-items: center;
   width: 20%;
   height: 100%;
-}
-
-.swap-button {
-  width: 10vw;
-  height: 10vw;
-  border-radius: 50%;
-  background-color: green;
 }
 
 .no-scroll {
