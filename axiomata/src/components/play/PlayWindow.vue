@@ -1,10 +1,5 @@
 <template>
-  <div class="headbar" :style="{ height: headBarHeight + 'vh' }">
-    <button :style="{ position: 'relative', width: 5 + 'vw' }" @click="openLevelMenu"> Zurück </button>
-    <div :style="{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 100 + '%' }">
-      <div :style="{ color: 'white' }"> {{ levelName }} </div>
-    </div>
-  </div>
+  <HeadBar :height="headBarHeight" :levelName="levelName" @openLevelMenu="emit('openLevelMenu')" />
   <div class="workbench" :style="{
     left: workbenchX + 'vw',
     top: workbenchY + 'vh',
@@ -31,7 +26,7 @@
   <SequenceContainer :posX="goalX" :posY="goalY" :width="goalWidth" :height="goalHeight" :screenRatio="screenRatio"
     :symbolIndices="goalAxiom.lowerSequence" :symbolAlphabet="symbolAlphabet" />
   <VictoryWindow v-if="levelFinsihed" :posX="workbenchX" :posY="headBarHeight" :width="workbenchWidth"
-    :height="workbenchHeight" :hasNextLevel="nextChapterName != ''" @openLevelMenu="openLevelMenu"
+    :height="workbenchHeight" :hasNextLevel="nextChapterName != ''" @openLevelMenu="emit('openLevelMenu')"
     @nextLevel="nextLevel" />
   <div :style="{
     position: 'absolute',
@@ -63,6 +58,7 @@ import Sequence from '@/components/play/Sequence.vue';
 import AxiomBar from './AxiomBar.vue';
 import SequenceContainer from '@/components/play/SequenceContainer.vue';
 import VictoryWindow from './VictoryWindow.vue';
+import HeadBar from '@/components/play/HeadBar.vue'
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount } from 'vue';
@@ -139,10 +135,6 @@ onMounted(() => {
 });
 
 const emit = defineEmits(['openLevelMenu']);
-
-function openLevelMenu(): void {
-  emit('openLevelMenu');
-}
 
 onBeforeUnmount(() => {
   document.body.classList.remove('no-scroll');
@@ -403,15 +395,6 @@ function nextLevel(): void {
 </script>
 
 <style>
-.headbar {
-  display: flex;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  background: rgb(89, 204, 245);
-  position: absolute
-}
-
 .workbench {
   position: absolute;
 }
