@@ -1,9 +1,9 @@
 <template>
   <div class="sequence" :style="{
-    width: (symbolIndices.length * symbolWidth) + 'vw',
+    width: (sequence.length * symbolWidth) + 'vw',
     height: symbolHeight + 'vh'
   }">
-    <Symbol v-for="(si, key) in symbolIndices" :key="key" :symbolWidth="symbolWidth" :screenRatio="screenRatio"
+    <Symbol v-for="(si, key) in sequence" :key="key" :symbolWidth="symbolWidth" :screenRatio="screenRatio"
       :highlight="(highlights.length === 0) ? false : highlights[key]" :symbolData="symbolAlphabet[si]" />
   </div>
 </template>
@@ -16,7 +16,7 @@ import { SymbolData } from "@/scripts/Interfaces";
 interface Props {
   symbolWidth: number;
   screenRatio: number;
-  symbolIndices: number[];
+  sequence: number[];
   highlights: boolean[];
   symbolAlphabet: SymbolData[];
 }

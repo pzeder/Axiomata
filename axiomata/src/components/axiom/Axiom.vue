@@ -7,12 +7,12 @@
       left: (maxSequence * symbolWidth / 2 - symbolWidth / 4) + 'vw',
       width: (symbolWidth / 2) + 'vw'
     }" />
-    <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="axiomData.upperSequence"
+    <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :sequence="axiomData.upperSequence"
       :symbolAlphabet="symbolAlphabet" :highlights="upperHighlights" :style="{
         left: (symbolWidth * (maxSequence - axiomData.upperSequence.length) / 2) + 'vw',
         top: 0
       }" />
-    <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="axiomData.lowerSequence"
+    <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :sequence="axiomData.lowerSequence"
       :symbolAlphabet="symbolAlphabet" :highlights="lowerHighlights" :style="{
         left: (symbolWidth * (maxSequence - axiomData.lowerSequence.length) / 2) + 'vw',
         top: (1.5 * symbolHeight) + 'vh'

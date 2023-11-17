@@ -1,8 +1,8 @@
 <template>
   <HeadBar :height="headBarHeight" :levelName="levelName" @openLevelMenu="emit('openLevelMenu')" />
-  <Workbench :posX="workbenchX" :posY="workbenchY" :width="workbenchWidth" :height="workbenchHeight"
-    :symbolWidth="symbolWidth" :screenRatio="screenRatio" :workHighlights="workHighlights" :sequence="workSequence"
-    :symbolAlphabet="symbolAlphabet" />
+  <SequenceContainer class="workbench" :posX="workbenchX" :posY="workbenchY" :width="workbenchWidth"
+    :height="workbenchHeight" :maxFill="workbenchMaxFill" :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio"
+    :screenRatio="screenRatio" :sequence="workSequence" :symbolAlphabet="symbolAlphabet" />
   <div class="derivate-bar"
     :style="{ left: derivateBarX + 'vw', width: derivateBarWidth + 'vw', height: derivateBarHeight + 'vh' }">
     <div class="derivate-container" v-for="(axiom, index) in derivates" :key="index">
@@ -13,17 +13,18 @@
   <AxiomBar :posX="0" :posY="axiomBarY" :width="axiomBarWidth" :height="axiomBarHeight" :screenRatio="screenRatio"
     :axioms="axioms" :symbolAlphabet="symbolAlphabet" :isInserting="true" :insertionIndex="hoverBarIndex"
     @selectAxiom="selectAxiom" @mouseOver="index => axiomBarMouseOver('axiom', index)" />
-  <SequenceContainer :posX="goalX" :posY="goalY" :width="goalWidth" :height="goalHeight" :screenRatio="screenRatio"
-    :symbolIndices="goalAxiom.lowerSequence" :symbolAlphabet="symbolAlphabet" />
+  <SequenceContainer class="goal-window" :posX="goalX" :posY="goalY" :width="goalWidth" :height="goalWidth * screenRatio"
+    :maxFill="0.8" :maxSymbolWidthRatio="0.33" :screenRatio="screenRatio" :sequence="goalAxiom.lowerSequence"
+    :symbolAlphabet="symbolAlphabet" />
   <VictoryWindow v-if="levelFinsihed" :posX="workbenchX" :posY="headBarHeight" :width="workbenchWidth"
     :height="workbenchHeight" :hasNextLevel="nextChapterName != ''" @openLevelMenu="emit('openLevelMenu')"
     @nextLevel="nextLevel" />
-  <Cursor :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="symbolWidth"
+  <Cursor :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="workSymbolWidth"
     :symbolAlphabet="symbolAlphabet" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
     :centerDirectionY="centerDirectionY" :screenRatio="screenRatio" :workMatch="workMatch" @axiomDrop="axiomDrop"
     @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
   <div v-if="goalMatch" @click="finishLevel"
-    :style="{ position: 'absolute', userSelect: 'none', color: 'black', left: (goalX + goalWidth / 2) + 'vw', top: (goalY + goalHeight / 2) + 'vh', width: (goalWidth) + 'vw', height: goalHeight + 'vh' }">
+    :style="{ position: 'absolute', userSelect: 'none', color: 'black', left: (goalX + goalWidth / 2) + 'vw', top: (goalY + goalWidth * screenRatio / 2) + 'vh', width: (goalWidth) + 'vw', height: goalHeight + 'vh' }">
     MATCH
   </div>
 </template>
@@ -38,7 +39,7 @@ import Workbench from '@/components/play/Workbench.vue';
 import Cursor from './Cursor.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import axios from 'axios';
-import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount } from 'vue';
+import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount, computed } from 'vue';
 import { axiomHeight, axiomWidth } from '@/scripts/AxiomMethods';
 
 interface Props {
@@ -49,6 +50,7 @@ interface Props {
 const props = defineProps<Props>();
 
 // Layout variables
+const screenRatio: Ref<number> = ref(window.innerWidth / window.innerHeight);
 const headBarHeight: Ref<number> = ref(5);
 const axiomBarY: Ref<number> = ref(5);
 const axiomBarWidth: Ref<number> = ref(20);
@@ -60,12 +62,16 @@ const workbenchX: Ref<number> = ref(20);
 const workbenchY: Ref<number> = ref(5);
 const workbenchWidth: Ref<number> = ref(80);
 const workbenchHeight: Ref<number> = ref(70);
+const workbenchMaxFill: Ref<number> = ref(0.6);
+const workbenchMaxSymbolWidthRatio: Ref<number> = ref(0.05);
 const goalX: Ref<number> = ref(88);
 const goalY: Ref<number> = ref(5);
 const goalWidth: Ref<number> = ref(10);
-const goalHeight: Ref<number> = ref(10);
-const symbolWidth: Ref<number> = ref(3);
-const screenRatio: Ref<number> = ref(window.innerWidth / window.innerHeight);
+const workSymbolWidth = computed(() => {
+  const w: number = workbenchMaxFill.value * workbenchWidth.value / workSequence.value.length;
+  const maxWidth: number = workbenchMaxSymbolWidthRatio.value * workbenchWidth.value;
+  return Math.min(w, maxWidth);
+});
 
 // Level variables
 const saveID: Ref<any> = ref(props.saveID);
@@ -145,8 +151,8 @@ function axiomDrop(): void {
     return;
   }
 
-  const centerX: number = cursorAxiomX.value + axiomWidth(cursorAxiom.value, symbolWidth.value) / 2;
-  const centerY: number = cursorAxiomX.value + axiomHeight(symbolWidth.value, screenRatio.value) / 2;
+  const centerX: number = cursorAxiomX.value + axiomWidth(cursorAxiom.value, workSymbolWidth.value) / 2;
+  const centerY: number = cursorAxiomX.value + axiomHeight(workSymbolWidth.value, screenRatio.value) / 2;
 
   // Remove the selected Axiom if the mouse is NOT inside workbench
 
@@ -169,14 +175,14 @@ function docking(): void {
     snap it to the workSequence accordingly */
 
   const workbenchCenterY: number = workbenchY.value + workbenchHeight.value / 2;
-  const workSequenceX: number = workbenchX.value + (workbenchWidth.value - workSequence.value.length * symbolWidth.value) / 2;
-  const symbolHeight: number = symbolWidth.value * screenRatio.value;
+  const workSequenceX: number = workbenchX.value + (workbenchWidth.value - workSequence.value.length * workSymbolWidth.value) / 2;
+  const symbolHeight: number = workSymbolWidth.value * screenRatio.value;
   const upperLength: number = cursorAxiom.value.upperSequence.length;
   const lowerLength: number = cursorAxiom.value.lowerSequence.length;
   let axiomOffset: number;
   if (vy < workbenchCenterY) {
     // Upper Half
-    axiomOffset = (upperLength <= lowerLength) ? 0 : ((upperLength - lowerLength) / 2 * symbolWidth.value);
+    axiomOffset = (upperLength <= lowerLength) ? 0 : ((upperLength - lowerLength) / 2 * workSymbolWidth.value);
     cursorAxiomY.value = workbenchCenterY - 6 * symbolHeight / 2;
     nearSequence = cursorAxiom.value.lowerSequence;
     farSequence = cursorAxiom.value.upperSequence;
@@ -184,7 +190,7 @@ function docking(): void {
     centerDirectionY.value = 1;
   } else {
     // Lower half
-    axiomOffset = (lowerLength <= upperLength) ? 0 : ((lowerLength - upperLength) / 2 * symbolWidth.value);
+    axiomOffset = (lowerLength <= upperLength) ? 0 : ((lowerLength - upperLength) / 2 * workSymbolWidth.value);
     cursorAxiomY.value = workbenchCenterY + symbolHeight / 2;
     nearSequence = cursorAxiom.value.upperSequence;
     farSequence = cursorAxiom.value.lowerSequence;
@@ -192,8 +198,8 @@ function docking(): void {
     centerDirectionY.value = -1;
   }
 
-  dockIndex.value = Math.round((vx + axiomOffset - workSequenceX) / symbolWidth.value);
-  cursorAxiomX.value = workSequenceX + dockIndex.value * symbolWidth.value - axiomOffset;
+  dockIndex.value = Math.round((vx + axiomOffset - workSequenceX) / workSymbolWidth.value);
+  cursorAxiomX.value = workSequenceX + dockIndex.value * workSymbolWidth.value - axiomOffset;
 
   dragging.value = false;
 }
@@ -280,8 +286,8 @@ function updateCursorAxiomPos(event: MouseEvent) {
   if (dragging.value) {
     const mouseX: number = event.clientX / window.innerWidth * 100;
     const mouseY: number = event.clientY / window.innerHeight * 100;
-    const width: number = axiomWidth(cursorAxiom.value, symbolWidth.value);
-    const height: number = axiomHeight(symbolWidth.value, screenRatio.value);
+    const width: number = axiomWidth(cursorAxiom.value, workSymbolWidth.value);
+    const height: number = axiomHeight(workSymbolWidth.value, screenRatio.value);
     cursorAxiomX.value = mouseX - width / 2;
     cursorAxiomY.value = mouseY - height / 2;
   }
@@ -389,6 +395,11 @@ function nextLevel(): void {
   align-items: center;
   width: 20%;
   height: 100%;
+}
+
+.goal-window {
+  background-color: #ffffff;
+  border: 1vw solid rgb(63, 196, 244);
 }
 
 .no-scroll {

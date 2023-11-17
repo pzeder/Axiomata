@@ -1,13 +1,13 @@
 <template>
   <div class="sequence-container"
-    :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vw' }">
-    <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :symbolIndices="symbolIndices"
-      :symbolAlphabet="symbolAlphabet" />
+    :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
+    <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :sequence="sequence" :symbolAlphabet="symbolAlphabet"
+      :highlights="highlights" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { computed, defineProps, withDefaults } from 'vue';
 import { SymbolData } from '@/scripts/Interfaces';
 import Sequence from '@/components/axiom/Sequence.vue';
 
@@ -16,15 +16,21 @@ interface Props {
   posY: number;
   width: number;
   height: number;
+  maxFill: number;
+  maxSymbolWidthRatio: number;
   screenRatio: number;
-  symbolIndices: number[];
+  sequence: number[];
   symbolAlphabet: SymbolData[];
+  highlights: boolean[];
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  highlights: () => []
+});
+
 const symbolWidth = computed(() => {
-  const w: number = 0.8 * props.width / props.symbolIndices.length;
-  const maxWidth: number = 0.33 * props.width;
+  const w: number = props.maxFill * props.width / props.sequence.length;
+  const maxWidth: number = props.maxSymbolWidthRatio * props.width;
   return Math.min(w, maxWidth);
 });
 </script>
@@ -35,8 +41,5 @@ const symbolWidth = computed(() => {
   justify-content: center;
   align-items: center;
   position: absolute;
-  background-color: #ffffff;
-  border: 1vw solid rgb(63, 196, 244);
-  ;
 }
 </style>
