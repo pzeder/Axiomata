@@ -1,8 +1,8 @@
 <template>
   <div class="axiom-bar" :style="{ top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
-    <AxiomContainer v-for="(axiom, index) in axioms" :key="index" :index="index" :posX="posX" :posY="posY" :width="width"
+    <AxiomContainer v-for="(axiom, index) in axioms" :key="index" :index="index" :posX="posX" :posY="posY + index * containerHeight" :width="width"
       :height="containerHeight" :screenRatio="screenRatio" :axiom="axiom" :symbolAlphabet="symbolAlphabet"
-      @selectAxiom="selectAxiom" @mouseOver="mouseOver" />
+      @selectAxiom="selectAxiom"  />
   </div>
 </template>
 
@@ -19,8 +19,7 @@ interface Props {
   screenRatio: number;
   axioms: AxiomData[];
   symbolAlphabet: SymbolData[];
-  isInserting: boolean;
-  insertionIndex: number;
+  // orientation: string;
 }
 const props = defineProps<Props>();
 
@@ -30,11 +29,7 @@ function selectAxiom(axiom: AxiomData): void {
   emit('selectAxiom', axiom);
 }
 
-function mouseOver(index: number) {
-  emit('mouseOver', index);
-}
-
-const containerHeight = computed(() => props.width * props.screenRatio);
+const containerHeight = computed(() => props.width * props.screenRatio * 0.5);
 </script>
 
 <style>

@@ -1,8 +1,8 @@
 <template>
   <div class="axiom-container"
-    :style="{ left: posX, top: posY + index * (width * screenRatio), width: width, height: height }">
+    :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
     <Axiom :symbolWidth="symbolWidth" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="symbolAlphabet"
-      @mousedown="selectAxiom(axiom)" @mouseenter="mouseOver" />
+      @mousedown="selectAxiom(axiom)" />
   </div>
 </template>
 
@@ -13,7 +13,6 @@ import Axiom from '@/components/axiom/Axiom.vue';
 import { maxSequenceLength } from '@/scripts/AxiomMethods';
 
 interface Props {
-  index: number;
   posX: number;
   posY: number;
   width: number;
@@ -30,19 +29,16 @@ function selectAxiom(axiom: AxiomData): void {
   emit('selectAxiom', axiom);
 }
 
-function mouseOver(): void {
-  emit('mouseOver', props.index);
-}
-
 const symbolWidth = computed(() => {
   const w: number = props.width * 0.8 / maxSequenceLength(props.axiom);
-  const maxWidth: number = props.height * 0.15 / props.screenRatio;
+  const maxWidth: number = props.width * 0.15;
   return Math.min(w, maxWidth);
 });
 </script>
 
 <style>
 .axiom-container {
+  position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
