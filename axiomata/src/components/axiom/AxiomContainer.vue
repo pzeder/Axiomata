@@ -30,8 +30,8 @@ function selectAxiom(axiom: AxiomData): void {
 }
 
 const symbolWidth = computed(() => {
-  const w: number = props.width * 0.8 / maxSequenceLength(props.axiom);
-  const maxWidth: number = props.width * 0.15;
+  const w: number = 0.8 * props.width / maxSequenceLength(props.axiom);
+  const maxWidth: number = 0.15 * props.width;
   return Math.min(w, maxWidth);
 });
 </script>

@@ -1,8 +1,8 @@
 <template>
-  <div class="axiom-bar" :style="{ top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
-    <AxiomContainer v-for="(axiom, index) in axioms" :key="index" :index="index" :posX="posX" :posY="posY + index * containerHeight" :width="width"
+  <div class="axiom-bar" :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
+    <AxiomContainer v-for="(axiom, index) in axioms" :key="index" :index="index" :posX="containerX(index)" :posY="containerY(index)" :width="containerWidth"
       :height="containerHeight" :screenRatio="screenRatio" :axiom="axiom" :symbolAlphabet="symbolAlphabet"
-      @selectAxiom="selectAxiom"  />
+      @selectAxiom="emit('selectAxiom', axiom)"  />
   </div>
 </template>
 
@@ -19,24 +19,24 @@ interface Props {
   screenRatio: number;
   axioms: AxiomData[];
   symbolAlphabet: SymbolData[];
-  // orientation: string;
 }
 const props = defineProps<Props>();
-
 const emit = defineEmits(['selectAxiom', 'mouseOver']);
 
-function selectAxiom(axiom: AxiomData): void {
-  emit('selectAxiom', axiom);
-}
-
-const containerHeight = computed(() => props.width * props.screenRatio * 0.5);
+const vertical = computed(() => props.width * props.screenRatio < props.height);
+const maxContainerWidth = computed(() => vertical.value ? props.width : 0.5 * props.height);
+const minContainerWidth = computed(() => vertical.value ? props.width : props.width / props.axioms.length)
+const containerWidth = computed(() => Math.min(minContainerWidth.value, maxContainerWidth.value));
+const maxContainerHeight = computed(() => vertical.value ? 0.5 * props.width * props.screenRatio : props.height);
+const minContainerHeight = computed(() => vertical.value ? props.height / props.axioms.length : props.height);
+const containerHeight = computed(() => Math.min(minContainerHeight.value, maxContainerHeight.value));
+const containerX = (index: number) => vertical.value ? 0 : index * containerWidth.value;
+const containerY = (index: number) => vertical.value ?  index * containerHeight.value : 0;
 </script>
 
 <style>
 .axiom-bar {
   position: absolute;
   left: 0;
-  background: rgb(252, 223, 203);
-  color: #fff;
 }
 </style>

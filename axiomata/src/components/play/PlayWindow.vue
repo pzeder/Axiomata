@@ -3,14 +3,9 @@
   <SequenceContainer class="workbench" :posX="workbenchX" :posY="workbenchY" :width="workbenchWidth"
     :height="workbenchHeight" :maxFill="workbenchMaxFill" :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio"
     :screenRatio="screenRatio" :sequence="workSequence" :symbolAlphabet="symbolAlphabet" />
-  <div class="derivate-bar"
-    :style="{ left: derivateBarX + 'vw', width: derivateBarWidth + 'vw', height: derivateBarHeight + 'vh' }">
-    <div class="derivate-container" v-for="(axiom, index) in derivates" :key="index">
-      <Axiom :symbolWidth="3" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="symbolAlphabet"
-        @mousedown="selectAxiom(axiom)" />
-    </div>
-  </div>
-  <AxiomBar :posX="0" :posY="axiomBarY" :width="axiomBarWidth" :height="axiomBarHeight" :screenRatio="screenRatio"
+  <AxiomBar class="derivate-bar" :posX="derivateBarX" :posY="derivateBarY" :width="derivateBarWidth" :height="derivateBarHeight" :screenRatio="screenRatio"
+    :axioms="derivates" :symbolAlphabet="symbolAlphabet" @selectAxiom="selectAxiom" />
+  <AxiomBar class="main-axiom-bar" :posX="axiomBarX" :posY="axiomBarY" :width="axiomBarWidth" :height="axiomBarHeight" :screenRatio="screenRatio"
     :axioms="axioms" :symbolAlphabet="symbolAlphabet" @selectAxiom="selectAxiom" />
   <SequenceContainer class="goal-window" :posX="goalX" :posY="goalY" :width="goalWidth" :height="goalWidth * screenRatio"
     :maxFill="0.8" :maxSymbolWidthRatio="0.33" :screenRatio="screenRatio" :sequence="goalAxiom.lowerSequence"
@@ -34,7 +29,6 @@ import AxiomBar from './AxiomBar.vue';
 import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import VictoryWindow from './VictoryWindow.vue';
 import HeadBar from '@/components/play/HeadBar.vue'
-import Workbench from '@/components/play/Workbench.vue';
 import Cursor from './Cursor.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import axios from 'axios';
@@ -51,10 +45,12 @@ const props = defineProps<Props>();
 // Layout variables
 const screenRatio: Ref<number> = ref(window.innerWidth / window.innerHeight);
 const headBarHeight: Ref<number> = ref(5);
+const axiomBarX: Ref<number> = ref(0);
 const axiomBarY: Ref<number> = ref(5);
 const axiomBarWidth: Ref<number> = ref(20);
 const axiomBarHeight: Ref<number> = ref(100);
-const derivateBarX: Ref<number> = ref(20);
+const derivateBarX = computed(() => axiomBarWidth.value);
+const derivateBarY = computed(() => workbenchY.value + workbenchHeight.value);
 const derivateBarWidth: Ref<number> = ref(100);
 const derivateBarHeight: Ref<number> = ref(25);
 const workbenchX: Ref<number> = ref(20);
@@ -371,20 +367,12 @@ function nextLevel(): void {
 </script>
 
 <style>
-.derivate-bar {
-  display: flex;
-  position: absolute;
-  bottom: 0;
-  background: rgb(208, 237, 248);
-  color: #fff;
+.main-axiom-bar {
+  background: rgb(252, 223, 203);
 }
 
-.derivate-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 20%;
-  height: 100%;
+.derivate-bar {
+  background: rgb(187, 231, 247);
 }
 
 .goal-window {
