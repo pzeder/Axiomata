@@ -7,7 +7,9 @@
     @openStartMenu="openStartMenu" />
   <LevelSelection v-if="showLevelSelection" @openStartMenu="openStartMenu" @selectLevel="selectLevel"
     @openSaveStateMenu="openSaveStateMenu" :saveID="saveID" />
-  <PlayWindow v-if="showPlayWindow" @openLevelMenu="openLevelMenu" @updateSequenceHistory="updateSequenceHistory" @levelFinished="updateLevelEnd" @nextLevel="nextLevel" :levelData="currentLevelData" />
+  <PlayWindow v-if="showPlayWindow" @openLevelMenu="openLevelMenu" @updateSequenceHistory="updateSequenceHistory"
+    @levelFinished="updateLevelEnd" @nextLevel="nextLevel" :levelData="currentLevelData"
+    :hasNextLevel="nextChapterIndex !== -1" />
 </template>
 
 <script setup lang="ts">
@@ -35,12 +37,11 @@ const userName: Ref<string> = ref('Philippe');
 const saveID: Ref<any> = ref(null);
 const currentChapterIndex: Ref<number> = ref(-1);
 const currentLevelIndex: Ref<number> = ref(-1);
-const nullAxiom: AxiomData = {upperSequence: [], lowerSequence: []};
-const nullLevel: LevelData = {symbolAlphabet: [], axioms: [], derivates: [], levelName: '', goalAxiom: nullAxiom, sequenceHistory: [[]], levelFinished: false, nextChapterIndex: -1, nextLevelIndex: -1};
+const nullAxiom: AxiomData = { upperSequence: [], lowerSequence: [] };
+const nullLevel: LevelData = { symbolAlphabet: [], axioms: [], derivates: [], levelName: '', goalAxiom: nullAxiom, sequenceHistory: [[]], levelFinished: false, nextChapterIndex: -1, nextLevelIndex: -1 };
 const currentLevelData: Ref<LevelData> = ref(nullLevel);
 const nextChapterIndex: Ref<number> = ref(-1);
 const nextLevelIndex: Ref<number> = ref(-1);
-const nextLevelData: Ref<LevelData> = ref(nullLevel);
 
 function newSaveStateCreated(newSaveID: any) {
   saveID.value = newSaveID;
@@ -55,21 +56,17 @@ function saveStateSelected(newSaveID: number): void {
 }
 
 async function selectLevel(chapterIndex: number, levelIndex: number): Promise<void> {
+  if (currentChapterIndex.value === chapterIndex && currentLevelIndex.value === levelIndex) {
+    return;
+  }
   try {
     currentChapterIndex.value = chapterIndex;
     currentLevelIndex.value = levelIndex;
     hideAll();
-    await fetchLevel(currentLevelData, currentChapterIndex.value, currentLevelIndex.value);
-    console.log('this before', currentLevelData.value);
+    await fetchLevel();
     showPlayWindow.value = true;
-    console.log('this before', currentLevelData.value);
-    if (currentLevelData.value.nextChapterIndex !== -1) {
-      await fetchLevel(nextLevelData, currentLevelData.value.nextChapterIndex, currentLevelData.value.nextLevelIndex);
-    }
-    console.log('this after', currentLevelData.value);
-    console.log('next', nextLevelData.value);
-  } catch(error) {
-    console.log('Error while selecting Level:', error);
+  } catch (error) {
+    console.log('Error while selecting level:', error)
   }
 }
 
@@ -105,23 +102,22 @@ function hideAll(): void {
   showPlayWindow.value = false;
 }
 
-async function fetchLevel(levelData: Ref<LevelData>, chapterIndex: number, levelIndex: number): Promise<void> {
-  console.log(chapterIndex, levelIndex);
+async function fetchLevel(): Promise<void> {
   try {
     const query: string = '?saveID=' + saveID.value
-      + '&chapterIndex=' + chapterIndex
-      + '&levelIndex=' + levelIndex;
+      + '&chapterIndex=' + currentChapterIndex.value
+      + '&levelIndex=' + currentLevelIndex.value;
     const response = await axios.get('http://localhost:3000/level' + query);
     if (response.status === 200) {
-      levelData.value.symbolAlphabet = response.data.symbolAlphabet;
-      levelData.value.axioms = response.data.axioms;
-      levelData.value.derivates = response.data.derivates;
-      levelData.value.levelName = response.data.levelName;
-      levelData.value.goalAxiom = response.data.goalAxiom;
-      levelData.value.sequenceHistory = response.data.sequenceHistory;
-      levelData.value.levelFinished = response.data.levelFinished;
-      levelData.value.nextChapterIndex = response.data.nextChapterIndex;
-      levelData.value.nextLevelIndex = response.data.nextLevelIndex;
+      currentLevelData.value.symbolAlphabet = response.data.symbolAlphabet;
+      currentLevelData.value.axioms = response.data.axioms;
+      currentLevelData.value.derivates = response.data.derivates;
+      currentLevelData.value.levelName = response.data.levelName;
+      currentLevelData.value.goalAxiom = response.data.goalAxiom;
+      currentLevelData.value.sequenceHistory = response.data.sequenceHistory;
+      currentLevelData.value.levelFinished = response.data.levelFinished;
+      nextChapterIndex.value = response.data.nextChapterIndex;
+      nextLevelIndex.value = response.data.nextLevelIndex;
     } else {
       console.error('Server responded with status', response.status);
     }
@@ -171,20 +167,10 @@ async function updateLevelEnd(): Promise<void> {
   }
 }
 
-function nextLevel(): void { 
-  currentChapterIndex.value = currentLevelData.value.nextChapterIndex;
-  currentLevelIndex.value = currentLevelData.value.nextLevelIndex;
-  // transfer nextLevelData to currentLevelData
-  currentLevelData.value.symbolAlphabet = nextLevelData.value.symbolAlphabet;
-  currentLevelData.value.axioms = nextLevelData.value.axioms;
-  currentLevelData.value.derivates = nextLevelData.value.derivates;
-  currentLevelData.value.levelName = nextLevelData.value.levelName;
-  currentLevelData.value.goalAxiom = nextLevelData.value.goalAxiom;
-  currentLevelData.value.sequenceHistory = nextLevelData.value.sequenceHistory;
-  currentLevelData.value.levelFinished = nextLevelData.value.levelFinished;
-  currentLevelData.value.nextChapterIndex = nextLevelData.value.nextChapterIndex;
-  currentLevelData.value.nextLevelIndex = nextLevelData.value.nextLevelIndex;
-  fetchLevel(nextLevelData, currentLevelData.value.nextChapterIndex, currentLevelData.value.nextLevelIndex);
+function nextLevel(): void {
+  currentChapterIndex.value = nextChapterIndex.value;
+  currentLevelIndex.value = nextLevelIndex.value;
+  fetchLevel();
 }
 </script>
 

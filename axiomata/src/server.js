@@ -179,8 +179,11 @@ app.patch('/levelEnd', async (req, res) => {
 
     // if all levels of a chapter are solved -> unlock all levels of the next chapter
 
-    const nextChapter = saveState.chapters[chapterIndex + 1];
-    const unfinishedLevels = saveState.chapters[chapterIndex].levels.filter(lev => !(lev.status === 'done'));
+    const updatedSaveState = await db.collection('SaveStates').findOne(filter);
+    const nextChapter = updatedSaveState.chapters[chapterIndex + 1];
+    const unfinishedLevels = updatedSaveState.chapters[chapterIndex].levels.filter(lev => !(lev.status === 'done'));
+
+    console.log(nextChapter, unfinishedLevels);
 
     if (nextChapter && unfinishedLevels.length === 0) {
       const unlockChapter = {

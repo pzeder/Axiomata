@@ -17,6 +17,4 @@ export interface LevelData {
     goalAxiom: AxiomData;
     sequenceHistory: number[][];
     levelFinished: boolean;
-    nextChapterIndex: number;
-    nextLevelIndex: number;
 }

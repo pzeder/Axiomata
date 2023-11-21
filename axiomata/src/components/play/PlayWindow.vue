@@ -1,17 +1,20 @@
-<template>levelFinished
+<template>
+  levelFinished
   <HeadBar :height="headBarHeight" :levelName="levelData.levelName" @openLevelMenu="emit('openLevelMenu')" />
   <SequenceContainer class="workbench" :posX="workbenchX" :posY="workbenchY" :width="workbenchWidth"
     :height="workbenchHeight" :maxFill="workbenchMaxFill" :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio"
     :screenRatio="screenRatio" :sequence="workSequence" :symbolAlphabet="levelData.symbolAlphabet" />
-  <AxiomBar class="derivate-bar" :posX="derivateBarX" :posY="derivateBarY" :width="derivateBarWidth" :height="derivateBarHeight" :screenRatio="screenRatio"
-    :axioms="levelData.derivates" :symbolAlphabet="levelData.symbolAlphabet" @selectAxiom="selectAxiom" />
-  <AxiomBar class="main-axiom-bar" :posX="axiomBarX" :posY="axiomBarY" :width="axiomBarWidth" :height="axiomBarHeight" :screenRatio="screenRatio"
-    :axioms="levelData.axioms" :symbolAlphabet="levelData.symbolAlphabet" @selectAxiom="selectAxiom" />
+  <AxiomBar class="derivate-bar" :posX="derivateBarX" :posY="derivateBarY" :width="derivateBarWidth"
+    :height="derivateBarHeight" :screenRatio="screenRatio" :axioms="levelData.derivates"
+    :symbolAlphabet="levelData.symbolAlphabet" @selectAxiom="selectAxiom" />
+  <AxiomBar class="main-axiom-bar" :posX="axiomBarX" :posY="axiomBarY" :width="axiomBarWidth" :height="axiomBarHeight"
+    :screenRatio="screenRatio" :axioms="levelData.axioms" :symbolAlphabet="levelData.symbolAlphabet"
+    @selectAxiom="selectAxiom" />
   <SequenceContainer class="goal-window" :posX="goalX" :posY="goalY" :width="goalWidth" :height="goalWidth * screenRatio"
     :maxFill="0.8" :maxSymbolWidthRatio="0.33" :screenRatio="screenRatio" :sequence="levelData.goalAxiom.lowerSequence"
     :symbolAlphabet="levelData.symbolAlphabet" />
   <VictoryWindow v-if="levelData.levelFinished" :posX="workbenchX" :posY="headBarHeight" :width="workbenchWidth"
-    :height="workbenchHeight" :hasNextLevel="levelData.nextChapterIndex !== -1" @openLevelMenu="emit('openLevelMenu')"
+    :height="workbenchHeight" :hasNextLevel="hasNextLevel" @openLevelMenu="emit('openLevelMenu')"
     @nextLevel="emit('nextLevel')" />
   <Cursor :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="workSymbolWidth"
     :symbolAlphabet="levelData.symbolAlphabet" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
@@ -35,6 +38,7 @@ import { axiomHeight, axiomWidth } from '@/scripts/AxiomMethods';
 
 interface Props {
   levelData: LevelData;
+  hasNextLevel: boolean;
 }
 const props = defineProps<Props>();
 
