@@ -7,7 +7,8 @@
     borderColor: (highlight) ? 'rgb(180, 180, 180)' : 'rgb(100, 100, 100)',
     borderWidth: (symbolWidth / 13) + 'vw',
     borderRadius: (symbolWidth / 5) + 'vw',
-    marginLeft: (-symbolWidth / 13) + 'vw'
+    marginLeft: (-symbolWidth / 13) + 'vw',
+    fontSize: (symbolWidth * screenRatio * 0.5) + 'vh'
   }"> {{ symbolData.text }} </div>
 </template>
 
@@ -28,13 +29,10 @@ const symbolHeight = computed(() => props.symbolWidth * props.screenRatio);
 
 <style scoped>
 .symbol {
-  display: grid;
-  place-items: center;
-  border-width: 0.5vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-style: solid;
-  border-radius: 1vw;
-  margin-left: -0.5vw;
   user-select: none;
-  font-size: 20pt;
 }
 </style>
