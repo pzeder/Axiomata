@@ -8,3 +8,15 @@ export interface SymbolData {
     text: string;
     textColor: string;
 }
+
+export interface LevelData {
+    symbolAlphabet: SymbolData[];
+    axioms: AxiomData[];
+    derivates: AxiomData[];
+    levelName: string;
+    goalAxiom: AxiomData;
+    sequenceHistory: number[][];
+    levelFinished: boolean;
+    nextChapterIndex: number;
+    nextLevelIndex: number;
+}

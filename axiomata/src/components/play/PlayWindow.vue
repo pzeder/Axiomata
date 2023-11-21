@@ -1,20 +1,20 @@
-<template>
-  <HeadBar :height="headBarHeight" :levelName="levelName" @openLevelMenu="emit('openLevelMenu')" />
+<template>levelFinished
+  <HeadBar :height="headBarHeight" :levelName="levelData.levelName" @openLevelMenu="emit('openLevelMenu')" />
   <SequenceContainer class="workbench" :posX="workbenchX" :posY="workbenchY" :width="workbenchWidth"
     :height="workbenchHeight" :maxFill="workbenchMaxFill" :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio"
-    :screenRatio="screenRatio" :sequence="workSequence" :symbolAlphabet="symbolAlphabet" />
+    :screenRatio="screenRatio" :sequence="workSequence" :symbolAlphabet="levelData.symbolAlphabet" />
   <AxiomBar class="derivate-bar" :posX="derivateBarX" :posY="derivateBarY" :width="derivateBarWidth" :height="derivateBarHeight" :screenRatio="screenRatio"
-    :axioms="derivates" :symbolAlphabet="symbolAlphabet" @selectAxiom="selectAxiom" />
+    :axioms="levelData.derivates" :symbolAlphabet="levelData.symbolAlphabet" @selectAxiom="selectAxiom" />
   <AxiomBar class="main-axiom-bar" :posX="axiomBarX" :posY="axiomBarY" :width="axiomBarWidth" :height="axiomBarHeight" :screenRatio="screenRatio"
-    :axioms="axioms" :symbolAlphabet="symbolAlphabet" @selectAxiom="selectAxiom" />
+    :axioms="levelData.axioms" :symbolAlphabet="levelData.symbolAlphabet" @selectAxiom="selectAxiom" />
   <SequenceContainer class="goal-window" :posX="goalX" :posY="goalY" :width="goalWidth" :height="goalWidth * screenRatio"
-    :maxFill="0.8" :maxSymbolWidthRatio="0.33" :screenRatio="screenRatio" :sequence="goalAxiom.lowerSequence"
-    :symbolAlphabet="symbolAlphabet" />
-  <VictoryWindow v-if="levelFinsihed" :posX="workbenchX" :posY="headBarHeight" :width="workbenchWidth"
-    :height="workbenchHeight" :hasNextLevel="nextChapterName != ''" @openLevelMenu="emit('openLevelMenu')"
-    @nextLevel="nextLevel" />
+    :maxFill="0.8" :maxSymbolWidthRatio="0.33" :screenRatio="screenRatio" :sequence="levelData.goalAxiom.lowerSequence"
+    :symbolAlphabet="levelData.symbolAlphabet" />
+  <VictoryWindow v-if="levelData.levelFinished" :posX="workbenchX" :posY="headBarHeight" :width="workbenchWidth"
+    :height="workbenchHeight" :hasNextLevel="levelData.nextChapterIndex !== -1" @openLevelMenu="emit('openLevelMenu')"
+    @nextLevel="emit('nextLevel')" />
   <Cursor :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="workSymbolWidth"
-    :symbolAlphabet="symbolAlphabet" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
+    :symbolAlphabet="levelData.symbolAlphabet" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
     :centerDirectionY="centerDirectionY" :screenRatio="screenRatio" :workMatch="workMatch" @axiomDrop="axiomDrop"
     @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
   <div v-if="goalMatch" @click="finishLevel"
@@ -24,21 +24,17 @@
 </template>
 
 <script setup lang=ts>
-import Axiom from '@/components/axiom/Axiom.vue';
 import AxiomBar from './AxiomBar.vue';
 import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import VictoryWindow from './VictoryWindow.vue';
 import HeadBar from '@/components/play/HeadBar.vue'
 import Cursor from './Cursor.vue';
-import { AxiomData, SymbolData } from '@/scripts/Interfaces';
-import axios from 'axios';
+import { AxiomData, LevelData, SymbolData } from '@/scripts/Interfaces';
 import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount, computed } from 'vue';
 import { axiomHeight, axiomWidth } from '@/scripts/AxiomMethods';
 
 interface Props {
-  saveID: any;
-  chapterName: string;
-  levelName: string;
+  levelData: LevelData;
 }
 const props = defineProps<Props>();
 
@@ -69,15 +65,6 @@ const workSymbolWidth = computed(() => {
 });
 
 // Level variables
-const saveID: Ref<any> = ref(props.saveID);
-const chapterName: Ref<string> = ref(props.chapterName);
-const levelName: Ref<string> = ref(props.levelName);
-const symbolAlphabet: Ref<SymbolData[]> = ref([]);
-const axioms: Ref<AxiomData[]> = ref([]);
-const derivates: Ref<AxiomData[]> = ref([]);
-const goalAxiom: Ref<AxiomData> = ref({ upperSequence: [], lowerSequence: [] });
-const levelFinsihed: Ref<boolean> = ref(false);
-const sequenceHistory: Ref<number[][]> = ref([[]]);
 const goalMatch: Ref<boolean> = ref(false);
 
 // Cursor variables
@@ -85,8 +72,6 @@ const cursorAxiom: Ref<AxiomData> = ref({ upperSequence: [], lowerSequence: [] }
 const cursorAxiomX: Ref<number> = ref(0);
 const cursorAxiomY: Ref<number> = ref(0);
 const dragging: Ref<boolean> = ref(false);
-const nextLevelName: Ref<string> = ref("");
-const nextChapterName: Ref<string> = ref("");
 
 // Workbench variables
 const dockIndex: Ref<number> = ref(0);
@@ -95,7 +80,7 @@ const upperHighlights: Ref<boolean[]> = ref([]);
 const lowerHighlights: Ref<boolean[]> = ref([]);
 const workMatch: Ref<boolean> = ref(false);
 const centerDirectionY: Ref<number> = ref(0);
-const workSequence: Ref<number[]> = ref([]);
+const workSequence = computed(() => props.levelData.sequenceHistory[props.levelData.sequenceHistory.length - 1]);
 let nearSequence: number[];
 let farSequence: number[];
 let nearHighlights: Ref<boolean[]>;
@@ -104,10 +89,9 @@ onMounted(() => {
   document.body.classList.add('no-scroll');
   window.addEventListener('resize', handleResize);
   window.addEventListener('mousemove', updateCursorAxiomPos);
-  fetchLevel();
 });
 
-const emit = defineEmits(['openLevelMenu']);
+const emit = defineEmits(['openLevelMenu', 'levelFinished', 'updateSequenceHistory', 'nextLevel']);
 
 onBeforeUnmount(() => {
   document.body.classList.remove('no-scroll');
@@ -209,55 +193,8 @@ function updateMatching(): void {
 }
 
 function finishLevel(): void {
-  levelFinsihed.value = true;
   goalMatch.value = false;
-  updateLevelEnd();
-}
-
-async function fetchLevel(): Promise<void> {
-  try {
-    const query: string = '?saveID=' + saveID.value
-      + '&chapterName=' + chapterName.value
-      + '&levelName=' + levelName.value;
-    console.log(query);
-    const response = await axios.get('http://localhost:3000/level' + query);
-    if (response.status === 200) {
-      symbolAlphabet.value = response.data.symbolAlphabet;
-      axioms.value = response.data.axioms;
-      derivates.value = response.data.derivates;
-      goalAxiom.value = response.data.goalAxiom;
-      sequenceHistory.value = response.data.sequenceHistory;
-      workSequence.value = sequenceHistory.value[sequenceHistory.value.length - 1];
-      nextChapterName.value = response.data.nextChapterName;
-      nextLevelName.value = response.data.nextLevelName;
-      console.log(nextChapterName.value, nextLevelName.value);
-    } else {
-      console.error('Server responded with status', response.status);
-    }
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
-}
-
-async function updateLevelEnd(): Promise<void> {
-  try {
-    const updatedData = {
-      saveID: saveID.value,
-      chapterName: chapterName.value,
-      levelName: levelName.value,
-      newStatus: 'done'
-    };
-    const response = await axios.patch(`http://localhost:3000/levelEnd`, updatedData);
-    if (response.status === 200) {
-      console.log('Course updated successfully:', response.data);
-    } else if (response.status === 400) {
-      console.error(response.data.message);
-    } else {
-      console.error('Server responded with status:', response.status);
-    }
-  } catch (error) {
-    console.error('Error updating data:', error);
-  }
+  emit('levelFinished');
 }
 
 function selectAxiom(axiom: AxiomData): void {
@@ -293,7 +230,6 @@ function cursorAxiomClicked(): void {
 
 function swap(): void {
   updateWorkSequence();
-  updateSequenceHistory();
   updateGoalMatch();
   cursorAxiom.value.upperSequence = [];
   resetHighlights();
@@ -319,27 +255,7 @@ function updateWorkSequence(): void {
     newSequence.push(workSequence.value[i]);
   }
 
-  workSequence.value = newSequence;
-}
-
-async function updateSequenceHistory(): Promise<void> {
-  sequenceHistory.value.push(workSequence.value);
-  try {
-    const updatedData = {
-      saveID: saveID.value,
-      chapterName: chapterName.value,
-      levelName: levelName.value,
-      newHistory: sequenceHistory.value
-    };
-    const response = await axios.patch(`http://localhost:3000/sequenceHistory`, updatedData);
-    if (response.status === 200) {
-      console.log('Course updated successfully:', response.data);
-    } else {
-      console.error('Server responded with status:', response.status);
-    }
-  } catch (error) {
-    console.error('Error updating data:', error);
-  }
+  emit('updateSequenceHistory', newSequence);
 }
 
 function updateGoalMatch(): void {
@@ -347,22 +263,15 @@ function updateGoalMatch(): void {
 }
 
 function endOfGame(): boolean {
-  if (workSequence.value.length !== goalAxiom.value.lowerSequence.length) {
+  if (workSequence.value.length !== props.levelData.goalAxiom.lowerSequence.length) {
     return false;
   }
   for (let i = 0; i < workSequence.value.length; i++) {
-    if (workSequence.value[i] !== goalAxiom.value.lowerSequence[i]) {
+    if (workSequence.value[i] !== props.levelData.goalAxiom.lowerSequence[i]) {
       return false;
     }
   }
   return true;
-}
-
-function nextLevel(): void {
-  levelFinsihed.value = false;
-  chapterName.value = nextChapterName.value;
-  levelName.value = nextLevelName.value;
-  fetchLevel();
 }
 </script>
 

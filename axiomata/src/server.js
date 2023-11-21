@@ -101,33 +101,32 @@ app.post('/newSaveState', async (req, res) => {
 
 app.get('/level', async (req, res) => {
   try {
-    const { saveID, chapterName, levelName } = req.query;
+    const { saveID, chapterIndex, levelIndex } = req.query;
     const filter = ({ _id: new ObjectId(saveID) });
     const saveState = await db.collection('SaveStates').findOne(filter);
-    const chapter = saveState.chapters.find(ch => ch.chapterName === chapterName);
-    const level = chapter.levels.find(lev => lev.levelName === levelName);
-    const chapterIndex = saveState.chapters.findIndex(ch => ch.chapterName === chapterName);
-    const levelIndex = saveState.chapters[chapterIndex].levels.findIndex(lev => lev.levelName === levelName);
-    let nextChapterIndex = chapterIndex;
-    let nextLevelIndex = levelIndex + 1;
-    let nextChapterName = "";
-    let nextLevelName = "";
+    const chapter = saveState.chapters[chapterIndex];
+    const level = chapter.levels[levelIndex];
+
+    let nextChapterIndex = parseInt(chapterIndex, 10);
+    let nextLevelIndex = parseInt(levelIndex, 10) + 1;
     if (nextLevelIndex >= chapter.levels.length) {
       nextChapterIndex++;
       nextLevelIndex = 0;
     }
-    if (nextChapterIndex < saveState.chapters.length) {
-      nextChapterName = saveState.chapters[nextChapterIndex].chapterName;
-      nextLevelName = saveState.chapters[nextChapterIndex].levels[nextLevelIndex].levelName;
+    if (nextChapterIndex >= saveState.chapters.length) {
+      nextChapterIndex = -1;
+      nextLevelIndex = -1;
     }
     const levelData = ({
+      levelName: level.levelName,
       symbolAlphabet: saveState.symbolAlphabet,
       axioms: saveState.axioms,
       derivates: saveState.derivates,
       goalAxiom: level.goalAxiom,
       sequenceHistory: level.sequenceHistory,
-      nextChapterName: nextChapterName,
-      nextLevelName: nextLevelName
+      levelFinished: level.status === 'done',
+      nextChapterIndex: nextChapterIndex,
+      nextLevelIndex: nextLevelIndex
     });
     res.json(levelData);
   } catch (error) {
@@ -137,11 +136,8 @@ app.get('/level', async (req, res) => {
 
 app.patch('/sequenceHistory', async (req, res) => {
   try {
-    const { saveID, chapterName, levelName, newHistory } = req.body;
+    const { saveID, chapterIndex, levelIndex, newHistory } = req.body;
     const filter = ({ _id: new ObjectId(saveID) });
-    let saveState = await db.collection('SaveStates').findOne(filter);
-    const chapterIndex = saveState.chapters.findIndex(ch => ch.chapterName === chapterName);
-    const levelIndex = saveState.chapters[chapterIndex].levels.findIndex(lev => lev.levelName === levelName);
 
     const updateLevel = {
       $set: { [`chapters.${chapterIndex}.levels.${levelIndex}.sequenceHistory`]: newHistory },
@@ -161,20 +157,17 @@ app.patch('/sequenceHistory', async (req, res) => {
 
 app.patch('/levelEnd', async (req, res) => {
   try {
-    const { saveID, chapterName, levelName, newStatus } = req.body;
+    const { saveID, chapterIndex, levelIndex } = req.body;
     const filter = ({ _id: new ObjectId(saveID) });
-    let saveState = await db.collection('SaveStates').findOne(filter);
-    const chapter = saveState.chapters.find(ch => ch.chapterName === chapterName);
-    const level = chapter.levels.find(lev => lev.levelName === levelName);
-    const chapterIndex = saveState.chapters.findIndex(ch => ch.chapterName === chapterName);
-    const levelIndex = saveState.chapters[chapterIndex].levels.findIndex(lev => lev.levelName === levelName);
+    const saveState = await db.collection('SaveStates').findOne(filter);
+    const level = saveState.chapters[chapterIndex].levels[levelIndex];
 
     if (level.status === 'done') {
       return res.status(400).json({ error: 'Level already finished' });
     }
 
     const updateLevel = {
-      $set: { [`chapters.${chapterIndex}.levels.${levelIndex}.status`]: newStatus },
+      $set: { [`chapters.${chapterIndex}.levels.${levelIndex}.status`]: 'done' },
       $push: { derivates: level.goalAxiom }
     };
 
@@ -184,12 +177,10 @@ app.patch('/levelEnd', async (req, res) => {
       return res.status(500).json({ error: 'Failed to update status' });
     }
 
-    // check if a new chapter gets unlocked
+    // if all levels of a chapter are solved -> unlock all levels of the next chapter
 
-    courseSave = await db.collection('SaveStates').findOne(filter);
-
-    const nextChapter = courseSave.chapters[chapterIndex + 1];
-    const unfinishedLevels = courseSave.chapters[chapterIndex].levels.filter(lev => !(lev.status === 'done'));
+    const nextChapter = saveState.chapters[chapterIndex + 1];
+    const unfinishedLevels = saveState.chapters[chapterIndex].levels.filter(lev => !(lev.status === 'done'));
 
     if (nextChapter && unfinishedLevels.length === 0) {
       const unlockChapter = {

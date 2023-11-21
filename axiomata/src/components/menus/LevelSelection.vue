@@ -1,8 +1,8 @@
 <template>
-  <div class="chapter-container" v-for="chapter in chapters" :key="chapter.chapterName">
+  <div class="chapter-container" v-for="(chapter, chIndex) in chapters" :key="chIndex">
     {{ chapter.chapterName }}
-    <button v-for="level in chapter.levelHeaders" :key="level.levelName"
-      @click="trySelectingLevel(chapter.unlocked, chapter.chapterName, level.levelName)"
+    <button v-for="(level, lvlIndex) in chapter.levelHeaders" :key="lvlIndex"
+      @click="trySelectingLevel(chapter.unlocked, chIndex, lvlIndex)"
       :style="{ backgroundColor: (!chapter.unlocked ? 'rgb(150,150,150)' : (level.status === 'todo' ? '#F53227' : (level.status === 'busy' ? '#F5AA27' : '#3FB56E'))) }">
       {{ level.levelName }}
     </button>
@@ -38,11 +38,11 @@ onMounted(() => {
   fetchChapterHeaders();
 });
 
-const emit = defineEmits(['levelSelected', 'openSaveStateMenu', 'openStartMenu']);
+const emit = defineEmits(['selectLevel', 'openSaveStateMenu', 'openStartMenu']);
 
-function trySelectingLevel(unlocked: boolean, chapterName: string, levelName: string) {
+function trySelectingLevel(unlocked: boolean, chapterIndex: number, levelIndex: number) {
   if (unlocked) {
-    emit('levelSelected', chapterName, levelName);
+    emit('selectLevel', chapterIndex, levelIndex);
   }
 }
 
