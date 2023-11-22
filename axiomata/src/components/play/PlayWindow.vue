@@ -126,12 +126,13 @@ function axiomDrop(): void {
   }
 
   const centerX: number = cursorAxiomX.value + axiomWidth(cursorAxiom.value, workSymbolWidth.value) / 2;
-  const centerY: number = cursorAxiomX.value + axiomHeight(workSymbolWidth.value, screenRatio.value) / 2;
+  const centerY: number = cursorAxiomY.value + axiomHeight(workSymbolWidth.value, screenRatio.value) / 2;
 
   // Remove the selected Axiom if the mouse is NOT inside workbench
 
   if (!(centerX > workbenchX.value && centerX < workbenchX.value + workbenchWidth.value
     && centerY > workbenchY.value && centerY < workbenchY.value + workbenchHeight.value)) {
+    console.log(centerX, centerY);
     cursorAxiom.value.upperSequence = [];
     return;
   }
