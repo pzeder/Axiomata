@@ -20,7 +20,7 @@ interface Props {
   symbolWidth: number;
   screenRatio: number;
   highlight: boolean;
-  symbolData: SymbolData;
+  symbolData: SymbolData | null;
 }
 const props = defineProps<Props>();
 

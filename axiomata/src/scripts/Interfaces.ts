@@ -1,6 +1,6 @@
 export interface AxiomData {
-    upperSequence: number[];
-    lowerSequence: number[];
+    upperSequence: Symbol[];
+    lowerSequence: Symbol[];
 }
 
 export interface SymbolData {
@@ -9,12 +9,25 @@ export interface SymbolData {
     textColor: string;
 }
 
+export interface SeqVar {
+    varIndex: number;
+    colorIndex: number;
+}
+
+export interface VarData {
+    symbolIndex: number;
+    possibilities: number[];
+}
+
 export interface LevelData {
     symbolAlphabet: SymbolData[];
     axioms: AxiomData[];
     derivates: AxiomData[];
     levelName: string;
     goalAxiom: AxiomData;
-    sequenceHistory: number[][];
+    sequenceHistory: Symbol[][];
     levelFinished: boolean;
+    variables: VarData[];
 }
+
+export type Symbol = number | SeqVar;

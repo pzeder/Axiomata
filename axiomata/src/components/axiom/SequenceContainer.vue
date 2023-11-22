@@ -2,13 +2,13 @@
   <div class="sequence-container"
     :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
     <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :sequence="sequence" :symbolAlphabet="symbolAlphabet"
-      :highlights="highlights" />
+      :highlights="highlights" :variables="variables" :varColors="varColors" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, defineProps, withDefaults } from 'vue';
-import { SymbolData } from '@/scripts/Interfaces';
+import { SeqVar, SymbolData, VarData } from '@/scripts/Interfaces';
 import Sequence from '@/components/axiom/Sequence.vue';
 
 interface Props {
@@ -19,9 +19,11 @@ interface Props {
   maxFill: number;
   maxSymbolWidthRatio: number;
   screenRatio: number;
-  sequence: number[];
+  sequence: (number | SeqVar)[];
   symbolAlphabet: SymbolData[];
   highlights: boolean[];
+  variables: VarData[];
+  varColors: string[];
 }
 
 const props = withDefaults(defineProps<Props>(), {

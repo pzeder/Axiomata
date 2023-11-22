@@ -126,7 +126,8 @@ app.get('/level', async (req, res) => {
       sequenceHistory: level.sequenceHistory,
       levelFinished: level.status === 'done',
       nextChapterIndex: nextChapterIndex,
-      nextLevelIndex: nextLevelIndex
+      nextLevelIndex: nextLevelIndex,
+      variables: saveState.variables
     });
     res.json(levelData);
   } catch (error) {
@@ -177,7 +178,9 @@ app.patch('/levelEnd', async (req, res) => {
       return res.status(500).json({ error: 'Failed to update status' });
     }
 
-    // if all levels of a chapter are solved -> unlock all levels of the next chapter
+    /* if all levels of a chapter are solved
+      1.) unlock all levels of the next chapter
+      2.) add goalAxiom to axioms */
 
     const updatedSaveState = await db.collection('SaveStates').findOne(filter);
     const nextChapter = updatedSaveState.chapters[chapterIndex + 1];

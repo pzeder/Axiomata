@@ -3,7 +3,8 @@
   <HeadBar :height="headBarHeight" :levelName="levelData.levelName" @openLevelMenu="emit('openLevelMenu')" />
   <SequenceContainer class="workbench" :posX="workbenchX" :posY="workbenchY" :width="workbenchWidth"
     :height="workbenchHeight" :maxFill="workbenchMaxFill" :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio"
-    :screenRatio="screenRatio" :sequence="workSequence" :symbolAlphabet="levelData.symbolAlphabet" />
+    :screenRatio="screenRatio" :sequence="workSequence" :symbolAlphabet="levelData.symbolAlphabet"
+    :variables="levelData.variables" :varColors="varColors" />
   <AxiomBar class="derivate-bar" :posX="derivateBarX" :posY="derivateBarY" :width="derivateBarWidth"
     :height="derivateBarHeight" :screenRatio="screenRatio" :axioms="levelData.derivates"
     :symbolAlphabet="levelData.symbolAlphabet" @selectAxiom="selectAxiom" />
@@ -12,7 +13,7 @@
     @selectAxiom="selectAxiom" />
   <SequenceContainer class="goal-window" :posX="goalX" :posY="goalY" :width="goalWidth" :height="goalWidth * screenRatio"
     :maxFill="0.8" :maxSymbolWidthRatio="0.33" :screenRatio="screenRatio" :sequence="levelData.goalAxiom.lowerSequence"
-    :symbolAlphabet="levelData.symbolAlphabet" />
+    :variables="levelData.variables" :varColors="varColors" :symbolAlphabet="levelData.symbolAlphabet" />
   <VictoryWindow v-if="levelData.levelFinished" :posX="workbenchX" :posY="headBarHeight" :width="workbenchWidth"
     :height="workbenchHeight" :hasNextLevel="hasNextLevel" @openLevelMenu="emit('openLevelMenu')"
     @nextLevel="emit('nextLevel')" />
@@ -32,7 +33,7 @@ import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import VictoryWindow from './VictoryWindow.vue';
 import HeadBar from '@/components/play/HeadBar.vue'
 import Cursor from './Cursor.vue';
-import { AxiomData, LevelData, SymbolData } from '@/scripts/Interfaces';
+import { AxiomData, LevelData, SeqVar, SymbolData, Symbol } from '@/scripts/Interfaces';
 import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount, computed } from 'vue';
 import { axiomHeight, axiomWidth } from '@/scripts/AxiomMethods';
 
@@ -67,6 +68,7 @@ const workSymbolWidth = computed(() => {
   const maxWidth: number = workbenchMaxSymbolWidthRatio.value * workbenchWidth.value;
   return Math.min(w, maxWidth);
 });
+const varColors: Ref<string[]> = ref(['red']);
 
 // Level variables
 const goalMatch: Ref<boolean> = ref(false);
@@ -85,8 +87,8 @@ const lowerHighlights: Ref<boolean[]> = ref([]);
 const workMatch: Ref<boolean> = ref(false);
 const centerDirectionY: Ref<number> = ref(0);
 const workSequence = computed(() => props.levelData.sequenceHistory[props.levelData.sequenceHistory.length - 1]);
-let nearSequence: number[];
-let farSequence: number[];
+let nearSequence: Symbol[];
+let farSequence: Symbol[];
 let nearHighlights: Ref<boolean[]>;
 
 onMounted(() => {
@@ -189,12 +191,25 @@ function updateMatching(): void {
   }
 
   while (workIndex < workSequence.value.length && nearIndex < nearSequence.length) {
-    let b = workSequence.value[workIndex] === nearSequence[nearIndex];
+    let workSymbol = getSymbolIndex(workSequence.value[workIndex]);
+    let nearSymbol = getSymbolIndex(nearSequence[nearIndex]);
+    let b = workSymbol === nearSymbol;
     workHighlights.value[workIndex] = b;
     nearHighlights.value[nearIndex] = b;
     workIndex++;
     nearIndex++;
   }
+}
+
+function getSymbolIndex(symbol: Symbol): number {
+  if (typeof symbol === 'number') {
+    return symbol;
+  }
+  if ('varIndex' in symbol && 'colorIndex' in symbol) {
+    const variable = symbol as SeqVar;
+    return props.levelData.variables[variable.varIndex].symbolIndex;
+  }
+  return -1;
 }
 
 function finishLevel(): void {
@@ -242,7 +257,7 @@ function swap(): void {
 }
 
 function updateWorkSequence(): void {
-  let newSequence: number[] = [];
+  let newSequence: Symbol[] = [];
 
   // Keep all symbols left of the match
 

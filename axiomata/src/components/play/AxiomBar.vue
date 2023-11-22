@@ -1,13 +1,14 @@
 <template>
   <div class="axiom-bar" :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
-    <AxiomContainer v-for="(axiom, index) in axioms" :key="index" :index="index" :posX="containerX(index)" :posY="containerY(index)" :width="containerWidth"
-      :height="containerHeight" :screenRatio="screenRatio" :axiom="axiom" :symbolAlphabet="symbolAlphabet"
-      @selectAxiom="emit('selectAxiom', axiom)"  />
+    <AxiomContainer v-for="(axiom, index) in axioms" :key="index" :index="index" :posX="containerX(index)"
+      :posY="containerY(index)" :width="containerWidth" :height="containerHeight" :screenRatio="screenRatio"
+      :axiom="axiom" :symbolAlphabet="symbolAlphabet" :variables="variables" :varColors="varColors"
+      @selectAxiom="emit('selectAxiom', axiom)" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { AxiomData, SymbolData } from '@/scripts/Interfaces';
+import { AxiomData, SymbolData, VarData } from '@/scripts/Interfaces';
 import { computed, defineProps, defineEmits } from 'vue';
 import AxiomContainer from '@/components/axiom/AxiomContainer.vue'
 
@@ -19,6 +20,8 @@ interface Props {
   screenRatio: number;
   axioms: AxiomData[];
   symbolAlphabet: SymbolData[];
+  variables: VarData[];
+  varColors: string[];
 }
 const props = defineProps<Props>();
 const emit = defineEmits(['selectAxiom', 'mouseOver']);
@@ -31,7 +34,7 @@ const maxContainerHeight = computed(() => vertical.value ? 0.5 * props.width * p
 const minContainerHeight = computed(() => vertical.value ? props.height / props.axioms.length : props.height);
 const containerHeight = computed(() => Math.min(minContainerHeight.value, maxContainerHeight.value));
 const containerX = (index: number) => vertical.value ? 0 : index * containerWidth.value;
-const containerY = (index: number) => vertical.value ?  index * containerHeight.value : 0;
+const containerY = (index: number) => vertical.value ? index * containerHeight.value : 0;
 </script>
 
 <style>
