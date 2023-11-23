@@ -15,7 +15,7 @@ export interface SeqVar {
 }
 
 export interface VarData {
-    symbolIndex: number;
+    varText: string;
     possibilities: number[];
 }
 

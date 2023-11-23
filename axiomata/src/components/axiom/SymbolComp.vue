@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { SeqSymbol, SeqVar, SymbolData, VarData } from "@/scripts/Interfaces";
-import { computed, defineProps } from "vue";
+import { computed, defineProps, withDirectives } from "vue";
 
 interface Props {
   symbolWidth: number;
@@ -35,13 +35,10 @@ const symbolData = computed(() => {
   }
   if ('varIndex' in props.symbol && 'colorIndex' in props.symbol) {
     const variable = props.symbol as SeqVar;
-    console.log('vars:', props.variables);
-    const symbolIndex: number = props.variables[variable.varIndex].symbolIndex;
-    const data: SymbolData = props.symbolAlphabet[symbolIndex];
     return {
       backgroundColor: props.varColors[variable.colorIndex],
-      text: data.text,
-      textColor: data.textColor
+      text: props.variables[variable.varIndex].varText,
+      textColor: 'white'
     };
   }
   return null;

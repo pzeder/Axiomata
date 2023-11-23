@@ -134,7 +134,6 @@ function axiomDrop(): void {
 
   if (!(centerX > workbenchX.value && centerX < workbenchX.value + workbenchWidth.value
     && centerY > workbenchY.value && centerY < workbenchY.value + workbenchHeight.value)) {
-    console.log(centerX, centerY);
     cursorAxiom.value.upperSequence = [];
     return;
   }
