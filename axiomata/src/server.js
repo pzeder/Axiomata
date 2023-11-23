@@ -89,7 +89,8 @@ app.post('/newSaveState', async (req, res) => {
         newAxioms: ch.newAxioms,
         unlocked: (getChapterIndex(ch) === 0 ? true : false),
         levels: getLevels(ch)
-      }))
+      })),
+      variables: courseData.variables
     };
 
     const result = await db.collection('SaveStates').insertOne(courseSave);
@@ -129,6 +130,7 @@ app.get('/level', async (req, res) => {
       nextLevelIndex: nextLevelIndex,
       variables: saveState.variables
     });
+    console.log(saveState.variablbes);
     res.json(levelData);
   } catch (error) {
     res.status(500).json({ error: error.message });

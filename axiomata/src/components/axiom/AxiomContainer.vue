@@ -1,7 +1,7 @@
 <template>
   <div class="axiom-container"
     :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
-    <Axiom :symbolWidth="symbolWidth" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="symbolAlphabet"
+    <AxiomComp :symbolWidth="symbolWidth" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="symbolAlphabet"
       :variables="variables" :varColors="varColors" @mousedown="selectAxiom(axiom)" />
   </div>
 </template>
@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, computed } from 'vue';
 import { AxiomData, SymbolData, VarData } from '@/scripts/Interfaces';
-import Axiom from '@/components/axiom/Axiom.vue';
+import AxiomComp from '@/components/axiom/AxiomComp.vue';
 import { maxSequenceLength } from '@/scripts/AxiomMethods';
 
 interface Props {

@@ -119,6 +119,7 @@ async function fetchLevel(): Promise<void> {
       currentLevelData.value.variables = response.data.variables;
       nextChapterIndex.value = response.data.nextChapterIndex;
       nextLevelIndex.value = response.data.nextLevelIndex;
+      console.log(currentLevelData.value.variables);
     } else {
       console.error('Server responded with status', response.status);
     }

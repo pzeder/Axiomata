@@ -4,9 +4,10 @@
     left: posX + 'vw',
     top: posY + 'vh'
   }">
-    <Axiom v-if="cursorAxiom.upperSequence.length !== 0" :symbolWidth="symbolWidth" :screenRatio="screenRatio"
-      :axiomData="cursorAxiom" :symbolAlphabet="symbolAlphabet" :upperHighlights="upperHighlights"
-      :lowerHighlights="lowerHighlights" @mouseup="emit('axiomDrop')" @mousedown="emit('cursorAxiomClicked')"> </Axiom>
+    <AxiomComp v-if="cursorAxiom.upperSequence.length !== 0" :symbolWidth="symbolWidth" :screenRatio="screenRatio"
+      :axiomData="cursorAxiom" :symbolAlphabet="symbolAlphabet" :upperHighlights="upperHighlights" :variables="variables"
+      :varColors="varColors" :lowerHighlights="lowerHighlights" @mouseup="emit('axiomDrop')"
+      @mousedown="emit('cursorAxiomClicked')" />
     <div class="swap-button" v-if="workMatch" @click="emit('swap')" :style="{
       display: 'grid',
       placeItems: 'center',
@@ -20,9 +21,9 @@
 </template>
 
 <script setup lang="ts">
-import { AxiomData, SymbolData } from '@/scripts/Interfaces';
+import { AxiomData, SymbolData, VarData } from '@/scripts/Interfaces';
 import { defineProps, defineEmits } from 'vue';
-import Axiom from '@/components/axiom/Axiom.vue';
+import AxiomComp from '@/components/axiom/AxiomComp.vue';
 
 interface Props {
   posX: number;
@@ -35,6 +36,8 @@ interface Props {
   centerDirectionY: number;
   screenRatio: number;
   workMatch: boolean;
+  variables: VarData[];
+  varColors: string[];
 }
 const props = defineProps<Props>();
 const emit = defineEmits(['axiomDrop', 'swap', 'cursorAxiomClicked']);

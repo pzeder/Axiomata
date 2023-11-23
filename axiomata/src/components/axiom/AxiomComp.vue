@@ -7,12 +7,12 @@
       left: (maxSequence * symbolWidth / 2 - symbolWidth / 4) + 'vw',
       width: (symbolWidth / 2) + 'vw'
     }" />
-    <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :sequence="axiomData.upperSequence"
+    <SequenceComp :symbolWidth="symbolWidth" :screenRatio="screenRatio" :sequence="axiomData.upperSequence"
       :variables="variables" :varColors="varColors" :symbolAlphabet="symbolAlphabet" :highlights="upperHighlights" :style="{
         left: (symbolWidth * (maxSequence - axiomData.upperSequence.length) / 2) + 'vw',
         top: 0
       }" />
-    <Sequence :symbolWidth="symbolWidth" :screenRatio="screenRatio" :sequence="axiomData.lowerSequence"
+    <SequenceComp :symbolWidth="symbolWidth" :screenRatio="screenRatio" :sequence="axiomData.lowerSequence"
       :variables="variables" :varColors="varColors" :symbolAlphabet="symbolAlphabet" :highlights="lowerHighlights" :style="{
         left: (symbolWidth * (maxSequence - axiomData.lowerSequence.length) / 2) + 'vw',
         top: (1.5 * symbolHeight) + 'vh'
@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { computed, defineProps, withDefaults } from 'vue';
 import { AxiomData, SymbolData, VarData } from '@/scripts/Interfaces';
-import Sequence from '@/components/axiom/Sequence.vue';
+import SequenceComp from '@/components/axiom/SequenceComp.vue';
 
 interface Props {
   symbolWidth: number;

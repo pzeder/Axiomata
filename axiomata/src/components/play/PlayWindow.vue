@@ -1,16 +1,15 @@
 <template>
-  levelFinished
   <HeadBar :height="headBarHeight" :levelName="levelData.levelName" @openLevelMenu="emit('openLevelMenu')" />
   <SequenceContainer class="workbench" :posX="workbenchX" :posY="workbenchY" :width="workbenchWidth"
     :height="workbenchHeight" :maxFill="workbenchMaxFill" :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio"
     :screenRatio="screenRatio" :sequence="workSequence" :symbolAlphabet="levelData.symbolAlphabet"
     :variables="levelData.variables" :varColors="varColors" />
   <AxiomBar class="derivate-bar" :posX="derivateBarX" :posY="derivateBarY" :width="derivateBarWidth"
-    :height="derivateBarHeight" :screenRatio="screenRatio" :axioms="levelData.derivates"
-    :symbolAlphabet="levelData.symbolAlphabet" @selectAxiom="selectAxiom" />
+    :height="derivateBarHeight" :screenRatio="screenRatio" :axioms="levelData.derivates" :variables="levelData.variables"
+    :varColors="varColors" :symbolAlphabet="levelData.symbolAlphabet" @selectAxiom="selectAxiom" />
   <AxiomBar class="main-axiom-bar" :posX="axiomBarX" :posY="axiomBarY" :width="axiomBarWidth" :height="axiomBarHeight"
     :screenRatio="screenRatio" :axioms="levelData.axioms" :symbolAlphabet="levelData.symbolAlphabet"
-    @selectAxiom="selectAxiom" />
+    :variables="levelData.variables" :varColors="varColors" @selectAxiom="selectAxiom" />
   <SequenceContainer class="goal-window" :posX="goalX" :posY="goalY" :width="goalWidth" :height="goalWidth * screenRatio"
     :maxFill="0.8" :maxSymbolWidthRatio="0.33" :screenRatio="screenRatio" :sequence="levelData.goalAxiom.lowerSequence"
     :variables="levelData.variables" :varColors="varColors" :symbolAlphabet="levelData.symbolAlphabet" />
@@ -19,10 +18,11 @@
     @nextLevel="emit('nextLevel')" />
   <Cursor :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="workSymbolWidth"
     :symbolAlphabet="levelData.symbolAlphabet" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
-    :centerDirectionY="centerDirectionY" :screenRatio="screenRatio" :workMatch="workMatch" @axiomDrop="axiomDrop"
+    :centerDirectionY="centerDirectionY" :screenRatio="screenRatio" :workMatch="workMatch"
+    :variables="levelData.variables" :varColors="varColors" @axiomDrop="axiomDrop"
     @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
   <div v-if="goalMatch" @click="finishLevel"
-    :style="{ position: 'absolute', userSelect: 'none', color: 'black', left: (goalX + goalWidth / 2) + 'vw', top: (goalY + goalWidth * screenRatio / 2) + 'vh', width: (goalWidth) + 'vw', height: goalHeight + 'vh' }">
+    :style="{ position: 'absolute', userSelect: 'none', color: 'black', left: (goalX + goalWidth / 2) + 'vw', top: (goalY + goalWidth * screenRatio / 2) + 'vh', width: (goalWidth) + 'vw', height: (goalWidth * screenRatio) + 'vh' }">
     MATCH
   </div>
 </template>
@@ -33,7 +33,7 @@ import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import VictoryWindow from './VictoryWindow.vue';
 import HeadBar from '@/components/play/HeadBar.vue'
 import Cursor from './Cursor.vue';
-import { AxiomData, LevelData, SeqVar, SymbolData, Symbol } from '@/scripts/Interfaces';
+import { AxiomData, LevelData, SeqVar, SeqSymbol } from '@/scripts/Interfaces';
 import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount, computed } from 'vue';
 import { axiomHeight, axiomWidth } from '@/scripts/AxiomMethods';
 
@@ -87,8 +87,8 @@ const lowerHighlights: Ref<boolean[]> = ref([]);
 const workMatch: Ref<boolean> = ref(false);
 const centerDirectionY: Ref<number> = ref(0);
 const workSequence = computed(() => props.levelData.sequenceHistory[props.levelData.sequenceHistory.length - 1]);
-let nearSequence: Symbol[];
-let farSequence: Symbol[];
+let nearSequence: SeqSymbol[];
+let farSequence: SeqSymbol[];
 let nearHighlights: Ref<boolean[]>;
 
 onMounted(() => {
@@ -201,7 +201,7 @@ function updateMatching(): void {
   }
 }
 
-function getSymbolIndex(symbol: Symbol): number {
+function getSymbolIndex(symbol: SeqSymbol): number {
   if (typeof symbol === 'number') {
     return symbol;
   }
@@ -257,7 +257,7 @@ function swap(): void {
 }
 
 function updateWorkSequence(): void {
-  let newSequence: Symbol[] = [];
+  let newSequence: SeqSymbol[] = [];
 
   // Keep all symbols left of the match
 

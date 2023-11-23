@@ -13,18 +13,39 @@
 </template>
 
 <script setup lang="ts">
-import { SymbolData } from "@/scripts/Interfaces";
+import { SeqSymbol, SeqVar, SymbolData, VarData } from "@/scripts/Interfaces";
 import { computed, defineProps } from "vue";
 
 interface Props {
   symbolWidth: number;
   screenRatio: number;
   highlight: boolean;
-  symbolData: SymbolData | null;
+  symbol: SeqSymbol;
+  symbolAlphabet: SymbolData[];
+  variables: VarData[];
+  varColors: string[];
 }
 const props = defineProps<Props>();
 
 const symbolHeight = computed(() => props.symbolWidth * props.screenRatio);
+
+const symbolData = computed(() => {
+  if (typeof props.symbol === 'number') {
+    return props.symbolAlphabet[props.symbol];
+  }
+  if ('varIndex' in props.symbol && 'colorIndex' in props.symbol) {
+    const variable = props.symbol as SeqVar;
+    console.log('vars:', props.variables);
+    const symbolIndex: number = props.variables[variable.varIndex].symbolIndex;
+    const data: SymbolData = props.symbolAlphabet[symbolIndex];
+    return {
+      backgroundColor: props.varColors[variable.colorIndex],
+      text: data.text,
+      textColor: data.textColor
+    };
+  }
+  return null;
+});
 </script>
 
 <style scoped>
