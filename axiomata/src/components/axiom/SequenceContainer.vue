@@ -1,6 +1,7 @@
 <template>
   <div class="sequence-container"
     :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
+    <div class="sequence-title" :style="{ width: width + 'vw' }"> {{ title }} </div>
     <SequenceComp :symbolWidth="symbolWidth" :screenRatio="screenRatio" :sequence="sequence"
       :symbolAlphabet="symbolAlphabet" :highlights="highlights" :variables="variables" :varColors="varColors"
       :varMap="varMap" />
@@ -48,5 +49,15 @@ const symbolWidth = computed(() => {
   justify-content: center;
   align-items: center;
   position: absolute;
+}
+
+.sequence-title {
+  position: absolute;
+  font-size: 4vh;
+  color: black;
+  left: 0;
+  top: 0;
+  user-select: none;
+  text-align: center;
 }
 </style>
