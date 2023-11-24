@@ -4,15 +4,18 @@
     :height="workbenchHeight" :maxFill="workbenchMaxFill" :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio"
     :screenRatio="screenRatio" :sequence="workSequence" :symbolAlphabet="levelData.symbolAlphabet"
     :variables="levelData.variables" :varColors="varColors" :highlights="workHighlights" />
-  <AxiomBar class="derivate-bar" :posX="derivateBarX" :posY="derivateBarY" :width="derivateBarWidth"
-    :height="derivateBarHeight" :screenRatio="screenRatio" :axioms="levelData.derivates" :variables="levelData.variables"
-    :varColors="varColors" :symbolAlphabet="levelData.symbolAlphabet" @selectAxiom="selectAxiom" />
-  <AxiomBar class="main-axiom-bar" :posX="axiomBarX" :posY="axiomBarY" :width="axiomBarWidth" :height="axiomBarHeight"
-    :screenRatio="screenRatio" :axioms="levelData.axioms" :symbolAlphabet="levelData.symbolAlphabet"
-    :variables="levelData.variables" :varColors="varColors" @selectAxiom="selectAxiom" />
-  <SequenceContainer class="goal-window" :posX="goalX" :posY="goalY" :width="goalWidth" :height="goalWidth * screenRatio"
-    :maxFill="0.8" :maxSymbolWidthRatio="0.33" :screenRatio="screenRatio" :sequence="levelData.goalAxiom.lowerSequence"
-    :variables="levelData.variables" :varColors="varColors" :symbolAlphabet="levelData.symbolAlphabet" />
+  <AxiomBar :title="'Bonus-Regeln'" :background="'rgb(187, 231, 247)'" :posX="derivateBarX" :posY="derivateBarY"
+    :width="derivateBarWidth" :height="derivateBarHeight" :screenRatio="screenRatio" :axioms="levelData.derivates"
+    :variables="levelData.variables" :varColors="varColors" :symbolAlphabet="levelData.symbolAlphabet"
+    @selectAxiom="selectAxiom" />
+  <AxiomBar :title="'Tausch-Regeln'" :background="'rgb(252, 223, 203)'" :posX="axiomBarX" :posY="axiomBarY"
+    :width="axiomBarWidth" :height="axiomBarHeight" :screenRatio="screenRatio" :axioms="levelData.axioms"
+    :symbolAlphabet="levelData.symbolAlphabet" :variables="levelData.variables" :varColors="varColors"
+    @selectAxiom="selectAxiom" />
+  <SequenceContainer class="goal-window" :title="'ZIEL'" :posX="goalX" :posY="goalY" :width="goalWidth"
+    :height="goalWidth * screenRatio" :maxFill="0.8" :maxSymbolWidthRatio="0.33" :screenRatio="screenRatio"
+    :sequence="levelData.goalAxiom.lowerSequence" :variables="levelData.variables" :varColors="varColors"
+    :symbolAlphabet="levelData.symbolAlphabet" />
   <VictoryWindow v-if="levelData.levelFinished" :posX="workbenchX" :posY="headBarHeight" :width="workbenchWidth"
     :height="workbenchHeight" :hasNextLevel="hasNextLevel" @openLevelMenu="emit('openLevelMenu')"
     @nextLevel="emit('nextLevel')" />
@@ -307,14 +310,6 @@ function updateWorkSequence(): void {
 </script>
 
 <style>
-.main-axiom-bar {
-  background: rgb(252, 223, 203);
-}
-
-.derivate-bar {
-  background: rgb(187, 231, 247);
-}
-
 .goal-window {
   background-color: #ffffff;
   border: 1vw solid rgb(63, 196, 244);

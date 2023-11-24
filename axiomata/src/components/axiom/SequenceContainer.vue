@@ -13,6 +13,7 @@ import { SeqSymbol, SymbolData, VarData } from '@/scripts/Interfaces';
 import SequenceComp from '@/components/axiom/SequenceComp.vue';
 
 interface Props {
+  title: string;
   posX: number;
   posY: number;
   width: number;
@@ -29,6 +30,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  title: () => '',
   highlights: () => [],
   varMap: () => new Map<string, number>()
 });
