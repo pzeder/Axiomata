@@ -25,7 +25,7 @@
     :variables="levelData.variables" :varColors="varColors" :varMap="varMap" @axiomDrop="axiomDrop"
     @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
   <div v-if="goalMatch" @click="finishLevel"
-    :style="{ position: 'absolute', userSelect: 'none', color: 'black', left: (goalX + goalWidth / 2) + 'vw', top: (goalY + goalWidth * screenRatio / 2) + 'vh', width: (goalWidth) + 'vw', height: (goalWidth * screenRatio) + 'vh' }">
+    :style="{ position: 'absolute', userSelect: 'none', color: 'red', left: (goalX + goalWidth / 2) + 'vw', top: (goalY + goalWidth * screenRatio / 2 + 10) + 'vh', width: (goalWidth) + 'vw', height: (goalWidth * screenRatio) + 'vh' }">
     MATCH
   </div>
 </template>
