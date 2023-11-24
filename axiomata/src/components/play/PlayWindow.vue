@@ -68,7 +68,7 @@ const workSymbolWidth: ComputedRef<number> = computed(() => {
   const maxWidth: number = workbenchMaxSymbolWidthRatio.value * workbenchWidth.value;
   return Math.min(w, maxWidth);
 });
-const varColors: Ref<string[]> = ref(['red']);
+const varColors: Ref<string[]> = ref(['red', 'blue', 'green', 'purple', 'orange']);
 
 // Level variables
 const goalMatch: ComputedRef<boolean> = computed(() => {
