@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { SeqSymbol, SeqVar, SymbolData, VarData } from "@/scripts/Interfaces";
-import { computed, defineProps, withDirectives } from "vue";
+import { computed, defineProps, withDefaults } from "vue";
 
 interface Props {
   symbolWidth: number;
@@ -24,8 +24,11 @@ interface Props {
   symbolAlphabet: SymbolData[];
   variables: VarData[];
   varColors: string[];
+  varMap: Map<string, number>;
 }
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  varMap: () => new Map<string, number>()
+});
 
 const symbolHeight = computed(() => props.symbolWidth * props.screenRatio);
 
@@ -35,6 +38,12 @@ const symbolData = computed(() => {
   }
   if ('varIndex' in props.symbol && 'colorIndex' in props.symbol) {
     const variable = props.symbol as SeqVar;
+    let key: string = `${variable.varIndex},${variable.colorIndex}`;
+    console.log('symbol', props.varMap);
+    if (props.varMap.get(key)) {
+      let symbolIndex: number = props.varMap.get(key) as number;
+      return props.symbolAlphabet[symbolIndex];
+    }
     return {
       backgroundColor: props.varColors[variable.colorIndex],
       text: props.variables[variable.varIndex].varText,

@@ -3,7 +3,7 @@
   <SequenceContainer class="workbench" :posX="workbenchX" :posY="workbenchY" :width="workbenchWidth"
     :height="workbenchHeight" :maxFill="workbenchMaxFill" :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio"
     :screenRatio="screenRatio" :sequence="workSequence" :symbolAlphabet="levelData.symbolAlphabet"
-    :variables="levelData.variables" :varColors="varColors" />
+    :variables="levelData.variables" :varColors="varColors" :highlights="workHighlights" />
   <AxiomBar class="derivate-bar" :posX="derivateBarX" :posY="derivateBarY" :width="derivateBarWidth"
     :height="derivateBarHeight" :screenRatio="screenRatio" :axioms="levelData.derivates" :variables="levelData.variables"
     :varColors="varColors" :symbolAlphabet="levelData.symbolAlphabet" @selectAxiom="selectAxiom" />
@@ -19,7 +19,7 @@
   <Cursor :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="workSymbolWidth"
     :symbolAlphabet="levelData.symbolAlphabet" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
     :centerDirectionY="centerDirectionY" :screenRatio="screenRatio" :workMatch="workMatch"
-    :variables="levelData.variables" :varColors="varColors" @axiomDrop="axiomDrop"
+    :variables="levelData.variables" :varColors="varColors" :varMap="varMap" @axiomDrop="axiomDrop"
     @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
   <div v-if="goalMatch" @click="finishLevel"
     :style="{ position: 'absolute', userSelect: 'none', color: 'black', left: (goalX + goalWidth / 2) + 'vw', top: (goalY + goalWidth * screenRatio / 2) + 'vh', width: (goalWidth) + 'vw', height: (goalWidth * screenRatio) + 'vh' }">
@@ -223,6 +223,7 @@ function updateMatching(): void {
     workIndex++;
     nearIndex++;
   }
+  console.log('match', varMap.value);
 }
 
 function finishLevel(): void {
@@ -253,6 +254,7 @@ function cursorAxiomClicked(): void {
   dragging.value = true;
   resetHighlights();
   cursorAxiomDocked.value = false;
+  varMap.value.clear();
 }
 
 function swap(): void {

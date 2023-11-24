@@ -2,7 +2,7 @@
   <div class="axiom-container"
     :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
     <AxiomComp :symbolWidth="symbolWidth" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="symbolAlphabet"
-      :variables="variables" :varColors="varColors" @mousedown="selectAxiom(axiom)" />
+      :variables="variables" :varColors="varColors" :varMap="varMap" @mousedown="selectAxiom(axiom)" />
   </div>
 </template>
 
@@ -22,8 +22,15 @@ interface Props {
   symbolAlphabet: SymbolData[];
   variables: VarData[];
   varColors: string[];
+  varMap: Map<string, number>;
+  upperHighlights: boolean[];
+  lowerHighlights: boolean[];
 }
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  upperHighlights: () => [],
+  lowerHighlights: () => [],
+  varMap: () => new Map<string, number>()
+});
 
 const emit = defineEmits(['selectAxiom', 'mouseOver']);
 

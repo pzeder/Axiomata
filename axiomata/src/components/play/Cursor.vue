@@ -6,7 +6,7 @@
   }">
     <AxiomComp v-if="cursorAxiom.upperSequence.length !== 0" :symbolWidth="symbolWidth" :screenRatio="screenRatio"
       :axiomData="cursorAxiom" :symbolAlphabet="symbolAlphabet" :upperHighlights="upperHighlights" :variables="variables"
-      :varColors="varColors" :lowerHighlights="lowerHighlights" @mouseup="emit('axiomDrop')"
+      :varColors="varColors" :lowerHighlights="lowerHighlights" :varMap="varMap" @mouseup="emit('axiomDrop')"
       @mousedown="emit('cursorAxiomClicked')" />
     <div class="swap-button" v-if="workMatch" @click="emit('swap')" :style="{
       display: 'grid',
@@ -38,8 +38,13 @@ interface Props {
   workMatch: boolean;
   variables: VarData[];
   varColors: string[];
+  varMap: Map<string, number>;
 }
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  upperHighlights: () => [],
+  lowerHighlights: () => [],
+  varMap: () => new Map<string, number>()
+});
 const emit = defineEmits(['axiomDrop', 'swap', 'cursorAxiomClicked']);
 </script>
 

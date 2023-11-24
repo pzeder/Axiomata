@@ -2,7 +2,8 @@
   <div class="sequence-container"
     :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
     <SequenceComp :symbolWidth="symbolWidth" :screenRatio="screenRatio" :sequence="sequence"
-      :symbolAlphabet="symbolAlphabet" :highlights="highlights" :variables="variables" :varColors="varColors" />
+      :symbolAlphabet="symbolAlphabet" :highlights="highlights" :variables="variables" :varColors="varColors"
+      :varMap="varMap" />
   </div>
 </template>
 
@@ -24,10 +25,12 @@ interface Props {
   highlights: boolean[];
   variables: VarData[];
   varColors: string[];
+  varMap: Map<string, number>;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  highlights: () => []
+  highlights: () => [],
+  varMap: () => new Map<string, number>()
 });
 
 const symbolWidth = computed(() => {

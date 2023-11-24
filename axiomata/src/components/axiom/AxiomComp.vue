@@ -8,12 +8,14 @@
       width: (symbolWidth / 2) + 'vw'
     }" />
     <SequenceComp :symbolWidth="symbolWidth" :screenRatio="screenRatio" :sequence="axiomData.upperSequence"
-      :variables="variables" :varColors="varColors" :symbolAlphabet="symbolAlphabet" :highlights="upperHighlights" :style="{
+      :variables="variables" :varColors="varColors" :varMap="varMap" :symbolAlphabet="symbolAlphabet"
+      :highlights="upperHighlights" :style="{
         left: (symbolWidth * (maxSequence - axiomData.upperSequence.length) / 2) + 'vw',
         top: 0
       }" />
     <SequenceComp :symbolWidth="symbolWidth" :screenRatio="screenRatio" :sequence="axiomData.lowerSequence"
-      :variables="variables" :varColors="varColors" :symbolAlphabet="symbolAlphabet" :highlights="lowerHighlights" :style="{
+      :variables="variables" :varColors="varColors" :varMap="varMap" :symbolAlphabet="symbolAlphabet"
+      :highlights="lowerHighlights" :style="{
         left: (symbolWidth * (maxSequence - axiomData.lowerSequence.length) / 2) + 'vw',
         top: (1.5 * symbolHeight) + 'vh'
       }" />
@@ -34,10 +36,12 @@ interface Props {
   lowerHighlights: boolean[];
   variables: VarData[];
   varColors: string[];
+  varMap: Map<string, number>;
 }
 const props = withDefaults(defineProps<Props>(), {
   upperHighlights: () => [],
-  lowerHighlights: () => []
+  lowerHighlights: () => [],
+  varMap: () => new Map<string, number>()
 });
 
 const maxSequence = computed(() => Math.max(props.axiomData.upperSequence.length, props.axiomData.lowerSequence.length));
