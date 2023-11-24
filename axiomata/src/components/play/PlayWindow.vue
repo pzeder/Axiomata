@@ -34,7 +34,7 @@ import VictoryWindow from './VictoryWindow.vue';
 import HeadBar from '@/components/play/HeadBar.vue'
 import Cursor from './Cursor.vue';
 import { AxiomData, LevelData, SeqVar, SeqSymbol, VarData } from '@/scripts/Interfaces';
-import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount, computed } from 'vue';
+import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount, computed, ComputedRef } from 'vue';
 import { axiomHeight, axiomWidth } from '@/scripts/AxiomMethods';
 
 interface Props {
@@ -82,15 +82,24 @@ const dragging: Ref<boolean> = ref(false);
 // Workbench variables
 const dockIndex: Ref<number> = ref(0);
 const workHighlights: Ref<boolean[]> = ref([]);
+
+// Cursor variables
 const upperHighlights: Ref<boolean[]> = ref([]);
 const lowerHighlights: Ref<boolean[]> = ref([]);
-const workMatch: Ref<boolean> = ref(false);
 const centerDirectionY: Ref<number> = ref(0);
-const workSequence = computed(() => props.levelData.sequenceHistory[props.levelData.sequenceHistory.length - 1]);
 let nearSequence: SeqSymbol[];
 let farSequence: SeqSymbol[];
 let nearHighlights: Ref<boolean[]>;
+const cursorAxiomDocked: Ref<boolean> = ref(false);
 const varMap: Ref<Map<string, number>> = ref(new Map<string, number>());
+const workSequence: ComputedRef<SeqSymbol[]> = computed(() =>
+  props.levelData.sequenceHistory[props.levelData.sequenceHistory.length - 1]);
+const workMatch: ComputedRef<boolean> = computed(() => {
+  if (!nearHighlights || nearHighlights.value.length === 0 || !cursorAxiomDocked.value) {
+    return false;
+  }
+  return (nearHighlights.value.filter(b => !b).length === 0);
+});
 
 onMounted(() => {
   document.body.classList.add('no-scroll');
@@ -109,7 +118,7 @@ onBeforeUnmount(() => {
 function handleMouseDown() {
   dragging.value = true;
   resetHighlights();
-  workMatch.value = false;
+  cursorAxiomDocked.value = false;
 }
 
 function handleResize() {
@@ -139,12 +148,11 @@ function axiomDrop(): void {
     return;
   }
 
-  docking();
+  dockCursorAxiom();
   updateMatching();
-  workMatch.value = checkWorkMatch();
 }
 
-function docking(): void {
+function dockCursorAxiom(): void {
   const vx: number = cursorAxiomX.value;
   const vy: number = cursorAxiomY.value;
 
@@ -179,6 +187,7 @@ function docking(): void {
   cursorAxiomX.value = workSequenceX + dockIndex.value * workSymbolWidth.value - axiomOffset;
 
   dragging.value = false;
+  cursorAxiomDocked.value = true;
 }
 
 function updateMatching(): void {
@@ -197,7 +206,6 @@ function updateMatching(): void {
     let workSymbol: SeqSymbol = workSequence.value[workIndex];
     let nearSymbol: SeqSymbol = nearSequence[nearIndex];
     let match: boolean = false;
-    console.log(nearIndex, nearSymbol);
     if (typeof nearSymbol === 'number') {
       match = (workSymbol === nearSymbol);
     } else if ('varIndex' in nearSymbol && 'colorIndex' in nearSymbol) {
@@ -209,7 +217,6 @@ function updateMatching(): void {
         varMap.value.set(key, workSymbolIndex);
       }
       match = (varMap.value.get(key) === workSymbolIndex);
-      console.log(varMap.value.get(key), workSymbolIndex);
     }
     workHighlights.value[workIndex] = match;
     nearHighlights.value[nearIndex] = match;
@@ -242,16 +249,10 @@ function updateCursorAxiomPos(event: MouseEvent) {
   }
 }
 
-function checkWorkMatch(): boolean {
-  if (!nearHighlights || nearHighlights.value.length === 0) {
-    return false;
-  }
-  return (nearHighlights.value.filter(b => !b).length === 0);
-}
-
 function cursorAxiomClicked(): void {
   dragging.value = true;
   resetHighlights();
+  cursorAxiomDocked.value = false;
 }
 
 function swap(): void {
@@ -259,7 +260,7 @@ function swap(): void {
   updateGoalMatch();
   cursorAxiom.value.upperSequence = [];
   resetHighlights();
-  workMatch.value = false;
+  cursorAxiomDocked.value = false;
 }
 
 function updateWorkSequence(): void {
