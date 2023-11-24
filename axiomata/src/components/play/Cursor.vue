@@ -54,5 +54,6 @@ const emit = defineEmits(['axiomDrop', 'swap', 'cursorAxiomClicked']);
   height: 10vw;
   border-radius: 50%;
   background-color: green;
+  user-select: none;
 }
 </style>

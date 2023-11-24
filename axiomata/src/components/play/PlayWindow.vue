@@ -63,7 +63,7 @@ const workbenchMaxSymbolWidthRatio: Ref<number> = ref(0.05);
 const goalX: Ref<number> = ref(88);
 const goalY: Ref<number> = ref(5);
 const goalWidth: Ref<number> = ref(10);
-const workSymbolWidth = computed(() => {
+const workSymbolWidth: ComputedRef<number> = computed(() => {
   const w: number = workbenchMaxFill.value * workbenchWidth.value / workSequence.value.length;
   const maxWidth: number = workbenchMaxSymbolWidthRatio.value * workbenchWidth.value;
   return Math.min(w, maxWidth);
@@ -71,7 +71,17 @@ const workSymbolWidth = computed(() => {
 const varColors: Ref<string[]> = ref(['red']);
 
 // Level variables
-const goalMatch: Ref<boolean> = ref(false);
+const goalMatch: ComputedRef<boolean> = computed(() => {
+  if (workSequence.value.length !== props.levelData.goalAxiom.lowerSequence.length) {
+    return false;
+  }
+  for (let i = 0; i < workSequence.value.length; i++) {
+    if (workSequence.value[i] !== props.levelData.goalAxiom.lowerSequence[i]) {
+      return false;
+    }
+  }
+  return true;
+});
 
 // Cursor variables
 const cursorAxiom: Ref<AxiomData> = ref({ upperSequence: [], lowerSequence: [] });
@@ -95,7 +105,8 @@ const varMap: Ref<Map<string, number>> = ref(new Map<string, number>());
 const workSequence: ComputedRef<SeqSymbol[]> = computed(() =>
   props.levelData.sequenceHistory[props.levelData.sequenceHistory.length - 1]);
 const workMatch: ComputedRef<boolean> = computed(() => {
-  if (!nearHighlights || nearHighlights.value.length === 0 || !cursorAxiomDocked.value) {
+  let docked: boolean = cursorAxiomDocked.value;
+  if (!nearHighlights || nearHighlights.value.length === 0 || !docked) {
     return false;
   }
   return (nearHighlights.value.filter(b => !b).length === 0);
@@ -119,6 +130,7 @@ function handleMouseDown() {
   dragging.value = true;
   resetHighlights();
   cursorAxiomDocked.value = false;
+  varMap.value.clear();
 }
 
 function handleResize() {
@@ -223,11 +235,9 @@ function updateMatching(): void {
     workIndex++;
     nearIndex++;
   }
-  console.log('match', varMap.value);
 }
 
 function finishLevel(): void {
-  goalMatch.value = false;
   emit('levelFinished');
 }
 
@@ -259,7 +269,6 @@ function cursorAxiomClicked(): void {
 
 function swap(): void {
   updateWorkSequence();
-  updateGoalMatch();
   cursorAxiom.value.upperSequence = [];
   resetHighlights();
   cursorAxiomDocked.value = false;
@@ -276,7 +285,16 @@ function updateWorkSequence(): void {
 
   // Replace the matching part with farSequence
 
-  newSequence.push(...farSequence);
+  newSequence.push(...farSequence.map(symbol => {
+    if (typeof symbol !== 'number' && 'varIndex' in symbol && 'colorIndex' in symbol) {
+      const variable = symbol as SeqVar;
+      let key: string = `${variable.varIndex},${variable.colorIndex}`;
+      if (varMap.value.get(key) || varMap.value.get(key) === 0) {
+        return varMap.value.get(key) as number;
+      }
+    }
+    return symbol;
+  }));
 
   // Keep all symbols left of the match
 
@@ -285,22 +303,6 @@ function updateWorkSequence(): void {
   }
 
   emit('updateSequenceHistory', newSequence);
-}
-
-function updateGoalMatch(): void {
-  goalMatch.value = endOfGame();
-}
-
-function endOfGame(): boolean {
-  if (workSequence.value.length !== props.levelData.goalAxiom.lowerSequence.length) {
-    return false;
-  }
-  for (let i = 0; i < workSequence.value.length; i++) {
-    if (workSequence.value[i] !== props.levelData.goalAxiom.lowerSequence[i]) {
-      return false;
-    }
-  }
-  return true;
 }
 </script>
 
