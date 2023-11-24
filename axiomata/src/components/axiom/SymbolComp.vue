@@ -4,7 +4,7 @@
     height: symbolHeight + 'hw',
     backgroundColor: symbolData.backgroundColor,
     color: symbolData.textColor,
-    borderColor: (highlight) ? 'rgb(180, 180, 180)' : 'rgb(100, 100, 100)',
+    borderColor: borderColor,
     borderWidth: (symbolWidth / 13) + 'vw',
     borderRadius: (symbolWidth / 5) + 'vw',
     marginLeft: (-symbolWidth / 13) + 'vw',
@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { SeqSymbol, SeqVar, SymbolData, VarData } from "@/scripts/Interfaces";
-import { computed, defineProps, withDefaults } from "vue";
+import { ComputedRef, computed, defineProps, withDefaults } from "vue";
 
 interface Props {
   symbolWidth: number;
@@ -44,12 +44,20 @@ const symbolData = computed(() => {
       return props.symbolAlphabet[symbolIndex];
     }
     return {
-      backgroundColor: props.varColors[variable.colorIndex],
+      backgroundColor: 'white',
       text: props.variables[variable.varIndex].varText,
-      textColor: 'white'
+      textColor: 'grey'
     };
   }
   return null;
+});
+
+const borderColor: ComputedRef<string> = computed(() => {
+  if (typeof props.symbol !== 'number' && 'varIndex' in props.symbol && 'colorIndex' in props.symbol) {
+    const variable = props.symbol as SeqVar;
+    return props.varColors[variable.colorIndex];
+  }
+  return (props.highlight) ? 'rgb(180, 180, 180)' : 'rgb(100, 100, 100)';
 });
 </script>
 
