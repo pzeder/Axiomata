@@ -130,7 +130,6 @@ app.get('/level', async (req, res) => {
       nextLevelIndex: nextLevelIndex,
       variables: saveState.variables
     });
-    console.log(saveState.variablbes);
     res.json(levelData);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -187,8 +186,6 @@ app.patch('/levelEnd', async (req, res) => {
     const updatedSaveState = await db.collection('SaveStates').findOne(filter);
     const nextChapter = updatedSaveState.chapters[chapterIndex + 1];
     const unfinishedLevels = updatedSaveState.chapters[chapterIndex].levels.filter(lev => !(lev.status === 'done'));
-
-    console.log(nextChapter, unfinishedLevels);
 
     if (nextChapter && unfinishedLevels.length === 0) {
       const unlockChapter = {

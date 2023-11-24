@@ -33,7 +33,7 @@ import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import VictoryWindow from './VictoryWindow.vue';
 import HeadBar from '@/components/play/HeadBar.vue'
 import Cursor from './Cursor.vue';
-import { AxiomData, LevelData, SeqVar, SeqSymbol } from '@/scripts/Interfaces';
+import { AxiomData, LevelData, SeqVar, SeqSymbol, VarData } from '@/scripts/Interfaces';
 import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount, computed } from 'vue';
 import { axiomHeight, axiomWidth } from '@/scripts/AxiomMethods';
 
@@ -90,6 +90,7 @@ const workSequence = computed(() => props.levelData.sequenceHistory[props.levelD
 let nearSequence: SeqSymbol[];
 let farSequence: SeqSymbol[];
 let nearHighlights: Ref<boolean[]>;
+const varMap: Ref<Map<string, number>> = ref(new Map<string, number>());
 
 onMounted(() => {
   document.body.classList.add('no-scroll');
@@ -189,26 +190,32 @@ function updateMatching(): void {
     workIndex = 0;
   }
 
+  // Reset map
+  varMap.value = new Map<string, number>();
+
   while (workIndex < workSequence.value.length && nearIndex < nearSequence.length) {
-    let workSymbol = getSymbolIndex(workSequence.value[workIndex]);
-    let nearSymbol = getSymbolIndex(nearSequence[nearIndex]);
-    let b = workSymbol === nearSymbol;
-    workHighlights.value[workIndex] = b;
-    nearHighlights.value[nearIndex] = b;
+    let workSymbol: SeqSymbol = workSequence.value[workIndex];
+    let nearSymbol: SeqSymbol = nearSequence[nearIndex];
+    let match: boolean = false;
+    console.log(nearIndex, nearSymbol);
+    if (typeof nearSymbol === 'number') {
+      match = (workSymbol === nearSymbol);
+    } else if ('varIndex' in nearSymbol && 'colorIndex' in nearSymbol) {
+      let variable = nearSymbol as SeqVar;
+      let varData: VarData = props.levelData.variables[variable.varIndex];
+      let workSymbolIndex: number = workSymbol as number;
+      let key: string = `${variable.varIndex},${variable.colorIndex}`;
+      if (!varMap.value.get(key) && varData.possibilities.includes(workSymbolIndex)) {
+        varMap.value.set(key, workSymbolIndex);
+      }
+      match = (varMap.value.get(key) === workSymbolIndex);
+      console.log(varMap.value.get(key), workSymbolIndex);
+    }
+    workHighlights.value[workIndex] = match;
+    nearHighlights.value[nearIndex] = match;
     workIndex++;
     nearIndex++;
   }
-}
-
-function getSymbolIndex(symbol: SeqSymbol): number {
-  if (typeof symbol === 'number') {
-    return symbol;
-  }
-  if ('varIndex' in symbol && 'colorIndex' in symbol) {
-    const variable = symbol as SeqVar;
-    return props.levelData.variables[variable.varIndex].symbolIndex;
-  }
-  return -1;
 }
 
 function finishLevel(): void {
