@@ -38,7 +38,7 @@ const symbolData = computed(() => {
   }
   if ('varIndex' in props.symbol && 'colorIndex' in props.symbol) {
     const variable = props.symbol as SeqVar;
-    let key: string = `${variable.varIndex},${variable.colorIndex}`;
+    let key = `${variable.varIndex},${variable.colorIndex}`;
     if (props.varMap.get(key) || props.varMap.get(key) === 0) {
       let symbolIndex: number = props.varMap.get(key) as number;
       return props.symbolAlphabet[symbolIndex];

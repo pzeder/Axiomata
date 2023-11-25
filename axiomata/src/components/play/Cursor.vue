@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { AxiomData, SymbolData, VarData } from '@/scripts/Interfaces';
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, withDefaults } from 'vue';
 import AxiomComp from '@/components/axiom/AxiomComp.vue';
 
 interface Props {

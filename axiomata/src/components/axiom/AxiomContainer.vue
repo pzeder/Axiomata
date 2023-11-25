@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, computed } from 'vue';
+import { defineProps, defineEmits, computed, withDefaults } from 'vue';
 import { AxiomData, SymbolData, VarData } from '@/scripts/Interfaces';
 import AxiomComp from '@/components/axiom/AxiomComp.vue';
 import { maxSequenceLength } from '@/scripts/AxiomMethods';

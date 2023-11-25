@@ -12,7 +12,11 @@
     :width="axiomBarWidth" :height="axiomBarHeight" :screenRatio="screenRatio" :axioms="levelData.axioms"
     :symbolAlphabet="levelData.symbolAlphabet" :variables="levelData.variables" :varColors="varColors"
     @selectAxiom="selectAxiom" />
-  <SequenceContainer class="goal-window" :title="'ZIEL'" :posX="goalX" :posY="goalY" :width="goalWidth"
+  <SequenceContainer class="goal-window" :title="'START'" :posX="startX" :posY="startY" :width="goalWidth"
+    :height="goalWidth * screenRatio" :maxFill="0.8" :maxSymbolWidthRatio="0.33" :screenRatio="screenRatio"
+    :sequence="levelData.goalAxiom.upperSequence" :variables="levelData.variables" :varColors="varColors"
+    :symbolAlphabet="levelData.symbolAlphabet" />
+  <SequenceContainer class="goal-window" :title="'ZIEL'" :posX="startX" :posY="goalY" :width="goalWidth"
     :height="goalWidth * screenRatio" :maxFill="0.8" :maxSymbolWidthRatio="0.33" :screenRatio="screenRatio"
     :sequence="levelData.goalAxiom.lowerSequence" :variables="levelData.variables" :varColors="varColors"
     :symbolAlphabet="levelData.symbolAlphabet" />
@@ -25,7 +29,7 @@
     :variables="levelData.variables" :varColors="varColors" :varMap="varMap" @axiomDrop="axiomDrop"
     @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
   <div v-if="goalMatch" @click="finishLevel"
-    :style="{ position: 'absolute', userSelect: 'none', color: 'red', left: (goalX + goalWidth / 2) + 'vw', top: (goalY + goalWidth * screenRatio / 2 + 10) + 'vh', width: (goalWidth) + 'vw', height: (goalWidth * screenRatio) + 'vh' }">
+    :style="{ position: 'absolute', userSelect: 'none', color: 'red', left: (startX + goalWidth / 2) + 'vw', top: (goalY + goalWidth * screenRatio / 2 + 10) + 'vh', width: (goalWidth) + 'vw', height: (goalWidth * screenRatio) + 'vh' }">
     MATCH
   </div>
 </template>
@@ -63,8 +67,10 @@ const workbenchWidth: Ref<number> = ref(80);
 const workbenchHeight: Ref<number> = ref(70);
 const workbenchMaxFill: Ref<number> = ref(0.6);
 const workbenchMaxSymbolWidthRatio: Ref<number> = ref(0.05);
-const goalX: Ref<number> = ref(88);
-const goalY: Ref<number> = ref(5);
+const startX: Ref<number> = ref(88);
+const startY: Ref<number> = ref(5);
+const goalY: ComputedRef<number> = computed(() =>
+  workbenchHeight.value - goalWidth.value * screenRatio.value + 0.75);
 const goalWidth: Ref<number> = ref(10);
 const workSymbolWidth: ComputedRef<number> = computed(() => {
   const w: number = workbenchMaxFill.value * workbenchWidth.value / workSequence.value.length;
@@ -220,14 +226,14 @@ function updateMatching(): void {
   while (workIndex < workSequence.value.length && nearIndex < nearSequence.length) {
     let workSymbol: SeqSymbol = workSequence.value[workIndex];
     let nearSymbol: SeqSymbol = nearSequence[nearIndex];
-    let match: boolean = false;
+    let match = false;
     if (typeof nearSymbol === 'number') {
       match = (workSymbol === nearSymbol);
     } else if ('varIndex' in nearSymbol && 'colorIndex' in nearSymbol) {
       let variable = nearSymbol as SeqVar;
       let varData: VarData = props.levelData.variables[variable.varIndex];
       let workSymbolIndex: number = workSymbol as number;
-      let key: string = `${variable.varIndex},${variable.colorIndex}`;
+      let key = `${variable.varIndex},${variable.colorIndex}`;
       if (!varMap.value.get(key) && varData.possibilities.includes(workSymbolIndex)) {
         varMap.value.set(key, workSymbolIndex);
       }
@@ -291,7 +297,7 @@ function updateWorkSequence(): void {
   newSequence.push(...farSequence.map(symbol => {
     if (typeof symbol !== 'number' && 'varIndex' in symbol && 'colorIndex' in symbol) {
       const variable = symbol as SeqVar;
-      let key: string = `${variable.varIndex},${variable.colorIndex}`;
+      let key = `${variable.varIndex},${variable.colorIndex}`;
       if (varMap.value.get(key) || varMap.value.get(key) === 0) {
         return varMap.value.get(key) as number;
       }
