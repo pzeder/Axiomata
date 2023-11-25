@@ -135,11 +135,12 @@ onBeforeUnmount(() => {
   window.removeEventListener('mousemove', updateCursorAxiomPos);
 });
 
-function handleMouseDown() {
+function handleMouseDown(event: MouseEvent) {
   dragging.value = true;
   resetHighlights();
   cursorAxiomDocked.value = false;
   varMap.value.clear();
+  updateCursorAxiomPos(event);
 }
 
 function handleResize() {
@@ -250,12 +251,12 @@ function finishLevel(): void {
   emit('levelFinished');
 }
 
-function selectAxiom(axiom: AxiomData): void {
+function selectAxiom(event: MouseEvent, axiom: AxiomData): void {
   cursorAxiom.value = ({
     upperSequence: [...axiom.upperSequence],
     lowerSequence: [...axiom.lowerSequence]
   });
-  handleMouseDown();
+  handleMouseDown(event);
 }
 
 function updateCursorAxiomPos(event: MouseEvent) {

@@ -8,7 +8,7 @@
     <AxiomContainer v-for="(axiom, index) in axioms" :key="index" :index="index" :posX="containerX(index)"
       :posY="titleHeight + containerY(index)" :width="containerWidth" :height="containerHeight" :screenRatio="screenRatio"
       :axiom="axiom" :symbolAlphabet="symbolAlphabet" :variables="variables" :varColors="varColors"
-      @selectAxiom="emit('selectAxiom', axiom)" />
+      @selectAxiom="(event) => emit('selectAxiom', event, axiom)" />
   </div>
 </template>
 

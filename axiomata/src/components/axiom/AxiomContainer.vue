@@ -2,7 +2,7 @@
   <div class="axiom-container"
     :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
     <AxiomComp :symbolWidth="symbolWidth" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="symbolAlphabet"
-      :variables="variables" :varColors="varColors" :varMap="varMap" @mousedown="selectAxiom(axiom)" />
+      :variables="variables" :varColors="varColors" :varMap="varMap" @mousedown="(event) => selectAxiom(event, axiom)" />
   </div>
 </template>
 
@@ -34,8 +34,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['selectAxiom', 'mouseOver']);
 
-function selectAxiom(axiom: AxiomData): void {
-  emit('selectAxiom', axiom);
+function selectAxiom(event: MouseEvent, axiom: AxiomData): void {
+  emit('selectAxiom', event, axiom);
 }
 
 const symbolWidth = computed(() => {
