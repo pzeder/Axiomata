@@ -68,7 +68,7 @@ app.get('/courses', async (req, res) => {
 app.get('/edits', async (req, res) => {
   try {
     const edits = await db.collection('Edits').find().toArray();
-    const editHeaders = edits.map(e => ({ _id: e._id, name: e.name }));
+    const editHeaders = edits.map(e => ({ _id: e._id, title: e.title }));
     res.json(editHeaders);
   } catch (error) {
     res.status(500).json({ error: error });
@@ -105,6 +105,20 @@ app.post('/newSaveState', async (req, res) => {
 
     const result = await db.collection('SaveStates').insertOne(courseSave);
     res.json({ saveID: result.insertedId });
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
+app.post('/newEdit', async (req, res) => {
+  try {
+    const { userName } = req.body;
+    const newEdit = {
+      userName: userName,
+      title: 'Neuer Kurs'
+    }
+    const result = await db.collection('Edits').insertOne(newEdit);
+    res.json({ editID: result.insertedId });
   } catch (error) {
     res.status(500).json({ error: error });
   }
