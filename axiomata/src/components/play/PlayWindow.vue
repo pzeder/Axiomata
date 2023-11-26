@@ -125,6 +125,8 @@ onMounted(() => {
   document.body.classList.add('no-scroll');
   window.addEventListener('resize', handleResize);
   window.addEventListener('mousemove', updateCursorAxiomPos);
+  window.addEventListener('touchmove', handleTouchMove, { passive: false });
+  window.addEventListener('touchend', axiomDrop, { passive: false });
 });
 
 const emit = defineEmits(['openLevelMenu', 'levelFinished', 'updateSequenceHistory', 'nextLevel']);
@@ -133,6 +135,8 @@ onBeforeUnmount(() => {
   document.body.classList.remove('no-scroll');
   window.removeEventListener('resize', handleResize);
   window.removeEventListener('mousemove', updateCursorAxiomPos);
+  window.removeEventListener('touchmove', handleTouchMove);
+  window.addEventListener('touchend', axiomDrop);
 });
 
 function handleMouseDown(event: MouseEvent) {
@@ -146,6 +150,12 @@ function handleMouseDown(event: MouseEvent) {
 function handleResize() {
   screenRatio.value = window.innerWidth / window.innerHeight;
   axiomDrop();
+}
+
+function handleTouchMove(event: TouchEvent) {
+  event.preventDefault();
+  let touch = event.touches[0];
+  updateCursorAxiomPos(touch);
 }
 
 function resetHighlights() {
@@ -260,7 +270,7 @@ function selectAxiom(event: MouseEvent, axiom: AxiomData): void {
   handleMouseDown(event);
 }
 
-function updateCursorAxiomPos(event: MouseEvent) {
+function updateCursorAxiomPos(event: MouseEvent | Touch) {
   if (dragging.value) {
     const mouseX: number = event.clientX / window.innerWidth * 100;
     const mouseY: number = event.clientY / window.innerHeight * 100;

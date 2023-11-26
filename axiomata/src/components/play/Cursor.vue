@@ -7,7 +7,8 @@
     <AxiomComp v-if="cursorAxiom.upperSequence.length !== 0" :symbolWidth="symbolWidth" :screenRatio="screenRatio"
       :axiomData="cursorAxiom" :symbolAlphabet="symbolAlphabet" :upperHighlights="upperHighlights" :variables="variables"
       :varColors="varColors" :lowerHighlights="lowerHighlights" :varMap="varMap" @mouseup="emit('axiomDrop')"
-      @mousedown="emit('cursorAxiomClicked')" />
+      @touchend="emit('axiomDrop')" @touchcancel="emit('axiomDrop')" @mousedown="emit('cursorAxiomClicked')"
+      @touchstart="emit('cursorAxiomClicked')" />
     <div class="swap-button" v-if="workMatch" @click="emit('swap')" :style="{
       display: 'grid',
       placeItems: 'center',

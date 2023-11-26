@@ -1,5 +1,5 @@
 <template>
-  <div class="axiom-container"
+  <div class="axiom-container" @touchstart="handleTouchStart"
     :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
     <AxiomComp :symbolWidth="symbolWidth" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="symbolAlphabet"
       :variables="variables" :varColors="varColors" :varMap="varMap" @mousedown="(event) => selectAxiom(event, axiom)" />
@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, computed, withDefaults } from 'vue';
+import { defineProps, defineEmits, computed, withDefaults, onMounted, ref, onBeforeUnmount } from 'vue';
 import { AxiomData, SymbolData, VarData } from '@/scripts/Interfaces';
 import AxiomComp from '@/components/axiom/AxiomComp.vue';
 import { maxSequenceLength } from '@/scripts/AxiomMethods';
@@ -34,8 +34,13 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['selectAxiom', 'mouseOver']);
 
-function selectAxiom(event: MouseEvent, axiom: AxiomData): void {
+function selectAxiom(event: MouseEvent | Touch, axiom: AxiomData): void {
   emit('selectAxiom', event, axiom);
+}
+
+function handleTouchStart(event: TouchEvent): void {
+  event.preventDefault();
+  selectAxiom(event.touches[0], props.axiom)
 }
 
 const symbolWidth = computed(() => {
