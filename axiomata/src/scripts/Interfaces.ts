@@ -19,6 +19,18 @@ export interface VarData {
     possibilities: number[];
 }
 
+export interface CourseData {
+    title: string;
+    chapters: ChapterData[];
+    variables: number[];
+}
+
+export interface ChapterData {
+    title: string;
+    newAxioms: AxiomData[];
+    levels: LevelData[];
+}
+
 export interface LevelData {
     symbolAlphabet: SymbolData[];
     axioms: AxiomData[];

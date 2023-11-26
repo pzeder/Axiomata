@@ -24,7 +24,7 @@ import LevelSelection from '@/components/menus/LevelSelection.vue';
 import PlayWindow from '@/components/play/PlayWindow.vue';
 import EditSelection from '@/components/menus/EditSelection.vue'
 import EditorScreen from '@/components/editor/EditorScreen.vue';
-import { AxiomData, LevelData } from './scripts/Interfaces';
+import { AxiomData, LevelData } from '@/scripts/Interfaces';
 import axios from 'axios';
 
 // menu variables
