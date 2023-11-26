@@ -160,6 +160,20 @@ app.get('/level', async (req, res) => {
   }
 })
 
+app.get('/edit', async (req, res) => {
+  try {
+    const { editID } = req.query;
+    const filter = ({ _id: new ObjectId(editID) });
+    const edit = await db.collection('Edits').findOne(filter);
+    const editData = ({
+      title: edit.title
+    });
+    res.json(editData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
 app.patch('/sequenceHistory', async (req, res) => {
   try {
     const { saveID, chapterIndex, levelIndex, newHistory } = req.body;

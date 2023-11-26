@@ -11,8 +11,8 @@
   <PlayWindow v-if="showPlayWindow" @openLevelMenu="openLevelMenu" @updateSequenceHistory="updateSequenceHistory"
     @levelFinished="updateLevelEnd" @nextLevel="nextLevel" :levelData="currentLevelData"
     :hasNextLevel="nextChapterIndex !== -1" />
-  <EditSelection v-if="showEditSelection" :userName="userName" @newEditCreated="newEditCreated" />
-  <EditorScreen v-if="showEditorScreen" />
+  <EditSelection v-if="showEditSelection" :userName="userName" @openEditor="openEditor" />
+  <EditorScreen v-if="showEditorScreen" :editID="editID" />
 </template>
 
 <script setup lang="ts">
@@ -56,11 +56,6 @@ const editID: Ref<any> = ref(null);
 function newSaveStateCreated(newSaveID: any) {
   saveID.value = newSaveID;
   openLevelMenu();
-}
-
-function newEditCreated(newEditID: any) {
-  editID.value = newEditID;
-  openEditor();
 }
 
 function saveStateSelected(newSaveID: number): void {
@@ -114,7 +109,8 @@ function openEditSelection(): void {
   showEditSelection.value = true;
 }
 
-function openEditor(): void {
+function openEditor(newEditID: any): void {
+  editID.value = newEditID;
   hideAll();
   showHomeButton.value = true;
   showEditorScreen.value = true;

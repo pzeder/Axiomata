@@ -1,5 +1,6 @@
 <template>
-  <div class="edit-container" v-for="(edit, index) in edits" :key="index"> {{ edit.title }} </div>
+  <div class="edit-container" v-for="(edit, index) in edits" :key="index" @click="emit('openEditor', edit._id)"> {{
+    edit.title }} </div>
   <div class="new-edit-button" @click="createNewEdit"> Neuen Kurs erstellen </div>
 </template>
 
@@ -13,7 +14,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const emit = defineEmits(['newEditCreated']);
+const emit = defineEmits(['openEditor']);
 
 interface EditHeader {
   _id: any;
@@ -47,7 +48,7 @@ async function createNewEdit() {
     });
     const response = await axios.post('http://localhost:3000/newEdit', data);
     if (response.status === 200) {
-      emit('newEditCreated', response.data.editID);
+      emit('openEditor', response.data.editID);
     } else {
       console.error('Server responded with status', response.status);
     }
