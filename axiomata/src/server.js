@@ -65,6 +65,16 @@ app.get('/courses', async (req, res) => {
   }
 });
 
+app.get('/edits', async (req, res) => {
+  try {
+    const edits = await db.collection('Edits').find().toArray();
+    const editHeaders = edits.map(e => ({ _id: e._id, name: e.name }));
+    res.json(editHeaders);
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
 app.post('/newSaveState', async (req, res) => {
   try {
     const { userName, courseName } = req.body;

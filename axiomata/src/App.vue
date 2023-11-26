@@ -11,7 +11,7 @@
   <PlayWindow v-if="showPlayWindow" @openLevelMenu="openLevelMenu" @updateSequenceHistory="updateSequenceHistory"
     @levelFinished="updateLevelEnd" @nextLevel="nextLevel" :levelData="currentLevelData"
     :hasNextLevel="nextChapterIndex !== -1" />
-  <EditSelection />
+  <EditSelection v-if="showEditSelection" />
   <EditorScreen v-if="showEditorScreen" />
 </template>
 

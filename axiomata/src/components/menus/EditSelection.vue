@@ -3,6 +3,7 @@
 </template>
 
 <script setup lang="ts">
+import axios from 'axios';
 import { Ref, ref, onMounted } from 'vue';
 
 interface EditHeader {
@@ -10,11 +11,25 @@ interface EditHeader {
   name: string;
 }
 
-const edits: Ref<EditHeader[]> = ref([{ _id: 0, name: "fuck you" }, { _id: 0, name: "please" }]);
+const edits: Ref<EditHeader[]> = ref([]);
 
 onMounted(() => {
-  console.log("lol")
+  fetchEditHeaders();
 });
+
+async function fetchEditHeaders(): Promise<void> {
+  try {
+    const response = await axios.get('http://localhost:3000/edits');
+    if (response.status === 200) {
+      edits.value = [];
+      edits.value = response.data;
+    } else {
+      console.error('Server responded with status', response.status);
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
 </script>
 
 <style>
