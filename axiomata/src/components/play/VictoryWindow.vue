@@ -1,14 +1,15 @@
 <template>
   <div class="victory-container"
-    :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
+    :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh', borderRadius: (width * 0.03) + 'vw' }">
     <div class="victory-text"
-      :style="{ left: (width * 0.2) + 'vw', top: (height * 0.3) + 'vh', width: width + 'vw', height: height + 'vh' }">
+      :style="{ left: 0, top: (height * 0.3) + 'vh', width: width + 'vw', height: height + 'vh', fontSize: (width * 0.1) + 'vw' }">
       Level
       geschafft! </div>
-    <button class="back" :style="{ left: (width * 0.2) + 'vw', top: (height * 0.65) + 'vh', width: (width * 0.3) + 'vw' }"
+    <button class="back"
+      :style="{ left: (width * 0.15) + 'vw', top: (height * 0.65) + 'vh', width: (width * 0.3) + 'vw', fontSize: (width * 0.03) + 'vw' }"
       @click="emit('openLevelMenu')"> Zurück zum Menü </button>
     <button v-if="hasNextLevel" class="back"
-      :style="{ left: (width * 0.6) + 'vw', top: (height * 0.65) + 'vh', width: (width * 0.3) + 'vw' }"
+      :style="{ left: (width * 0.55) + 'vw', top: (height * 0.65) + 'vh', width: (width * 0.3) + 'vw', fontSize: (width * 0.03) + 'vw' }"
       @click="emit('nextLevel')"> Nächstes Level </button>
   </div>
 </template>
@@ -37,6 +38,7 @@ const emit = defineEmits(['openLevelMenu', 'nextLevel']);
 .victory-text {
   position: absolute;
   font-size: 80pt;
+  text-align: center;
   background-color: none;
   color: white;
 }
@@ -45,4 +47,5 @@ const emit = defineEmits(['openLevelMenu', 'nextLevel']);
   position: absolute;
   font-size: 40pt;
   background-color: white;
-}</style>
+}
+</style>

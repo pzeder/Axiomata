@@ -1,7 +1,7 @@
 <template>
   <div class="sequence-container"
     :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
-    <div class="sequence-title" :style="{ width: width + 'vw' }"> {{ title }} </div>
+    <div class="sequence-title" :style="{ width: width + 'vw', fontSize: (height * 0.2) + 'vh' }"> {{ title }} </div>
     <SequenceComp :symbolWidth="symbolWidth" :screenRatio="screenRatio" :sequence="sequence"
       :symbolAlphabet="symbolAlphabet" :highlights="highlights" :variables="variables" :varColors="varColors"
       :varMap="varMap" />
