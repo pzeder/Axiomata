@@ -24,11 +24,7 @@ onMounted(() => {
   fetchCourseHeaders();
 });
 
-const emit = defineEmits(['newSaveStateCreated', 'openStartMenu']);
-
-function openStartMenu(): void {
-  emit('openStartMenu');
-}
+const emit = defineEmits(['newSaveStateCreated']);
 
 async function createNewSaveState(courseName: string) {
   try {

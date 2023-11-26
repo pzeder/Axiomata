@@ -1,6 +1,7 @@
 <template>
   <button class="home" v-if="showHomeButton" @click="openStartMenu"> Home </button>
-  <StartMenu v-if="showStartMenu" @openNewCourseMenu="openNewCourseMenu" @openSaveStateMenu="openSaveStateMenu" />
+  <StartMenu v-if="showStartMenu" @openNewCourseMenu="openNewCourseMenu" @openSaveStateMenu="openSaveStateMenu"
+    @openEditSelection="openEditSelection" />
   <SaveStateSelection v-if="showSaveSelection" :userName="userName" @saveStateSelected="saveStateSelected"
     @openNewCourseMenu="openNewCourseMenu" @openStartMenu="openStartMenu" />
   <NewCourseSelection v-if="showNewCourseSelection" :userName="userName" @newSaveStateCreated="newSaveStateCreated"
@@ -10,6 +11,8 @@
   <PlayWindow v-if="showPlayWindow" @openLevelMenu="openLevelMenu" @updateSequenceHistory="updateSequenceHistory"
     @levelFinished="updateLevelEnd" @nextLevel="nextLevel" :levelData="currentLevelData"
     :hasNextLevel="nextChapterIndex !== -1" />
+  <EditSelection />
+  <EditorScreen v-if="showEditorScreen" />
 </template>
 
 <script setup lang="ts">
@@ -19,7 +22,9 @@ import SaveStateSelection from '@/components/menus/SaveStateSelection.vue';
 import NewCourseSelection from '@/components/menus/NewCourseSelection.vue';
 import LevelSelection from '@/components/menus/LevelSelection.vue';
 import PlayWindow from '@/components/play/PlayWindow.vue';
-import { AxiomData, LevelData, SymbolData } from './scripts/Interfaces';
+import EditSelection from '@/components/menus/EditSelection.vue'
+import EditorScreen from '@/components/editor/EditorScreen.vue';
+import { AxiomData, LevelData } from './scripts/Interfaces';
 import axios from 'axios';
 
 // menu variables
@@ -29,6 +34,8 @@ const showSaveSelection: Ref<boolean> = ref(false);
 const showNewCourseSelection: Ref<boolean> = ref(false);
 const showLevelSelection: Ref<boolean> = ref(false);
 const showPlayWindow: Ref<boolean> = ref(false);
+const showEditSelection: Ref<boolean> = ref(false);
+const showEditorScreen: Ref<boolean> = ref(false);
 
 // user variables
 const userName: Ref<string> = ref('Philippe');
@@ -93,6 +100,18 @@ function openNewCourseMenu(): void {
   showNewCourseSelection.value = true;
 }
 
+function openEditSelection(): void {
+  hideAll();
+  showHomeButton.value = true;
+  showEditSelection.value = true;
+}
+
+function openEditor(): void {
+  hideAll();
+  showHomeButton.value = true;
+  showEditorScreen.value = true;
+}
+
 function hideAll(): void {
   showHomeButton.value = false;
   showStartMenu.value = false;
@@ -100,6 +119,8 @@ function hideAll(): void {
   showNewCourseSelection.value = false;
   showLevelSelection.value = false;
   showPlayWindow.value = false;
+  showEditSelection.value = false;
+  showEditorScreen.value = false;
 }
 
 async function fetchLevel(): Promise<void> {

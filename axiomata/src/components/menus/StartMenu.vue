@@ -1,25 +1,18 @@
 <template>
   <div class="start-container">
-    <button @click="openNewCourseMenu"> Neues Spiel </button>
-    <button @click="openSaveStateMenu"> Laden </button>
+    <button @click="emit('openNewCourseMenu')"> Neues Spiel </button>
+    <button @click="emit('openSaveStateMenu')"> Laden </button>
+    <button @click="emit('openEditSelection')"> Editor </button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Ref, defineEmits, ref } from 'vue';
 
-const emit = defineEmits(['openNewCourseMenu', 'openSaveStateMenu']);
+const emit = defineEmits(['openNewCourseMenu', 'openSaveStateMenu', 'openEditSelection']);
 
 const screenWidth: Ref<number> = ref(window.innerWidth);
 const screenHeight: Ref<number> = ref(window.innerHeight);
-
-function openNewCourseMenu(): void {
-  emit('openNewCourseMenu');
-}
-
-function openSaveStateMenu(): void {
-  emit('openSaveStateMenu');
-}
 </script>
 
 <style>
