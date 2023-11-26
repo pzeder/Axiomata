@@ -42,7 +42,7 @@ import HeadBar from '@/components/play/HeadBar.vue'
 import Cursor from './Cursor.vue';
 import { AxiomData, LevelData, SeqVar, SeqSymbol, VarData } from '@/scripts/Interfaces';
 import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount, computed, ComputedRef } from 'vue';
-import { axiomHeight, axiomWidth } from '@/scripts/AxiomMethods';
+import { axiomHeight, axiomWidth, maxSequenceLength } from '@/scripts/AxiomMethods';
 
 interface Props {
   levelData: LevelData;
@@ -177,6 +177,7 @@ function axiomDrop(): void {
 function dockCursorAxiom(): void {
   const vx: number = cursorAxiomX.value;
   const vy: number = cursorAxiomY.value;
+  const cursorCenterY: number = vy + axiomHeight(workSymbolWidth.value, screenRatio.value) / 2;
 
   /* Check if selected Axiom is in the upper or lower half of the workbench and
     snap it to the workSequence accordingly */
@@ -187,7 +188,7 @@ function dockCursorAxiom(): void {
   const upperLength: number = cursorAxiom.value.upperSequence.length;
   const lowerLength: number = cursorAxiom.value.lowerSequence.length;
   let axiomOffset: number;
-  if (vy < workbenchCenterY) {
+  if (cursorCenterY < workbenchCenterY) {
     // Upper Half
     axiomOffset = (upperLength <= lowerLength) ? 0 : ((upperLength - lowerLength) / 2 * workSymbolWidth.value);
     cursorAxiomY.value = workbenchCenterY - 6 * symbolHeight / 2;
