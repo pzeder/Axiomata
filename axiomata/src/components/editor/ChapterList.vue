@@ -6,20 +6,38 @@
     </div>
     <div> Neues Level hinzufügen </div>
   </div>
-  <div class="new-chapter-button" @click="emit('addNewChapter')"> Neues Kapitel hinzufügen </div>
+  <div class="new-chapter-button" @click="addNewChapter"> Neues Kapitel hinzufügen </div>
 </template>
 
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
 import { ChapterData } from '@/scripts/Interfaces';
+import axios from 'axios';
 
 interface Props {
+  editID: any;
   chapters: ChapterData[];
 }
 
 const props = defineProps<Props>();
 
-const emit = defineEmits(['addNewChapter', 'renameChapter']);
+const emit = defineEmits(['updateChapters']);
+
+async function addNewChapter(): Promise<void> {
+  try {
+    const query: string = '?editID=' + props.editID;
+    const response = await axios.get('http://localhost:3000/addNewChapter' + query);
+    if (response.status === 200) {
+      const updatedChapters: ChapterData[] = response.data.chapters;
+      emit('updateChapters', updatedChapters);
+      console.log('New chapter added successfully:', response.data);
+    } else {
+      console.error('Server responded with status:', response.status);
+    }
+  } catch (error) {
+    console.error('Error adding new chapter:', error);
+  }
+}
 </script>
 
 <style>

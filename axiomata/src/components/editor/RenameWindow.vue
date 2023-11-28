@@ -1,21 +1,27 @@
 <template>
   <div class="rename-window">
-    <div class="rn-headbar"> Titel des {{ chapterIndex }}. Kapitels ändern </div>
+    <div class="rn-headbar"> Titel des Kapitels ändern </div>
     <div :style="{ display: 'flex' }">
-      <input type="text" id="textInput" placeholder="Enter text here">
-      <div class="ok-button"> ok </div>
+      <input class="input-bar" type="text" v-model="textInput" :placeholder="chapterTitle">
+      <div class="ok-button" @click="updateName"> ok </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { defineProps, Ref, ref } from 'vue';
 
 interface Props {
-  chapterIndex: number;
+  chapterTitle: string | undefined;
 }
 
 const props = defineProps<Props>();
+
+const textInput: Ref<string> = ref('');
+
+async function updateName(): Promise<void> {
+  console.log(textInput.value);
+}
 </script>
 
 <style>
@@ -37,8 +43,9 @@ const props = defineProps<Props>();
   user-select: none;
 }
 
-#textInput {
+.input-bar {
   width: 50%;
+  height: 20%;
   padding: 10px;
   margin: 10px;
   border: 1px solid #ccc;
