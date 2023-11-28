@@ -46,7 +46,6 @@ function openRenameWindow(chapterIndex: number): void {
 }
 
 function updateChapters(updatedChapters: ChapterData[]) {
-  console.log("hell yes")
   if (course.value) {
     course.value.chapters = updatedChapters;
   }
