@@ -1,13 +1,13 @@
 <template>
   <div class="chapter-container" v-for="(chapter, chIndex) in chapters" :key="chIndex">
     {{ chapter.chapterName }}
-    <button v-for="(level, lvlIndex) in chapter.levelHeaders" :key="lvlIndex"
+    <div class="level-container" v-for="(level, lvlIndex) in chapter.levelHeaders" :key="lvlIndex"
       @click="trySelectingLevel(chapter.unlocked, chIndex, lvlIndex)"
       :style="{ backgroundColor: (!chapter.unlocked ? 'rgb(150,150,150)' : (level.status === 'todo' ? '#F53227' : (level.status === 'busy' ? '#F5AA27' : '#3FB56E'))) }">
       {{ level.levelName }}
-    </button>
+    </div>
   </div>
-  <button :style="{fontSize: 20 + 'pt'}" @click="openSaveStateMenu"> Ladebidschirm </button>
+  <button :style="{ fontSize: 20 + 'pt' }" @click="openSaveStateMenu"> Ladebidschirm </button>
 </template>
 
 <script setup lang="ts">
@@ -72,13 +72,23 @@ async function fetchChapterHeaders(): Promise<void> {
 
 <style>
 .chapter-container {
+  position: static;
   display: flex;
   flex-direction: column;
   font-size: 50pt;
+  margin-bottom: 10px;
+  user-select: none;
 }
 
-.chapter-container button {
+.level-container {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 10vh;
+  border: 0.3vw solid black;
+  border-radius: 2vw;
   margin-bottom: 10px;
   font-size: 30pt;
+  user-select: none;
 }
 </style>
