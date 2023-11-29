@@ -25,6 +25,10 @@ const emit = defineEmits(['updateChapters', 'closeRenameWindow']);
 const textInput: Ref<string> = ref('');
 
 async function updateName(): Promise<void> {
+  if (textInput.value.length === 0) {
+    emit('closeRenameWindow');
+    return;
+  }
   try {
     const updateData = {
       editID: props.editID,
