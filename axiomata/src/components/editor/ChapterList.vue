@@ -2,7 +2,7 @@
   <div class="edit-chapter" v-for="(chapter, index) in chapters" :key="index">
     <div :style="{ display: 'flex' }">
       <div> {{ chapter.title }}</div>
-      <div class="name-edit-button" @click="emit('renameChapter', index)"> Namen ändern </div>
+      <TextEditButton @click="emit('editChapterTitle', index)" />
     </div>
     <div> Neues Level hinzufügen </div>
   </div>
@@ -13,6 +13,7 @@
 import { defineProps, defineEmits } from 'vue';
 import { ChapterData } from '@/scripts/Interfaces';
 import axios from 'axios';
+import TextEditButton from './TextEditButton.vue';
 
 interface Props {
   editID: any;
@@ -21,7 +22,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const emit = defineEmits(['updateChapters']);
+const emit = defineEmits(['updateChapters', 'editChapterTitle']);
 
 async function addNewChapter(): Promise<void> {
   try {
@@ -62,13 +63,5 @@ async function addNewChapter(): Promise<void> {
   justify-content: center;
   font-size: 20pt;
   user-select: none;
-}
-
-.name-edit-button {
-  display: grid;
-  align-items: center;
-  border: 2px solid black;
-  border-radius: 5vw;
-  font-size: 2vh;
 }
 </style>

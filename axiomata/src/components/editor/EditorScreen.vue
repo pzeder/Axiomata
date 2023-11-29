@@ -1,18 +1,21 @@
 <template>
-  <div> {{ course?.title }} </div>
+  <div :style="{ display: 'flex' }">
+    <div> {{ course?.title }} </div>
+    <TextEditButton @click="editCourseTitle" />
+  </div>
   <ChapterList v-if="course" key="course.chapters" :editID="editID" :chapters="course.chapters"
-    @updateChapters="updateChapters" @renameChapter="openRenameWindow" />
-  <RenameWindow v-if="showRenameWindow" :editID="editID" :chapterIndex="renameChapterIndex"
-    :chapterTitle="course?.chapters[renameChapterIndex].title" @updateChapters="updateChapters"
-    @closeRenameWindow="showRenameWindow = false" />
+    @updateChapters="updateChapters" @editChapterTitle="editChapterTitle" />
+  <TextInput v-if="showTextInput" :placeholder="textInputPlaceholder" :target="textInputTarget"
+    @updateText="updateText" />
 </template>
 
 <script setup lang="ts">
 import axios from 'axios';
-import { Ref, ref, defineProps, onMounted } from 'vue';
+import { Ref, ref, defineProps, onMounted, ComputedRef, computed } from 'vue';
 import { CourseData, ChapterData } from '@/scripts/Interfaces';
 import ChapterList from '@/components/editor/ChapterList.vue';
-import RenameWindow from '@/components/editor/RenameWindow.vue';
+import TextInput from '@/components/editor/TextInput.vue';
+import TextEditButton from './TextEditButton.vue';
 
 interface Props {
   editID: any;
@@ -21,8 +24,19 @@ interface Props {
 const props = defineProps<Props>();
 
 const course: Ref<CourseData | null> = ref(null);
-const renameChapterIndex: Ref<number> = ref(-1);
-const showRenameWindow: Ref<boolean> = ref(false);
+const chapterIndex: Ref<number> = ref(-1);
+const showTextInput: Ref<boolean> = ref(false);
+const textInputTarget: Ref<string> = ref('');
+const textInputPlaceholder: ComputedRef<string | undefined> = computed(() => {
+  switch (textInputTarget.value) {
+    case 'course':
+      return course.value?.title;
+    case 'chapter':
+      return course.value?.chapters[chapterIndex.value].title;
+    default:
+      return '';
+  }
+});
 
 onMounted(() => {
   fetchEdit();
@@ -42,9 +56,39 @@ async function fetchEdit(): Promise<void> {
   }
 }
 
-function openRenameWindow(chapterIndex: number): void {
-  renameChapterIndex.value = chapterIndex;
-  showRenameWindow.value = true;
+async function updateText(text: string): Promise<void> {
+  showTextInput.value = false;
+  if (text.length === 0) {
+    return;
+  }
+  try {
+    const updateData = {
+      editID: props.editID,
+      text: text,
+      target: textInputTarget.value,
+      chapterIndex: chapterIndex.value,
+    };
+    const response = await axios.patch('http://localhost:3000/text', updateData);
+    if (response.status === 200) {
+      const updatedCourse: CourseData = response.data.course;
+      course.value = updatedCourse;
+    } else {
+      console.error('Server responded with status', response.status);
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
+
+function editCourseTitle(): void {
+  textInputTarget.value = 'course';
+  showTextInput.value = true;
+}
+
+function editChapterTitle(index: number): void {
+  textInputTarget.value = 'chapter';
+  chapterIndex.value = index;
+  showTextInput.value = true;
 }
 
 function updateChapters(updatedChapters: ChapterData[]) {
