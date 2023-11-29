@@ -1,8 +1,10 @@
 <template>
   <div> {{ course?.title }} </div>
-  <ChapterList v-if="course" :editID="editID" :chapters="course.chapters" @updateChapters="updateChapters"
-    @renameChapter="openRenameWindow" />
-  <RenameWindow v-if="showRenameWindow" :chapterTitle="course?.chapters[renameChapterIndex].title" />
+  <ChapterList v-if="course" key="course.chapters" :editID="editID" :chapters="course.chapters"
+    @updateChapters="updateChapters" @renameChapter="openRenameWindow" />
+  <RenameWindow v-if="showRenameWindow" :editID="editID" :chapterIndex="renameChapterIndex"
+    :chapterTitle="course?.chapters[renameChapterIndex].title" @updateChapters="updateChapters"
+    @closeRenameWindow="showRenameWindow = false" />
 </template>
 
 <script setup lang="ts">

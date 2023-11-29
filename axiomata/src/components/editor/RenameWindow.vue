@@ -2,25 +2,46 @@
   <div class="rename-window">
     <div class="rn-headbar"> Titel des Kapitels ändern </div>
     <div :style="{ display: 'flex' }">
-      <input class="input-bar" type="text" v-model="textInput" :placeholder="chapterTitle">
+      <input id="input-bar" type="text" v-model="textInput" :placeholder="chapterTitle">
       <div class="ok-button" @click="updateName"> ok </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, Ref, ref } from 'vue';
+import { ChapterData } from '@/scripts/Interfaces';
+import axios from 'axios';
+import { defineProps, Ref, ref, defineEmits } from 'vue';
 
 interface Props {
+  editID: any;
+  chapterIndex: number;
   chapterTitle: string | undefined;
 }
 
 const props = defineProps<Props>();
+const emit = defineEmits(['updateChapters', 'closeRenameWindow']);
 
 const textInput: Ref<string> = ref('');
 
 async function updateName(): Promise<void> {
-  console.log(textInput.value);
+  try {
+    const updateData = {
+      editID: props.editID,
+      chapterIndex: props.chapterIndex,
+      newChapterTitle: textInput.value
+    };
+    const response = await axios.patch('http://localhost:3000/chapterTitle', updateData);
+    if (response.status === 200) {
+      const updatedChapters: ChapterData[] = response.data.chapters;
+      emit('updateChapters', updatedChapters);
+      emit('closeRenameWindow');
+    } else {
+      console.error('Server responded with status', response.status);
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
 }
 </script>
 
@@ -43,7 +64,7 @@ async function updateName(): Promise<void> {
   user-select: none;
 }
 
-.input-bar {
+#input-bar {
   width: 50%;
   height: 20%;
   padding: 10px;

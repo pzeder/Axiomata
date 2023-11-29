@@ -269,3 +269,25 @@ app.get('/addNewChapter', async (req, res) => {
   }
 });
 
+app.patch('/chapterTitle', async (req, res) => {
+  try {
+    const { editID, chapterIndex, newChapterTitle } = req.body;
+    const filter = ({ _id: new ObjectId(editID) });
+
+    const renameChapter = {
+      $set: { [`chapters.${chapterIndex}.title`]: newChapterTitle },
+    };
+
+    const patch = await db.collection('Edits').updateOne(filter, renameChapter);
+
+    if (patch.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to update status' });
+    }
+
+    const edit = await db.collection('Edits').findOne(filter);
+    res.json({ chapters: edit.chapters });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
