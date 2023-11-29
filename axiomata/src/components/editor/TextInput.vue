@@ -1,6 +1,6 @@
 <template>
   <div class="rename-window">
-    <div class="rn-headbar"> Titel des Kapitels ändern </div>
+    <div class="rn-headbar"> {{ headbarTitle }} </div>
     <div :style="{ display: 'flex' }">
       <input id="input-bar" type="text" v-model="textInput" :placeholder="placeholder"
         @keyup.enter="emit('updateText', textInput)">
@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, Ref, ref, defineEmits } from 'vue';
+import { defineProps, Ref, ref, defineEmits, ComputedRef, computed } from 'vue';
 
 interface Props {
   placeholder: string | undefined;
@@ -21,6 +21,18 @@ const props = defineProps<Props>();
 const emit = defineEmits(['updateText']);
 
 const textInput: Ref<string> = ref('');
+const headbarTitle: ComputedRef<string> = computed(() => {
+  switch (props.target) {
+    case 'course':
+      return 'Titel des Kurses ändern';
+    case 'chapter':
+      return 'Titel des Kapitels ändern';
+    case 'level':
+      return 'Titel des Levels ändern'
+    default:
+      return '';
+  }
+});
 </script>
 
 <style>

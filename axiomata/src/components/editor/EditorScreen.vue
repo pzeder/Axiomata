@@ -1,10 +1,7 @@
 <template>
-  <div :style="{ display: 'flex' }">
-    <div> {{ course?.title }} </div>
-    <TextEditButton @click="editCourseTitle" />
-  </div>
-  <ChapterList v-if="course" key="course.chapters" :editID="editID" :chapters="course.chapters"
-    @updateChapters="updateChapters" @editChapterTitle="editChapterTitle" />
+  <TitleBar :title="course?.title" target="course" @editCourseTitle="editCourseTitle" />
+  <ChapterList v-if="course" :editID="editID" :chapters="course.chapters" @updateChapters="updateChapters"
+    @editChapterTitle="editChapterTitle" />
   <TextInput v-if="showTextInput" :placeholder="textInputPlaceholder" :target="textInputTarget"
     @updateText="updateText" />
 </template>
@@ -15,7 +12,7 @@ import { Ref, ref, defineProps, onMounted, ComputedRef, computed } from 'vue';
 import { CourseData, ChapterData } from '@/scripts/Interfaces';
 import ChapterList from '@/components/editor/ChapterList.vue';
 import TextInput from '@/components/editor/TextInput.vue';
-import TextEditButton from './TextEditButton.vue';
+import TitleBar from './TitleBar.vue';
 
 interface Props {
   editID: any;
@@ -86,6 +83,7 @@ function editCourseTitle(): void {
 }
 
 function editChapterTitle(index: number): void {
+  console.log(index);
   textInputTarget.value = 'chapter';
   chapterIndex.value = index;
   showTextInput.value = true;
