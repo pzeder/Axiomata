@@ -1,6 +1,6 @@
 <template>
   <div class="course-container">
-    <button v-for="c in courses" :key="c.courseName" @click="createNewSaveState(c.courseName)"> {{ c.courseName
+    <button v-for="c in courses" :key="c.title" @click="createNewSaveState(c.title)"> {{ c.title
     }} </button>
   </div>
 </template>
@@ -16,7 +16,7 @@ const props = defineProps<Props>();
 const userName: Ref<string> = ref(props.userName);
 
 interface CourseHeader {
-  courseName: string;
+  title: string;
 }
 const courses: Ref<CourseHeader[]> = ref([]);
 
@@ -26,11 +26,11 @@ onMounted(() => {
 
 const emit = defineEmits(['newSaveStateCreated']);
 
-async function createNewSaveState(courseName: string) {
+async function createNewSaveState(courseTitle: string) {
   try {
     const data = ({
       userName: userName.value,
-      courseName: courseName
+      courseTitle: courseTitle
     });
     const response = await axios.post('http://localhost:3000/newSaveState', data);
     if (response.status === 200) {
@@ -47,7 +47,7 @@ async function fetchCourseHeaders(): Promise<void> {
   try {
     const response = await axios.get('http://localhost:3000/courses');
     if (response.status === 200) {
-      courses.value = [];
+      const courseHeaders = response.data;
       courses.value = response.data;
     } else {
       console.error('Server responded with status', response.status);

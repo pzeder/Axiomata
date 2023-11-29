@@ -4,7 +4,7 @@
     <div class="level-container" v-for="(level, lvlIndex) in chapter.levelHeaders" :key="lvlIndex"
       @click="trySelectingLevel(chapter.unlocked, chIndex, lvlIndex)"
       :style="{ backgroundColor: (!chapter.unlocked ? 'rgb(150,150,150)' : (level.status === 'todo' ? '#F53227' : (level.status === 'busy' ? '#F5AA27' : '#3FB56E'))) }">
-      {{ level.levelName }}
+      {{ level.title }}
     </div>
   </div>
   <button :style="{ fontSize: 20 + 'pt' }" @click="openSaveStateMenu"> Ladebidschirm </button>
@@ -28,7 +28,7 @@ interface ChapterHeader {
 }
 
 interface LevelHeader {
-  levelName: string;
+  title: string;
   status: string;
 }
 
@@ -59,7 +59,6 @@ async function fetchChapterHeaders(): Promise<void> {
     const query: string = '?saveID=' + saveID.value;
     const response = await axios.get('http://localhost:3000/chapterHeaders' + query);
     if (response.status === 200) {
-      chapters.value = [];
       chapters.value = response.data;
     } else {
       console.error('Server responded with status', response.status);

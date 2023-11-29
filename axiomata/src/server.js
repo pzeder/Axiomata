@@ -25,7 +25,7 @@ app.get('/saveStateHeaders', async (req, res) => {
   try {
     const filter = { userName: req.query.userName };
     const saveStates = await db.collection('SaveStates').find(filter).toArray();
-    const saveStateHeader = saveStates.map(s => ({ saveID: s._id, courseName: s.courseName }));
+    const saveStateHeader = saveStates.map(s => ({ saveID: s._id, title: s.title }));
     res.json(saveStateHeader)
   } catch (error) {
     res.status(500).json({ error: error });
@@ -39,12 +39,12 @@ app.get('/chapterHeaders', async (req, res) => {
     const saveState = await db.collection('SaveStates').findOne(filter);
 
     const getLevelHeaders = ch => ch.levels.map(lev => ({
-      levelName: lev.levelName,
+      title: lev.title,
       status: (lev.status === 'todo' && lev.sequenceHistory.length > 1) ? 'busy' : lev.status
     }));
 
     const chapterHeaders = saveState.chapters.map(ch => ({
-      chapterName: ch.chapterName,
+      title: ch.title,
       unlocked: ch.unlocked,
       levelHeaders: getLevelHeaders(ch)
     }));
@@ -58,8 +58,8 @@ app.get('/chapterHeaders', async (req, res) => {
 app.get('/courses', async (req, res) => {
   try {
     const courses = await db.collection('Courses').find().toArray();
-    const courseNames = courses.map(c => ({ courseName: c.courseName }));
-    res.json(courseNames)
+    const courseTitles = courses.map(c => ({ title: c.title }));
+    res.json(courseTitles)
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -77,12 +77,12 @@ app.get('/edits', async (req, res) => {
 
 app.post('/newSaveState', async (req, res) => {
   try {
-    const { userName, courseName } = req.body;
-    const courseData = await db.collection('Courses').findOne({ courseName: courseName });
-    const getChapterIndex = ch => courseData.chapters.findIndex(item => item.chapterName === ch.chapterName);
+    const { userName, courseTitle } = req.body;
+    const courseData = await db.collection('Courses').findOne({ title: courseTitle });
+    const getChapterIndex = ch => courseData.chapters.findIndex(item => item.title === ch.title);
 
     const getLevels = ch => ch.levels.map(lev => ({
-      levelName: lev.levelName,
+      title: lev.title,
       goalAxiom: lev.goalAxiom,
       status: 'todo',
       sequenceHistory: [lev.goalAxiom.upperSequence]
@@ -90,12 +90,12 @@ app.post('/newSaveState', async (req, res) => {
 
     const courseSave = {
       userName: userName,
-      courseName: courseName,
+      title: courseTitle,
       symbolAlphabet: courseData.symbolAlphabet,
       axioms: courseData.chapters[0].newAxioms,
       derivates: [],
       chapters: courseData.chapters.map(ch => ({
-        chapterName: ch.chapterName,
+        title: ch.title,
         newAxioms: ch.newAxioms,
         unlocked: (getChapterIndex(ch) === 0 ? true : false),
         levels: getLevels(ch)
@@ -145,7 +145,7 @@ app.get('/level', async (req, res) => {
       nextLevelIndex = -1;
     }
     const levelData = ({
-      levelName: level.levelName,
+      title: level.title,
       symbolAlphabet: saveState.symbolAlphabet,
       axioms: saveState.axioms,
       derivates: saveState.derivates,

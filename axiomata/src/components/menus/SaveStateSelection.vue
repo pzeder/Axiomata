@@ -1,6 +1,6 @@
 <template>
   <div class="save-container">
-    <button v-for="ssh in saveStateHeaders" :key="ssh.saveID" @click="saveStateSelected(ssh.saveID)"> {{ ssh.courseName
+    <button v-for="ssh in saveStateHeaders" :key="ssh.saveID" @click="saveStateSelected(ssh.saveID)"> {{ ssh.title
     }} </button>
   </div>
   <button @click="openNewCourseMenu"> Neuer Kurs </button>
@@ -19,7 +19,7 @@ const userName: Ref<string> = ref(props.userName);
 
 interface SaveStateHeader {
   saveID: any;
-  courseName: string;
+  title: string;
 }
 
 const saveStateHeaders: Ref<SaveStateHeader[]> = ref([]);
@@ -47,7 +47,6 @@ async function fetchCourseSaves(): Promise<void> {
     const query: string = '?userName=' + userName.value;
     const response = await axios.get('http://localhost:3000/saveStateHeaders' + query);
     if (response.status === 200) {
-      saveStateHeaders.value = [];
       saveStateHeaders.value = response.data;
     } else {
       console.error('Server responded with status', response.status);
