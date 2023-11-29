@@ -2,7 +2,7 @@
   <div class="rename-window">
     <div class="rn-headbar"> Titel des Kapitels ändern </div>
     <div :style="{ display: 'flex' }">
-      <input id="input-bar" type="text" v-model="textInput" :placeholder="chapterTitle">
+      <input id="input-bar" type="text" v-model="textInput" :placeholder="chapterTitle" @keyup.enter="updateName">
       <div class="ok-button" @click="updateName"> ok </div>
     </div>
   </div>
