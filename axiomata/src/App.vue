@@ -45,7 +45,7 @@ const saveID: Ref<any> = ref(null);
 const currentChapterIndex: Ref<number> = ref(-1);
 const currentLevelIndex: Ref<number> = ref(-1);
 const nullAxiom: AxiomData = { upperSequence: [], lowerSequence: [] };
-const nullLevel: LevelData = { symbolAlphabet: [], axioms: [], derivates: [], levelName: '', goalAxiom: nullAxiom, sequenceHistory: [[]], levelFinished: false, variables: [] };
+const nullLevel: LevelData = { symbolAlphabet: [], axioms: [], derivates: [], title: '', goalAxiom: nullAxiom, sequenceHistory: [[]], levelFinished: false, variables: [] };
 const currentLevelData: Ref<LevelData> = ref(nullLevel);
 const nextChapterIndex: Ref<number> = ref(-1);
 const nextLevelIndex: Ref<number> = ref(-1);
@@ -137,7 +137,7 @@ async function fetchLevel(): Promise<void> {
       currentLevelData.value.symbolAlphabet = response.data.symbolAlphabet;
       currentLevelData.value.axioms = response.data.axioms;
       currentLevelData.value.derivates = response.data.derivates;
-      currentLevelData.value.levelName = response.data.levelName;
+      currentLevelData.value.title = response.data.title;
       currentLevelData.value.goalAxiom = response.data.goalAxiom;
       currentLevelData.value.sequenceHistory = response.data.sequenceHistory;
       currentLevelData.value.levelFinished = response.data.levelFinished;
