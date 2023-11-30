@@ -1,8 +1,18 @@
 <template>
   <div class="add-button-container">
-    <div class="add-new-button"> Neues Kapitel hinzufügen </div>
+    <div class="add-new-button"> {{ text }} </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { defineProps } from 'vue';
+
+interface Props {
+  text: string;
+}
+
+const props = defineProps<Props>();
+</script>
 
 <style>
 .add-button-container {

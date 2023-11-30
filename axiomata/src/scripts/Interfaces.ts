@@ -35,7 +35,7 @@ export interface LevelData {
     symbolAlphabet: SymbolData[];
     axioms: AxiomData[];
     derivates: AxiomData[];
-    levelName: string;
+    title: string;
     goalAxiom: AxiomData;
     sequenceHistory: SeqSymbol[][];
     levelFinished: boolean;
