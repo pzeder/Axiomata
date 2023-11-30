@@ -1,5 +1,5 @@
 <template>
-  <div :style="{ display: 'flex' }">
+  <div :style="{ display: 'flex', marginLeft: 2 + 'vw' }">
     <div :style="{ fontSize: height + 'vh' }"> {{ title }}</div>
     <TextEditButton @click="emit('editTitle')" />
   </div>

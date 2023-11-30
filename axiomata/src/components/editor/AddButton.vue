@@ -1,5 +1,5 @@
 <template>
-  <div class="add-button-container">
+  <div class="add-button-container" :style="{ width: (target === 'chapter' ? 100 : 60) + 'vw' }">
     <div class="add-new-button" :style="{ background: color }"> {{ text }} </div>
   </div>
 </template>
@@ -38,7 +38,6 @@ const color: ComputedRef<string> = computed(() => {
 .add-button-container {
   display: grid;
   place-items: center;
-  width: 100vw;
   height: 9vh;
 }
 

@@ -21,7 +21,7 @@ const emit = defineEmits(['editLevelTitle', 'deleteLevel']);
 
 <style>
 .edit-level {
-  width: 100vw;
+  width: 60vw;
   border: 2px solid black;
   border-radius: 1vw;
   margin-bottom: 10px;

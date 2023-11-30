@@ -19,6 +19,7 @@ const props = defineProps<Props>();
   border: 2px solid black;
   border-radius: 5vw;
   margin-bottom: 0;
+  margin-left: 2vw;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -10,6 +10,9 @@
   border-radius: 5vw;
   font-size: 2vh;
   user-select: none;
-  background: yellow;
+  background: rgb(247, 247, 110);
+  padding-left: 2vw;
+  padding-right: 2vw;
+  margin-left: 1vw;
 }
 </style>

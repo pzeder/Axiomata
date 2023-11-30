@@ -4,7 +4,7 @@
     <div class="text-input-window" @click.stop="() => { }">
       <div class="ti-headbar"> {{ headbarTitle }} </div>
       <div :style="{ display: 'flex' }">
-        <input id="input-bar" type="text" v-model="textInput" :placeholder="placeholder"
+        <input id="input-bar" type="text" maxLength=50 v-model="textInput" :placeholder="placeholder"
           @keyup.enter="emit('updateText', textInput)">
         <div class="ok-button" @click="emit('updateText', textInput)"> ok </div>
       </div>
