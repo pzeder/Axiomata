@@ -27,5 +27,6 @@ const emit = defineEmits(['editLevelTitle', 'deleteLevel']);
   margin-bottom: 10px;
   font-size: 20pt;
   user-select: none;
+  background-color: rgb(255, 157, 0);
 }
 </style>

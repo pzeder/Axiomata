@@ -24,5 +24,6 @@ const props = defineProps<Props>();
   justify-content: center;
   font-size: 10pt;
   user-select: none;
+  background: red;
 }
 </style>

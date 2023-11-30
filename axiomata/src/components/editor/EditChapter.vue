@@ -42,5 +42,6 @@ function deleteLevel(levelIndex: number): void {
   margin-bottom: 10px;
   font-size: 20pt;
   user-select: none;
+  background: rgb(89, 204, 245);
 }
 </style>

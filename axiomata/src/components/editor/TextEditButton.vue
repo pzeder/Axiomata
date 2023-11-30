@@ -10,5 +10,6 @@
   border-radius: 5vw;
   font-size: 2vh;
   user-select: none;
+  background: yellow;
 }
 </style>
