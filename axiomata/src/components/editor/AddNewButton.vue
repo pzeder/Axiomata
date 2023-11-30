@@ -1,18 +1,27 @@
 <template>
-  <div class="add-new-button"> Neu </div>
+  <div class="add-button-container">
+    <div class="add-new-button"> Neu </div>
+  </div>
 </template>
 
 <style>
+.add-button-container {
+  display: grid;
+  place-items: center;
+  width: 100vw;
+  height: 9vh;
+}
+
 .add-new-button {
-  width: 50vw;
-  height: 10vh;
+  width: 20vw;
+  height: 5vh;
   border: 2px solid black;
   border-radius: 5vw;
-  margin-bottom: 10px;
+  margin-bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20pt;
+  font-size: 10pt;
   user-select: none;
 }
 </style>

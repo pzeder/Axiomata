@@ -1,7 +1,10 @@
 <template>
-  <div class="edit-chapter" v-for="(chapter, index) in chapters" :key="index">
-    <TitleBar :title="chapter.title" target="chapter" :chapterIndex="index" @editChapterTitle="editChapterTitle" />
-    <LevelList />
+  <div v-for="(chapter, index) in chapters" :key="index">
+    <AddNewButton @click="addNewChapter(index)" />
+    <div class="edit-chapter">
+      <TitleBar :title="chapter.title" target="chapter" :chapterIndex="index" @editChapterTitle="editChapterTitle" />
+      <LevelList />
+    </div>
   </div>
   <AddNewButton @click="addNewChapter(chapters.length)" />
 </template>
