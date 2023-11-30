@@ -1,7 +1,7 @@
 <template>
   <div v-for="(chapter, index) in chapters" :key="index">
     <NewChapterButton @click="addNewChapter(index)" />
-    <EditChapter :title="chapter.title" :index="index" />
+    <EditChapter :title="chapter.title" :index="index" @editChapterTitle="editChapterTitle" />
   </div>
   <NewChapterButton @click="addNewChapter(chapters.length)" />
 </template>
