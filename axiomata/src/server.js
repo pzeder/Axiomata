@@ -274,6 +274,32 @@ app.post('/addNewChapter', async (req, res) => {
   }
 });
 
+app.patch('/deleteChapter', async (req, res) => {
+  try {
+    const { editID, chapterIndex } = req.body;
+    const filter = ({ _id: new ObjectId(editID) });
+    console.log(filter);
+    const deleteChapter = {
+      $unset: { [`chapters.${chapterIndex}`]: "" }
+    };
+    const removeNull = {
+      $pull: { chapters: null }
+    }
+    result = await db.collection('Edits').updateOne(filter, deleteChapter);
+    if (result.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to update status' });
+    }
+    result = await db.collection('Edits').updateOne(filter, removeNull);
+    if (result.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to update status' });
+    }
+    const edit = await db.collection('Edits').findOne(filter);
+    res.json({ chapters: edit.chapters });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.patch('/text', async (req, res) => {
   try {
     const { editID, text, target, chapterIndex } = req.body;

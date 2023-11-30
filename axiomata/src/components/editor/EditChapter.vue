@@ -1,7 +1,8 @@
 <template>
   <div class="edit-chapter">
-    <TitleBar :title="title" target="chapter" :chapterIndex="index" @editChapterTitle="editChapterTitle" />
+    <TitleBar :title="title" target="chapter" :chapterIndex="index" @editChapterTitle="emit('editChapterTitle', index)" />
     <LevelList />
+    <DeleteButton text="Kapitel löschen" @click="emit('deleteChapter', index)" />
   </div>
 </template>
 
@@ -9,6 +10,7 @@
 import { defineProps, defineEmits } from 'vue';
 import TitleBar from './TitleBar.vue';
 import LevelList from './LevelList.vue';
+import DeleteButton from './DeleteButton.vue';
 
 interface Props {
   title: string;
@@ -16,11 +18,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['editChapterTitle']);
-
-function editChapterTitle(index: number) {
-  emit('editChapterTitle', index);
-}
+const emit = defineEmits(['editChapterTitle', 'deleteChapter']);
 </script>
 
 <style>

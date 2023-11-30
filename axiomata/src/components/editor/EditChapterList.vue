@@ -1,7 +1,8 @@
 <template>
   <div v-for="(chapter, index) in chapters" :key="index">
     <NewChapterButton @click="addNewChapter(index)" />
-    <EditChapter :title="chapter.title" :index="index" @editChapterTitle="editChapterTitle" />
+    <EditChapter :title="chapter.title" :index="index" @editChapterTitle="editChapterTitle"
+      @deleteChapter="deleteChapter" />
   </div>
   <NewChapterButton @click="addNewChapter(chapters.length)" />
 </template>
@@ -33,6 +34,26 @@ async function addNewChapter(position: number): Promise<void> {
       position: position
     }
     const response = await axios.post('http://localhost:3000/addNewChapter', updateData);
+    if (response.status === 200) {
+      const updatedChapters: ChapterData[] = response.data.chapters;
+      emit('updateChapters', updatedChapters);
+      console.log('New chapter added successfully:', response.data);
+    } else {
+      console.error('Server responded with status:', response.status);
+    }
+  } catch (error) {
+    console.error('Error adding new chapter:', error);
+  }
+}
+
+async function deleteChapter(index: number) {
+  console.log('destory!');
+  try {
+    const updateData = {
+      editID: props.editID,
+      chapterIndex: index
+    }
+    const response = await axios.patch('http://localhost:3000/deleteChapter', updateData);
     if (response.status === 200) {
       const updatedChapters: ChapterData[] = response.data.chapters;
       emit('updateChapters', updatedChapters);
