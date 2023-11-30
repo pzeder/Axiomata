@@ -1,6 +1,6 @@
 <template>
   <div :style="{ display: 'flex' }">
-    <div> {{ title }}</div>
+    <div :style="{ fontSize: height + 'vh' }"> {{ title }}</div>
     <TextEditButton @click="editTitle" />
   </div>
 </template>
@@ -13,6 +13,7 @@ interface Props {
   title: string | undefined;
   target: string;
   chapterIndex: number;
+  height: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {

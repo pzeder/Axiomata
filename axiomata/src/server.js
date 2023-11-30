@@ -278,7 +278,6 @@ app.patch('/deleteChapter', async (req, res) => {
   try {
     const { editID, chapterIndex } = req.body;
     const filter = ({ _id: new ObjectId(editID) });
-    console.log(filter);
     const deleteChapter = {
       $unset: { [`chapters.${chapterIndex}`]: "" }
     };

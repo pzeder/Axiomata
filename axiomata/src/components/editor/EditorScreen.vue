@@ -1,5 +1,5 @@
 <template>
-  <TitleBar :title="course?.title" target="course" @editCourseTitle="editCourseTitle" />
+  <TitleBar :title="course?.title" target="course" :height=10 @editCourseTitle="editCourseTitle" />
   <EditChapterList v-if="course" :editID="editID" :chapters="course.chapters" @updateChapters="updateChapters"
     @editChapterTitle="editChapterTitle" />
   <TextInput v-if="showTextInput" :placeholder="textInputPlaceholder" :target="textInputTarget"
