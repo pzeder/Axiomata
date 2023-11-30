@@ -1,12 +1,12 @@
 <template>
   <div v-for="(chapter, index) in chapters" :key="index">
-    <AddNewButton @click="addNewChapter(index)" />
+    <NewChapterButton @click="addNewChapter(index)" />
     <div class="edit-chapter">
       <TitleBar :title="chapter.title" target="chapter" :chapterIndex="index" @editChapterTitle="editChapterTitle" />
       <LevelList />
     </div>
   </div>
-  <AddNewButton @click="addNewChapter(chapters.length)" />
+  <NewChapterButton @click="addNewChapter(chapters.length)" />
 </template>
 
 <script setup lang="ts">
@@ -15,7 +15,7 @@ import { ChapterData } from '@/scripts/Interfaces';
 import axios from 'axios';
 import TitleBar from './TitleBar.vue';
 import LevelList from '@/components/editor/LevelList.vue';
-import AddNewButton from '@/components/editor/AddNewButton.vue';
+import NewChapterButton from '@/components/editor/NewChapterButton.vue';
 
 interface Props {
   editID: any;

@@ -1,6 +1,6 @@
 <template>
   <div class="add-button-container">
-    <div class="add-new-button"> Neu </div>
+    <div class="add-new-button"> Neues Kapitel hinzufügen </div>
   </div>
 </template>
 
