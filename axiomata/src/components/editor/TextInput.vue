@@ -1,10 +1,12 @@
 <template>
-  <div class="rename-window">
-    <div class="rn-headbar"> {{ headbarTitle }} </div>
-    <div :style="{ display: 'flex' }">
-      <input id="input-bar" type="text" v-model="textInput" :placeholder="placeholder"
-        @keyup.enter="emit('updateText', textInput)">
-      <div class="ok-button" @click="emit('updateText', textInput)"> ok </div>
+  <div class="text-input-container">
+    <div class="text-input-window" @click.stop="() => { }">
+      <div class="ti-headbar"> {{ headbarTitle }} </div>
+      <div :style="{ display: 'flex' }">
+        <input id="input-bar" type="text" v-model="textInput" :placeholder="placeholder"
+          @keyup.enter="emit('updateText', textInput)">
+        <div class="ok-button" @click="emit('updateText', textInput)"> ok </div>
+      </div>
     </div>
   </div>
 </template>
@@ -36,16 +38,24 @@ const headbarTitle: ComputedRef<string> = computed(() => {
 </script>
 
 <style>
-.rename-window {
+.text-input-container {
+  position: fixed;
+  display: grid;
+  place-items: center;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+.text-input-window {
   position: absolute;
-  left: 35vw;
-  top: 35vh;
   width: 30vw;
   height: 15vh;
   background-color: orange;
 }
 
-.rn-headbar {
+.ti-headbar {
   width: 100%;
   height: 30%;
   background-color: rgb(215, 140, 0);

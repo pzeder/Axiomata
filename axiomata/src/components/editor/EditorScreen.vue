@@ -2,8 +2,8 @@
   <TitleBar :title="course?.title" :height=10 @editTitle="editCourseTitle" />
   <EditChapterList v-if="course" :editID="editID" :chapters="course.chapters" @updateChapters="updateChapters"
     @editChapterTitle="editChapterTitle" @editLevelTitle="editLevelTitle" />
-  <TextInput v-if="showTextInput" :placeholder="textInputPlaceholder" :target="textInputTarget"
-    @updateText="updateText" />
+  <TextInput v-if="showTextInput" :placeholder="textInputPlaceholder" :target="textInputTarget" @updateText="updateText"
+    @click="showTextInput = false" />
 </template>
 
 <script setup lang="ts">
