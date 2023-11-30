@@ -1,10 +1,7 @@
 <template>
   <div v-for="(chapter, index) in chapters" :key="index">
     <NewChapterButton @click="addNewChapter(index)" />
-    <div class="edit-chapter">
-      <TitleBar :title="chapter.title" target="chapter" :chapterIndex="index" @editChapterTitle="editChapterTitle" />
-      <LevelList />
-    </div>
+    <EditChapter :title="chapter.title" :index="index" />
   </div>
   <NewChapterButton @click="addNewChapter(chapters.length)" />
 </template>
@@ -13,8 +10,7 @@
 import { defineProps, defineEmits } from 'vue';
 import { ChapterData } from '@/scripts/Interfaces';
 import axios from 'axios';
-import TitleBar from './TitleBar.vue';
-import LevelList from '@/components/editor/LevelList.vue';
+import EditChapter from './EditChapter.vue';
 import NewChapterButton from '@/components/editor/NewChapterButton.vue';
 
 interface Props {
@@ -27,7 +23,7 @@ const props = defineProps<Props>();
 const emit = defineEmits(['updateChapters', 'editChapterTitle']);
 
 function editChapterTitle(index: number) {
-  emit('editChapterTitle', index)
+  emit('editChapterTitle', index);
 }
 
 async function addNewChapter(position: number): Promise<void> {
@@ -50,13 +46,4 @@ async function addNewChapter(position: number): Promise<void> {
 }
 </script>
 
-<style>
-.edit-chapter {
-  width: 100vw;
-  border: 2px solid black;
-  border-radius: 1vw;
-  margin-bottom: 10px;
-  font-size: 20pt;
-  user-select: none;
-}
-</style>
+<style></style>
