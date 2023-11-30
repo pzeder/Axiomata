@@ -5,13 +5,23 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { ComputedRef, computed, defineProps } from 'vue';
 
 interface Props {
-  text: string;
+  target: string;
 }
 
 const props = defineProps<Props>();
+const text: ComputedRef<string> = computed(() => {
+  switch (props.target) {
+    case 'chapter':
+      return "Neues Kapitel hinzufügen";
+    case 'level':
+      return "Neues Level hinzufügen";
+    default:
+      return "ERROR: faulty target";
+  }
+});
 </script>
 
 <style>

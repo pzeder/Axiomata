@@ -1,10 +1,10 @@
 <template>
   <div v-for="(chapter, index) in chapters" :key="index">
-    <AddButton text="Neues Kapitel hinzufügen" @click="addNewChapter(index)" />
+    <AddButton target="chapter" @click="addNewChapter(index)" />
     <EditChapter :chapter="chapter" :index="index" @editChapterTitle="editChapterTitle" @deleteChapter="deleteChapter"
       @addNewLevel="(lvlIndex) => addNewLevel(index, lvlIndex)" />
   </div>
-  <AddButton text="Neues Kapitel hinzufügen" @click="addNewChapter(chapters.length)" />
+  <AddButton target="chapter" @click="addNewChapter(chapters.length)" />
 </template>
 
 <script setup lang="ts">
@@ -66,7 +66,7 @@ async function deleteChapter(index: number) {
 }
 
 async function addNewLevel(chapterIndex: number, levelIndex: number): Promise<void> {
-  console.log('hey');
+  console.log(chapterIndex, levelIndex);
   /* try {
     const updateData = {
       editID: props.editID,
