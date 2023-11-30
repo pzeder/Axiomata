@@ -1,5 +1,6 @@
 <template>
   <div class="text-input-container">
+    <div class="backdrop" />
     <div class="text-input-window" @click.stop="() => { }">
       <div class="ti-headbar"> {{ headbarTitle }} </div>
       <div :style="{ display: 'flex' }">
@@ -48,11 +49,19 @@ const headbarTitle: ComputedRef<string> = computed(() => {
   height: 100vh;
 }
 
+.backdrop {
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 20%;
+}
+
 .text-input-window {
   position: absolute;
   width: 30vw;
   height: 15vh;
   background-color: orange;
+  opacity: 2000%;
 }
 
 .ti-headbar {
