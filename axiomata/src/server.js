@@ -274,6 +274,37 @@ app.post('/addNewChapter', async (req, res) => {
   }
 });
 
+app.post('/addNewLevel', async (req, res) => {
+  try {
+    const { editID, chapterIndex, levelIndex } = req.body;
+    const filter = ({ _id: new ObjectId(editID) });
+    const edit = await db.collection('Edits').findOne(filter);
+    const newLevel = {
+      title: 'Neues Level'
+    }
+    if (edit && edit.chapters && edit.chapters[chapterIndex]) {
+      edit.chapters[chapterIndex].levels.splice(levelIndex, 0, newLevel);
+    } else {
+      return res.status(500).json({ error: 'Failed to update status' });
+    }
+    console.log(edit);
+
+    const addLevel = {
+      $set: {
+        chapters: edit.chapters
+      }
+    };
+    result = await db.collection('Edits').updateOne(filter, addLevel);
+    if (result.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to update status' });
+    }
+    const newEdit = await db.collection('Edits').findOne(filter);
+    res.json({ chapters: newEdit.chapters });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.patch('/deleteChapter', async (req, res) => {
   try {
     const { editID, chapterIndex } = req.body;

@@ -66,8 +66,7 @@ async function deleteChapter(index: number) {
 }
 
 async function addNewLevel(chapterIndex: number, levelIndex: number): Promise<void> {
-  console.log(chapterIndex, levelIndex);
-  /* try {
+  try {
     const updateData = {
       editID: props.editID,
       chapterIndex: chapterIndex,
@@ -77,13 +76,13 @@ async function addNewLevel(chapterIndex: number, levelIndex: number): Promise<vo
     if (response.status === 200) {
       const updatedChapters: ChapterData[] = response.data.chapters;
       emit('updateChapters', updatedChapters);
-      console.log('New chapter added successfully:', response.data);
+      console.log('New Level added successfully:', response.data);
     } else {
       console.error('Server responded with status:', response.status);
     }
   } catch (error) {
     console.error('Error adding new chapter:', error);
-  } */
+  }
 }
 
 async function deleteLevel(index: number) {
