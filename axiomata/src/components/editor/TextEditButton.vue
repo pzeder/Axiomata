@@ -1,5 +1,5 @@
 <template>
-  <div class="name-edit-button"> Namen ändern </div>
+  <div class="name-edit-button"> Titel ändern </div>
 </template>
 
 <style>

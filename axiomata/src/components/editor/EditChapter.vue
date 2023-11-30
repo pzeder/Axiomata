@@ -1,9 +1,8 @@
 <template>
   <div class="edit-chapter">
-    <TitleBar :title="chapter.title" target="chapter" :chapterIndex="index" :height=5
-      @editChapterTitle="emit('editChapterTitle', index)" />
-    <EditLevelList :levels="chapter.levels" @addNewLevel="addNewLevel" />
-    <DeleteButton text="Kapitel löschen" @click="emit('deleteChapter', index)" />
+    <TitleBar :title="chapter.title" :height=5 @editTitle="emit('editChapterTitle')" />
+    <EditLevelList :levels="chapter.levels" @addNewLevel="addNewLevel" @deleteLevel="deleteLevel" />
+    <DeleteButton text="Kapitel löschen" @click="emit('deleteChapter')" />
   </div>
 </template>
 
@@ -16,14 +15,17 @@ import { ChapterData } from '@/scripts/Interfaces';
 
 interface Props {
   chapter: ChapterData;
-  index: number;
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'addNewLevel']);
+const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'addNewLevel', 'deleteLevel']);
 
 function addNewLevel(levelIndex: number): void {
   emit('addNewLevel', levelIndex);
+}
+
+function deleteLevel(levelIndex: number): void {
+  emit('deleteLevel', levelIndex);
 }
 </script>
 

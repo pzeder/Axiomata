@@ -330,6 +330,33 @@ app.patch('/deleteChapter', async (req, res) => {
   }
 });
 
+app.patch('/deleteLevel', async (req, res) => {
+  try {
+    const { editID, chapterIndex, levelIndex } = req.body;
+    const filter = ({ _id: new ObjectId(editID) });
+    const deleteLevel = {
+      $unset: {
+        [`chapters.${chapterIndex}.levels.${levelIndex}`]: ""
+      }
+    };
+    const removeNull = {
+      $pull: { [`chapters.${chapterIndex}.levels`]: null }
+    };
+    result = await db.collection('Edits').updateOne(filter, deleteLevel);
+    if (result.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to update status' });
+    }
+    result = await db.collection('Edits').updateOne(filter, removeNull);
+    if (result.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to update status' });
+    }
+    const edit = await db.collection('Edits').findOne(filter);
+    res.json({ chapters: edit.chapters });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.patch('/text', async (req, res) => {
   try {
     const { editID, text, target, chapterIndex } = req.body;

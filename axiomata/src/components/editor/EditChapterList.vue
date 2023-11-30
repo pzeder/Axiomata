@@ -1,8 +1,9 @@
 <template>
   <div v-for="(chapter, index) in chapters" :key="index">
     <AddButton target="chapter" @click="addNewChapter(index)" />
-    <EditChapter :chapter="chapter" :index="index" @editChapterTitle="editChapterTitle" @deleteChapter="deleteChapter"
-      @addNewLevel="(lvlIndex) => addNewLevel(index, lvlIndex)" />
+    <EditChapter :chapter="chapter" :index="index" @editChapterTitle="emit('editChapterTitle', index)"
+      @deleteChapter="deleteChapter(index)" @addNewLevel="(lvlIndex) => addNewLevel(index, lvlIndex)"
+      @deleteLevel="(lvlIndex) => deleteLevel(index, lvlIndex)" />
   </div>
   <AddButton target="chapter" @click="addNewChapter(chapters.length)" />
 </template>
@@ -22,10 +23,6 @@ interface Props {
 const props = defineProps<Props>();
 
 const emit = defineEmits(['updateChapters', 'editChapterTitle']);
-
-function editChapterTitle(index: number) {
-  emit('editChapterTitle', index);
-}
 
 async function addNewChapter(position: number): Promise<void> {
   try {
@@ -85,17 +82,18 @@ async function addNewLevel(chapterIndex: number, levelIndex: number): Promise<vo
   }
 }
 
-async function deleteLevel(index: number) {
+async function deleteLevel(chapterIndex: number, levelIndex: number) {
   try {
     const updateData = {
       editID: props.editID,
-      chapterIndex: index
+      chapterIndex: chapterIndex,
+      levelIndex: levelIndex
     }
     const response = await axios.patch('http://localhost:3000/deleteLevel', updateData);
     if (response.status === 200) {
       const updatedChapters: ChapterData[] = response.data.chapters;
       emit('updateChapters', updatedChapters);
-      console.log('chapter deleted successfully:', response.data);
+      console.log('level deleted successfully:', response.data);
     } else {
       console.error('Server responded with status:', response.status);
     }
