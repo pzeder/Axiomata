@@ -246,9 +246,9 @@ app.patch('/levelEnd', async (req, res) => {
   }
 })
 
-app.get('/addNewChapter', async (req, res) => {
+app.post('/addNewChapter', async (req, res) => {
   try {
-    const { editID } = req.query;
+    const { editID, position } = req.body;
     const filter = ({ _id: new ObjectId(editID) });
     const newChapter = {
       title: 'Neues Kapitel',
@@ -256,7 +256,12 @@ app.get('/addNewChapter', async (req, res) => {
       levels: []
     }
     const addChapter = {
-      $push: { chapters: newChapter }
+      $push: {
+        chapters: {
+          $each: [newChapter],
+          $position: position
+        }
+      }
     };
     result = await db.collection('Edits').updateOne(filter, addChapter);
     if (result.modifiedCount === 0) {
