@@ -1,6 +1,6 @@
 <template>
   <TitleBar :title="course?.title" target="course" @editCourseTitle="editCourseTitle" />
-  <ChapterList v-if="course" :editID="editID" :chapters="course.chapters" @updateChapters="updateChapters"
+  <EditChapterList v-if="course" :editID="editID" :chapters="course.chapters" @updateChapters="updateChapters"
     @editChapterTitle="editChapterTitle" />
   <TextInput v-if="showTextInput" :placeholder="textInputPlaceholder" :target="textInputTarget"
     @updateText="updateText" />
@@ -10,7 +10,7 @@
 import axios from 'axios';
 import { Ref, ref, defineProps, onMounted, ComputedRef, computed } from 'vue';
 import { CourseData, ChapterData } from '@/scripts/Interfaces';
-import ChapterList from '@/components/editor/ChapterList.vue';
+import EditChapterList from '@/components/editor/EditChapterList.vue';
 import TextInput from '@/components/editor/TextInput.vue';
 import TitleBar from './TitleBar.vue';
 
