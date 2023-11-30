@@ -83,7 +83,6 @@ function editCourseTitle(): void {
 }
 
 function editChapterTitle(index: number): void {
-  console.log(index);
   textInputTarget.value = 'chapter';
   chapterIndex.value = index;
   showTextInput.value = true;
