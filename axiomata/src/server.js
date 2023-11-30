@@ -287,7 +287,6 @@ app.post('/addNewLevel', async (req, res) => {
     } else {
       return res.status(500).json({ error: 'Failed to update status' });
     }
-    console.log(edit);
 
     const addLevel = {
       $set: {
@@ -359,7 +358,7 @@ app.patch('/deleteLevel', async (req, res) => {
 
 app.patch('/text', async (req, res) => {
   try {
-    const { editID, text, target, chapterIndex } = req.body;
+    const { editID, text, target, chapterIndex, levelIndex } = req.body;
     const filter = ({ _id: new ObjectId(editID) });
 
     let update;
@@ -372,6 +371,11 @@ app.patch('/text', async (req, res) => {
       case 'chapter':
         update = {
           $set: { [`chapters.${chapterIndex}.title`]: text },
+        };
+        break;
+      case 'level':
+        update = {
+          $set: { [`chapters.${chapterIndex}.levels.${levelIndex}.title`]: text },
         };
         break;
     }

@@ -1,7 +1,8 @@
 <template>
   <div class="edit-chapter">
     <TitleBar :title="chapter.title" :height=5 @editTitle="emit('editChapterTitle')" />
-    <EditLevelList :levels="chapter.levels" @addNewLevel="addNewLevel" @deleteLevel="deleteLevel" />
+    <EditLevelList :levels="chapter.levels" @addNewLevel="addNewLevel" @deleteLevel="deleteLevel"
+      @editLevelTitle="editLevelTitle" />
     <DeleteButton text="Kapitel löschen" @click="emit('deleteChapter')" />
   </div>
 </template>
@@ -18,10 +19,14 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'addNewLevel', 'deleteLevel']);
+const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'addNewLevel', 'editLevelTitle', 'deleteLevel']);
 
 function addNewLevel(levelIndex: number): void {
   emit('addNewLevel', levelIndex);
+}
+
+function editLevelTitle(levelIndex: number): void {
+  emit('editLevelTitle', levelIndex);
 }
 
 function deleteLevel(levelIndex: number): void {

@@ -1,7 +1,7 @@
 <template>
   <TitleBar :title="course?.title" :height=10 @editTitle="editCourseTitle" />
   <EditChapterList v-if="course" :editID="editID" :chapters="course.chapters" @updateChapters="updateChapters"
-    @editChapterTitle="editChapterTitle" />
+    @editChapterTitle="editChapterTitle" @editLevelTitle="editLevelTitle" />
   <TextInput v-if="showTextInput" :placeholder="textInputPlaceholder" :target="textInputTarget"
     @updateText="updateText" />
 </template>
@@ -22,6 +22,7 @@ const props = defineProps<Props>();
 
 const course: Ref<CourseData | null> = ref(null);
 const chapterIndex: Ref<number> = ref(-1);
+const levelIndex: Ref<number> = ref(-1);
 const showTextInput: Ref<boolean> = ref(false);
 const textInputTarget: Ref<string> = ref('');
 const textInputPlaceholder: ComputedRef<string | undefined> = computed(() => {
@@ -30,6 +31,8 @@ const textInputPlaceholder: ComputedRef<string | undefined> = computed(() => {
       return course.value?.title;
     case 'chapter':
       return course.value?.chapters[chapterIndex.value].title;
+    case 'level':
+      return course.value?.chapters[chapterIndex.value].levels[levelIndex.value].title;
     default:
       return '';
   }
@@ -64,6 +67,7 @@ async function updateText(text: string): Promise<void> {
       text: text,
       target: textInputTarget.value,
       chapterIndex: chapterIndex.value,
+      levelIndex: levelIndex.value
     };
     const response = await axios.patch('http://localhost:3000/text', updateData);
     if (response.status === 200) {
@@ -85,6 +89,13 @@ function editCourseTitle(): void {
 function editChapterTitle(index: number): void {
   textInputTarget.value = 'chapter';
   chapterIndex.value = index;
+  showTextInput.value = true;
+}
+
+function editLevelTitle(chIndex: number, lvlIndex: number) {
+  textInputTarget.value = 'level';
+  chapterIndex.value = chIndex;
+  levelIndex.value = lvlIndex;
   showTextInput.value = true;
 }
 

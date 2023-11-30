@@ -1,6 +1,6 @@
 <template>
   <div class="edit-level">
-    <TitleBar :title="level.title" :height=5 @editLevelTitle="emit('editLevelTitle')" />
+    <TitleBar :title="level.title" :height=5 @editTitle="emit('editLevelTitle')" />
     <DeleteButton text="Level löschen" @click="emit('deleteLevel')" />
   </div>
 </template>

@@ -3,6 +3,7 @@
     <AddButton target="chapter" @click="addNewChapter(index)" />
     <EditChapter :chapter="chapter" :index="index" @editChapterTitle="emit('editChapterTitle', index)"
       @deleteChapter="deleteChapter(index)" @addNewLevel="(lvlIndex) => addNewLevel(index, lvlIndex)"
+      @editLevelTitle="(lvlIndex) => emit('editLevelTitle', index, lvlIndex)"
       @deleteLevel="(lvlIndex) => deleteLevel(index, lvlIndex)" />
   </div>
   <AddButton target="chapter" @click="addNewChapter(chapters.length)" />
@@ -22,7 +23,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const emit = defineEmits(['updateChapters', 'editChapterTitle']);
+const emit = defineEmits(['updateChapters', 'editChapterTitle', 'editLevelTitle']);
 
 async function addNewChapter(position: number): Promise<void> {
   try {
