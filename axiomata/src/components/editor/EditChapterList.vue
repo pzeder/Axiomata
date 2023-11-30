@@ -47,7 +47,6 @@ async function addNewChapter(position: number): Promise<void> {
 }
 
 async function deleteChapter(index: number) {
-  console.log('destory!');
   try {
     const updateData = {
       editID: props.editID,
@@ -57,7 +56,7 @@ async function deleteChapter(index: number) {
     if (response.status === 200) {
       const updatedChapters: ChapterData[] = response.data.chapters;
       emit('updateChapters', updatedChapters);
-      console.log('New chapter added successfully:', response.data);
+      console.log('chapter deleted successfully:', response.data);
     } else {
       console.error('Server responded with status:', response.status);
     }
