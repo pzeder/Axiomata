@@ -1,20 +1,26 @@
 <template>
   <div class="color-editor">
-    <ColorSlider color="red" @changeValue="setRed" />
-    <ColorSlider color='green' @changeValue="setGreen" />
-    <ColorSlider color='blue' @changeValue="setBlue" />
+    <ColorSlider :defaultValue="defaultValue" color="red" @changeValue="setRed" />
+    <ColorSlider :defaultValue="defaultValue" color='green' @changeValue="setGreen" />
+    <ColorSlider :defaultValue="defaultValue" color='blue' @changeValue="setBlue" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ComputedRef, Ref, computed, ref, defineEmits } from 'vue';
+import { ComputedRef, Ref, computed, ref, defineEmits, defineProps } from 'vue';
 import ColorSlider from '@/components/editor/ColorSlider.vue';
+
+interface Props {
+  defaultValue: number;
+}
+
+const props = defineProps<Props>();
 
 const emit = defineEmits(['changeColor']);
 
-const red: Ref<number> = ref(255);
-const green: Ref<number> = ref(255);
-const blue: Ref<number> = ref(255);
+const red: Ref<number> = ref(props.defaultValue);
+const green: Ref<number> = ref(props.defaultValue);
+const blue: Ref<number> = ref(props.defaultValue);
 
 const rgb: ComputedRef<string> = computed(() =>
   'rgb(' + red.value + ',' + green.value + ',' + blue.value + ')');

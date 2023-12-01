@@ -2,10 +2,11 @@
   <div class="backdrop" />
   <div class="edit-symbol-container">
     <div class="flex-container">
-      <ColorEditor @changeColor="setBackgroundColor" />
+      <ColorEditor :defaultValue=255 @changeColor="setBackgroundColor" />
       <div class="edit-symbol" :style="{ background: backgroundColor, color: textColor }">
         {{ text }}
       </div>
+      <ColorEditor :defaultValue=0 @changeColor="setTextColor" />
     </div>
   </div>
 </template>
@@ -14,12 +15,16 @@
 import { Ref, ref } from 'vue';
 import ColorEditor from './ColorEditor.vue';
 
-const backgroundColor: Ref<string> = ref('red');
+const backgroundColor: Ref<string> = ref('white');
 const text: Ref<string> = ref('text');
-const textColor: Ref<string> = ref('blue');
+const textColor: Ref<string> = ref('black');
 
 function setBackgroundColor(color: string) {
   backgroundColor.value = color;
+}
+
+function setTextColor(color: string) {
+  textColor.value = color;
 }
 </script>
 

@@ -12,12 +12,13 @@ import { Ref, ref, defineEmits, defineProps, onMounted } from 'vue';
 
 interface Props {
   color: string;
+  defaultValue: number;
 }
 
 const rootElement: Ref<HTMLElement | null> = ref(null);
 const props = defineProps<Props>();
 const emit = defineEmits(['changeValue']);
-const sliderValue = ref(255);
+const sliderValue = ref(props.defaultValue);
 
 onMounted(() => {
   if (rootElement.value) {
