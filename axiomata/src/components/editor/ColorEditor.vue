@@ -1,5 +1,6 @@
 <template>
   <div class="color-editor">
+    <div class="color-editor-title"> {{ title }} </div>
     <ColorSlider :defaultValue="defaultValue" color="red" @changeValue="setRed" />
     <ColorSlider :defaultValue="defaultValue" color='green' @changeValue="setGreen" />
     <ColorSlider :defaultValue="defaultValue" color='blue' @changeValue="setBlue" />
@@ -11,6 +12,7 @@ import { ComputedRef, Ref, computed, ref, defineEmits, defineProps } from 'vue';
 import ColorSlider from '@/components/editor/ColorSlider.vue';
 
 interface Props {
+  title: string;
   defaultValue: number;
 }
 

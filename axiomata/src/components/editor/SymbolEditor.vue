@@ -2,11 +2,11 @@
   <div class="backdrop" />
   <div class="edit-symbol-container">
     <div class="flex-container">
-      <ColorEditor :defaultValue=255 @changeColor="setBackgroundColor" />
+      <ColorEditor title="Hintergrundfarbe" :defaultValue=255 @changeColor="setBackgroundColor" />
       <div class="edit-symbol" :style="{ background: backgroundColor, color: textColor }">
         {{ text }}
       </div>
-      <ColorEditor :defaultValue=0 @changeColor="setTextColor" />
+      <ColorEditor title="Textfarbe" :defaultValue=0 @changeColor="setTextColor" />
     </div>
   </div>
 </template>
