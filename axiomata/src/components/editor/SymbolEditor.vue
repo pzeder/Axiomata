@@ -1,12 +1,17 @@
 <template>
   <div class="backdrop" />
   <div class="edit-symbol-container">
-    <div class="flex-container">
-      <ColorEditor title="Hintergrundfarbe" :defaultValue=255 @changeColor="setBackgroundColor" />
-      <div class="edit-symbol" :style="{ background: backgroundColor, color: textColor }">
-        {{ text }}
+    <div>
+      <div class="title-container">
+        <div class="edit-symbol-title"> Neues Symbol erstellen </div>
       </div>
-      <ColorEditor title="Textfarbe" :defaultValue=0 @changeColor="setTextColor" />
+      <div class="flex-container">
+        <ColorEditor title="Hintergrundfarbe" :defaultValue=255 @changeColor="setBackgroundColor" />
+        <div class="edit-symbol" :style="{ background: backgroundColor, color: textColor }">
+          {{ text }}
+        </div>
+        <ColorEditor title="Textfarbe" :defaultValue=0 @changeColor="setTextColor" />
+      </div>
     </div>
   </div>
 </template>
@@ -49,9 +54,26 @@ function setTextColor(color: string) {
   place-items: center;
 }
 
+.title-container {
+  display: grid;
+  place-items: center;
+}
+
+.edit-symbol-title {
+  margin-bottom: 0;
+  font-size: 5vh;
+  background: orange;
+  width: 30vw;
+  display: grid;
+  place-items: center;
+  border-radius: 2vw;
+}
+
 .flex-container {
   display: flex;
   justify-content: center;
+  background-color: rgb(192, 191, 191);
+  border-radius: 20vw;
 }
 
 .edit-symbol {

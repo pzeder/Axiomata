@@ -47,7 +47,7 @@ function setBlue(value: number) {
 .color-editor {
   width: 30vw;
   height: 20vw;
-  background-color: white;
+  background-color: none;
   display: grid;
   place-items: center;
 }
