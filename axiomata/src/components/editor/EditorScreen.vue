@@ -2,9 +2,9 @@
   <TitleBar :title="course?.title" :height=10 @editTitle="editCourseTitle" />
   <EditChapterList v-if="course" :editID="editID" :chapters="course.chapters" @updateChapters="updateChapters"
     @editChapterTitle="editChapterTitle" @editLevelTitle="editLevelTitle" />
+  <SymbolEditor :text="symbolTextPlaceholder" @editSymbolText="editSymbolText" />
   <TextInput v-if="showTextInput" :placeholder="textInputPlaceholder" :target="textInputTarget" @updateText="updateText"
     @click="showTextInput = false" />
-  <SymbolEditor />
 </template>
 
 <script setup lang="ts">
@@ -27,6 +27,7 @@ const chapterIndex: Ref<number> = ref(-1);
 const levelIndex: Ref<number> = ref(-1);
 const showTextInput: Ref<boolean> = ref(false);
 const textInputTarget: Ref<string> = ref('');
+const symbolTextPlaceholder: Ref<string> = ref('text');
 const textInputPlaceholder: ComputedRef<string | undefined> = computed(() => {
   switch (textInputTarget.value) {
     case 'course':
@@ -35,6 +36,8 @@ const textInputPlaceholder: ComputedRef<string | undefined> = computed(() => {
       return course.value?.chapters[chapterIndex.value].title;
     case 'level':
       return course.value?.chapters[chapterIndex.value].levels[levelIndex.value].title;
+    case 'symbol':
+      return symbolTextPlaceholder.value;
     default:
       return '';
   }
@@ -60,6 +63,10 @@ async function fetchEdit(): Promise<void> {
 
 async function updateText(text: string): Promise<void> {
   showTextInput.value = false;
+  if (textInputTarget.value === 'symbol') {
+    symbolTextPlaceholder.value = text;
+    return
+  }
   if (text.length === 0) {
     return;
   }
@@ -98,6 +105,11 @@ function editLevelTitle(chIndex: number, lvlIndex: number) {
   textInputTarget.value = 'level';
   chapterIndex.value = chIndex;
   levelIndex.value = lvlIndex;
+  showTextInput.value = true;
+}
+
+function editSymbolText(): void {
+  textInputTarget.value = 'symbol';
   showTextInput.value = true;
 }
 

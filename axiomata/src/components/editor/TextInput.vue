@@ -32,6 +32,8 @@ const headbarTitle: ComputedRef<string> = computed(() => {
       return 'Titel des Kapitels ändern';
     case 'level':
       return 'Titel des Levels ändern'
+    case 'symbol':
+      return 'Symboltext ändern';
     default:
       return '';
   }

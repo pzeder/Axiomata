@@ -7,7 +7,8 @@
       </div>
       <div class="flex-container">
         <ColorEditor title="Hintergrundfarbe" :defaultValue=255 @changeColor="setBackgroundColor" />
-        <div class="edit-symbol" :style="{ background: backgroundColor, color: textColor }">
+        <div class="edit-symbol" :style="{ background: backgroundColor, color: textColor }"
+          @click="emit('editSymbolText')">
           {{ text }}
         </div>
         <ColorEditor title="Textfarbe" :defaultValue=0 @changeColor="setTextColor" />
@@ -17,11 +18,18 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, ref } from 'vue';
+import { Ref, ref, defineEmits, defineProps } from 'vue';
 import ColorEditor from './ColorEditor.vue';
 
+interface Props {
+  text: string;
+}
+
+const props = defineProps<Props>();
+
+const emit = defineEmits(['editSymbolText']);
+
 const backgroundColor: Ref<string> = ref('white');
-const text: Ref<string> = ref('text');
 const textColor: Ref<string> = ref('black');
 
 function setBackgroundColor(color: string) {
@@ -84,5 +92,6 @@ function setTextColor(color: string) {
   display: grid;
   place-items: center;
   font-size: 10vh;
+  user-select: none;
 }
 </style>
