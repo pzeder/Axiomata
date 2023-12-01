@@ -4,6 +4,7 @@
     @editChapterTitle="editChapterTitle" @editLevelTitle="editLevelTitle" />
   <TextInput v-if="showTextInput" :placeholder="textInputPlaceholder" :target="textInputTarget" @updateText="updateText"
     @click="showTextInput = false" />
+  <SymbolEditor />
 </template>
 
 <script setup lang="ts">
@@ -13,6 +14,7 @@ import { CourseData, ChapterData } from '@/scripts/Interfaces';
 import EditChapterList from '@/components/editor/EditChapterList.vue';
 import TextInput from '@/components/editor/TextInput.vue';
 import TitleBar from './TitleBar.vue';
+import SymbolEditor from './SymbolEditor.vue';
 
 interface Props {
   editID: any;
