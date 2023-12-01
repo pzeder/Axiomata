@@ -2,6 +2,7 @@
   <TitleBar :title="course?.title" :height=10 @editTitle="editCourseTitle" />
   <EditChapterList v-if="course" :editID="editID" :chapters="course.chapters" @updateChapters="updateChapters"
     @editChapterTitle="editChapterTitle" @editLevelTitle="editLevelTitle" />
+  <AxiomEditor/>
   <SymbolEditor v-if="showSymbolEditor" :text="symbolTextPlaceholder" @editSymbolText="editSymbolText"
     @closeSymbolEditor="showSymbolEditor = false" />
   <TextInput v-if="showTextInput" :placeholder="textInputPlaceholder" :target="textInputTarget" @updateText="updateText"
@@ -16,6 +17,7 @@ import EditChapterList from '@/components/editor/EditChapterList.vue';
 import TextInput from '@/components/editor/TextInput.vue';
 import TitleBar from './TitleBar.vue';
 import SymbolEditor from './SymbolEditor.vue';
+import AxiomEditor from './AxiomEditor.vue'
 
 interface Props {
   editID: any;
