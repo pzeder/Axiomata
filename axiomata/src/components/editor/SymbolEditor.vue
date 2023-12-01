@@ -13,6 +13,10 @@
         </div>
         <ColorEditor title="Textfarbe" :defaultValue=0 @changeColor="setTextColor" />
       </div>
+      <div class="button-container">
+        <div class="cancel-button" @click="emit('closeSymbolEditor')"> abbrechen </div>
+        <div class="ok-symbol-button"> ok </div>
+      </div>
     </div>
   </div>
 </template>
@@ -27,7 +31,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const emit = defineEmits(['editSymbolText']);
+const emit = defineEmits(['editSymbolText', 'closeSymbolEditor']);
 
 const backgroundColor: Ref<string> = ref('white');
 const textColor: Ref<string> = ref('black');
@@ -49,7 +53,7 @@ function setTextColor(color: string) {
   width: 100vw;
   height: 100vh;
   background: black;
-  opacity: 20%;
+  opacity: 50%;
 }
 
 .edit-symbol-container {
@@ -92,6 +96,30 @@ function setTextColor(color: string) {
   display: grid;
   place-items: center;
   font-size: 10vh;
+  user-select: none;
+}
+
+.button-container {
+  display: flex;
+  place-items: center;
+  justify-content: center;
+}
+
+.cancel-button {
+  width: 10vw;
+  height: 5vh;
+  background-color: red;
+  display: grid;
+  place-items: center;
+  user-select: none;
+}
+
+.ok-symbol-button {
+  width: 10vw;
+  height: 5vh;
+  background-color: green;
+  display: grid;
+  place-items: center;
   user-select: none;
 }
 </style>

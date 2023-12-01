@@ -2,7 +2,8 @@
   <TitleBar :title="course?.title" :height=10 @editTitle="editCourseTitle" />
   <EditChapterList v-if="course" :editID="editID" :chapters="course.chapters" @updateChapters="updateChapters"
     @editChapterTitle="editChapterTitle" @editLevelTitle="editLevelTitle" />
-  <SymbolEditor :text="symbolTextPlaceholder" @editSymbolText="editSymbolText" />
+  <SymbolEditor v-if="showSymbolEditor" :text="symbolTextPlaceholder" @editSymbolText="editSymbolText"
+    @closeSymbolEditor="showSymbolEditor = false" />
   <TextInput v-if="showTextInput" :placeholder="textInputPlaceholder" :target="textInputTarget" @updateText="updateText"
     @click="showTextInput = false" />
 </template>
@@ -25,6 +26,7 @@ const props = defineProps<Props>();
 const course: Ref<CourseData | null> = ref(null);
 const chapterIndex: Ref<number> = ref(-1);
 const levelIndex: Ref<number> = ref(-1);
+const showSymbolEditor: Ref<boolean> = ref(true);
 const showTextInput: Ref<boolean> = ref(false);
 const textInputTarget: Ref<string> = ref('');
 const symbolTextPlaceholder: Ref<string> = ref('text');
