@@ -70,7 +70,6 @@ app.get('/course', async (req, res) => {
     const { saveID } = req.query;
     const filter = ({ _id: new ObjectId(saveID) });
     const course = await db.collection('SaveStates').findOne(filter);
-    console.log(filter, course);
     res.json(course);
   } catch (error) {
     res.status(500).json({ error: error });
@@ -136,41 +135,6 @@ app.post('/newEdit', async (req, res) => {
   }
 });
 
-/*app.get('/level', async (req, res) => {
-  try {
-    const { saveID, chapterIndex, levelIndex } = req.query;
-    const filter = ({ _id: new ObjectId(saveID) });
-    const saveState = await db.collection('SaveStates').findOne(filter);
-    const chapter = saveState.chapters[chapterIndex];
-    const level = chapter.levels[levelIndex];
-
-    let nextChapterIndex = parseInt(chapterIndex, 10);
-    let nextLevelIndex = parseInt(levelIndex, 10) + 1;
-    if (nextLevelIndex >= chapter.levels.length) {
-      nextChapterIndex++;
-      nextLevelIndex = 0;
-    }
-    if (nextChapterIndex >= saveState.chapters.length) {
-      nextChapterIndex = -1;
-      nextLevelIndex = -1;
-    }
-    const levelData = ({
-      title: level.title,
-      symbolAlphabet: saveState.symbolAlphabet,
-      axioms: saveState.axioms,
-      derivates: saveState.derivates,
-      goalAxiom: level.goalAxiom,
-      sequenceHistory: level.sequenceHistory,
-      levelFinished: level.status === 'done',
-      nextChapterIndex: nextChapterIndex,
-      nextLevelIndex: nextLevelIndex,
-      variables: saveState.variables
-    });
-    res.json(levelData);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-}) */
 
 app.get('/edit', async (req, res) => {
   try {
