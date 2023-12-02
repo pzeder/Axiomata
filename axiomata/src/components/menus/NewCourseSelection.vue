@@ -1,6 +1,6 @@
 <template>
   <div class="course-container">
-    <button v-for="c in courses" :key="c.title" @click="createNewSaveState(c.title)"> {{ c.title
+    <button v-for="(course, index) in courseHeaders" :key="index" @click="createNewSaveState(course.title)"> {{ course.title
     }} </button>
   </div>
 </template>
@@ -18,13 +18,26 @@ const userName: Ref<string> = ref(props.userName);
 interface CourseHeader {
   title: string;
 }
-const courses: Ref<CourseHeader[]> = ref([]);
+const courseHeaders: Ref<CourseHeader[]> = ref([]);
 
 onMounted(() => {
   fetchCourseHeaders();
 });
 
-const emit = defineEmits(['newSaveStateCreated']);
+const emit = defineEmits(['openCourse']);
+
+async function fetchCourseHeaders(): Promise<void> {
+  try {
+    const response = await axios.get('http://localhost:3000/courseHeaders');
+    if (response.status === 200) {
+      courseHeaders.value = response.data;
+    } else {
+      console.error('Server responded with status', response.status);
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
 
 async function createNewSaveState(courseTitle: string) {
   try {
@@ -34,7 +47,8 @@ async function createNewSaveState(courseTitle: string) {
     });
     const response = await axios.post('http://localhost:3000/newSaveState', data);
     if (response.status === 200) {
-      emit('newSaveStateCreated', response.data.saveID, response.data.symbolAlphabet);
+      console.log('New saveState created successfully', response.data);
+      emit('openCourse', response.data.saveID);
     } else {
       console.error('Server responded with status', response.status);
     }
@@ -42,21 +56,6 @@ async function createNewSaveState(courseTitle: string) {
     console.error('Error fetching data:', error);
   }
 }
-
-async function fetchCourseHeaders(): Promise<void> {
-  try {
-    const response = await axios.get('http://localhost:3000/courses');
-    if (response.status === 200) {
-      const courseHeaders = response.data;
-      courses.value = response.data;
-    } else {
-      console.error('Server responded with status', response.status);
-    }
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
-}
-
 </script>
 
 <style>

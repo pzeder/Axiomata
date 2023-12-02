@@ -1,9 +1,9 @@
 <template>
   <div class="save-container">
-    <button v-for="ssh in saveStateHeaders" :key="ssh.saveID" @click="saveStateSelected(ssh.saveID)"> {{ ssh.title
+    <button v-for="ssh in saveStateHeaders" :key="ssh.saveID" @click="emit('openCourse', ssh.saveID)"> {{ ssh.title
     }} </button>
   </div>
-  <button @click="openNewCourseMenu"> Neuer Kurs </button>
+  <button @click="emit('openNewCourseMenu')"> Neuer Kurs </button>
 </template>
 
 <script setup lang="ts">
@@ -28,19 +28,7 @@ onMounted(() => {
   fetchCourseSaves();
 });
 
-const emit = defineEmits(['saveStateSelected', 'openNewCourseMenu', 'openStartMenu']);
-
-function saveStateSelected(newSaveID: any) {
-  emit('saveStateSelected', newSaveID);
-}
-
-function openNewCourseMenu() {
-  emit('openNewCourseMenu');
-}
-
-function openStartMenu() {
-  emit('openStartMenu');
-}
+const emit = defineEmits(['openCourse', 'openNewCourseMenu']);
 
 async function fetchCourseSaves(): Promise<void> {
   try {

@@ -45,7 +45,7 @@ import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount, compute
 import { axiomHeight, axiomWidth, maxSequenceLength } from '@/scripts/AxiomMethods';
 
 interface Props {
-  levelData: LevelData;
+  levelData: LevelData | null;
   hasNextLevel: boolean;
 }
 const props = defineProps<Props>();
@@ -81,11 +81,11 @@ const varColors: Ref<string[]> = ref(['red', 'blue', 'green', 'purple', 'orange'
 
 // Level variables
 const goalMatch: ComputedRef<boolean> = computed(() => {
-  if (workSequence.value.length !== props.levelData.goalAxiom.lowerSequence.length) {
+  if (workSequence.value.length !== props.levelData?.goalAxiom.lowerSequence.length) {
     return false;
   }
   for (let i = 0; i < workSequence.value.length; i++) {
-    if (workSequence.value[i] !== props.levelData.goalAxiom.lowerSequence[i]) {
+    if (workSequence.value[i] !== props.levelData?.goalAxiom.lowerSequence[i]) {
       return false;
     }
   }
@@ -324,6 +324,53 @@ function updateWorkSequence(): void {
   }
 
   emit('updateSequenceHistory', newSequence);
+}
+
+async function updateSequenceHistory(newSequence: number[]): Promise<void> {
+  currentLevel.value.sequenceHistory.push(newSequence);
+  try {
+    const updatedData = {
+      saveID: saveID.value,
+      chapterIndex: currentChapterIndex.value,
+      levelIndex: currentLevelIndex.value,
+      newHistory: currentLevel.value.sequenceHistory
+    };
+    const response = await axios.patch(`http://localhost:3000/sequenceHistory`, updatedData);
+    if (response.status === 200) {
+      console.log('Course updated successfully:', response.data);
+    } else {
+      console.error('Server responded with status:', response.status);
+    }
+  } catch (error) {
+    console.error('Error updating data:', error);
+  }
+}
+
+async function updateLevelEnd(): Promise<void> {
+  currentLevelData.value.levelFinished = true;
+  try {
+    const updatedData = {
+      saveID: saveID.value,
+      chapterIndex: currentChapterIndex.value,
+      levelIndex: currentLevelIndex.value,
+    };
+    const response = await axios.patch(`http://localhost:3000/levelEnd`, updatedData);
+    if (response.status === 200) {
+      console.log('Course updated successfully:', response.data);
+    } else if (response.status === 400) {
+      console.error(response.data.message);
+    } else {
+      console.error('Server responded with status:', response.status);
+    }
+  } catch (error) {
+    console.error('Error updating data:', error);
+  }
+}
+
+function nextLevel(): void {
+  currentChapterIndex.value = nextChapterIndex.value;
+  currentLevelIndex.value = nextLevelIndex.value;
+  fetchLevel();
 }
 </script>
 

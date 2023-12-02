@@ -55,11 +55,23 @@ app.get('/chapterHeaders', async (req, res) => {
   }
 });
 
-app.get('/courses', async (req, res) => {
+app.get('/courseHeaders', async (req, res) => {
   try {
     const courses = await db.collection('Courses').find().toArray();
-    const courseTitles = courses.map(c => ({ title: c.title }));
-    res.json(courseTitles)
+    const courseHeaders = courses.map(c => ({ title: c.title }));
+    res.json(courseHeaders)
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
+app.get('/course', async (req, res) => {
+  try {
+    const { saveID } = req.query;
+    const filter = ({ _id: new ObjectId(saveID) });
+    const course = await db.collection('SaveStates').findOne(filter);
+    console.log(filter, course);
+    res.json(course);
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -79,25 +91,22 @@ app.post('/newSaveState', async (req, res) => {
   try {
     const { userName, courseTitle } = req.body;
     const courseData = await db.collection('Courses').findOne({ title: courseTitle });
-    const getChapterIndex = ch => courseData.chapters.findIndex(item => item.title === ch.title);
 
     const getLevels = ch => ch.levels.map(lev => ({
       title: lev.title,
       goalAxiom: lev.goalAxiom,
-      status: 'todo',
       sequenceHistory: [lev.goalAxiom.upperSequence]
     }));
 
     const courseSave = {
       userName: userName,
       title: courseTitle,
-      symbolAlphabet: courseData.symbolAlphabet,
+      symbols: courseData.symbols,
       axioms: courseData.chapters[0].newAxioms,
       derivates: [],
       chapters: courseData.chapters.map(ch => ({
         title: ch.title,
         newAxioms: ch.newAxioms,
-        unlocked: (getChapterIndex(ch) === 0 ? true : false),
         levels: getLevels(ch)
       })),
       variables: courseData.variables
@@ -127,7 +136,7 @@ app.post('/newEdit', async (req, res) => {
   }
 });
 
-app.get('/level', async (req, res) => {
+/*app.get('/level', async (req, res) => {
   try {
     const { saveID, chapterIndex, levelIndex } = req.query;
     const filter = ({ _id: new ObjectId(saveID) });
@@ -161,7 +170,7 @@ app.get('/level', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-})
+}) */
 
 app.get('/edit', async (req, res) => {
   try {

@@ -33,14 +33,10 @@ export interface ChapterData {
 }
 
 export interface LevelData {
-    symbols: SymbolData[];
-    axioms: AxiomData[];
-    derivates: AxiomData[];
     title: string;
     goalAxiom: AxiomData;
     sequenceHistory: SeqSymbol[][];
-    levelFinished: boolean;
-    variables: VarData[];
+    solved: boolean;
 }
 
 export type SeqSymbol = number | SeqVar;
