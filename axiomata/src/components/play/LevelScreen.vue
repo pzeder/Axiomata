@@ -345,53 +345,6 @@ function updateWorkSequence(): void {
 
   emit('updateSequenceHistory', newSequence);
 }
-
-/* async function updateSequenceHistory(newSequence: number[]): Promise<void> {
-  props.level.sequenceHistory.push(newSequence);
-  try {
-    const updatedData = {
-      saveID: saveID.value,
-      chapterIndex: currentChapterIndex.value,
-      levelIndex: currentLevelIndex.value,
-      newHistory: currentLevel.value.sequenceHistory
-    };
-    const response = await axios.patch(`http://localhost:3000/sequenceHistory`, updatedData);
-    if (response.status === 200) {
-      console.log('Course updated successfully:', response.data);
-    } else {
-      console.error('Server responded with status:', response.status);
-    }
-  } catch (error) {
-    console.error('Error updating data:', error);
-  }
-}
-
-async function updateLevelEnd(): Promise<void> {
-  currentLevelData.value.levelFinished = true;
-  try {
-    const updatedData = {
-      saveID: saveID.value,
-      chapterIndex: currentChapterIndex.value,
-      levelIndex: currentLevelIndex.value,
-    };
-    const response = await axios.patch(`http://localhost:3000/levelEnd`, updatedData);
-    if (response.status === 200) {
-      console.log('Course updated successfully:', response.data);
-    } else if (response.status === 400) {
-      console.error(response.data.message);
-    } else {
-      console.error('Server responded with status:', response.status);
-    }
-  } catch (error) {
-    console.error('Error updating data:', error);
-  }
-}
-
-function nextLevel(): void {
-  currentChapterIndex.value = nextChapterIndex.value;
-  currentLevelIndex.value = nextLevelIndex.value;
-  fetchLevel();
-} */
 </script>
 
 <style>
