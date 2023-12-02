@@ -51,7 +51,7 @@ const currentLevel: ComputedRef<LevelData | null> = computed(() => {
     return course.value.chapters[chapterIndex].levels[levelIndex];
 });
 
-const currentAxioms: ComputedRef<AxiomData[]> = computed(() => []); // TODO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+const currentAxioms: ComputedRef<AxiomData[]> = computed(() => [{upperSequence: [0], lowerSequence: [1]}]); // TODO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 const currentDerivates: ComputedRef<AxiomData[]> = computed(() => []); // TODO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -91,4 +91,50 @@ function updateChapters(updatedChapters: ChapterData[]): void {
         course.value.chapters = updatedChapters;
     }
 }
+
+async function updateSequenceHistory(newSequence: number[]): Promise<void> {
+  try {
+    const updatedData = {
+      saveID: props.saveID,
+      chapterIndex: currentLevelPointer.value?.chapterIndex,
+      levelIndex: currentLevelPointer.value?.levelIndex,
+      newSequence: newSequence
+    };
+    const response = await axios.patch(`http://localhost:3000/sequenceHistory`, updatedData);
+    if (response.status === 200) {
+      console.log('Course updated successfully:', response.data);
+    } else {
+      console.error('Server responded with status:', response.status);
+    }
+  } catch (error) {
+    console.error('Error updating data:', error);
+  }
+}
+
+async function updateLevelEnd(): Promise<void> {
+  currentLevelData.value.levelFinished = true;
+  try {
+    const updatedData = {
+      saveID: saveID.value,
+      chapterIndex: currentChapterIndex.value,
+      levelIndex: currentLevelIndex.value,
+    };
+    const response = await axios.patch(`http://localhost:3000/levelEnd`, updatedData);
+    if (response.status === 200) {
+      console.log('Course updated successfully:', response.data);
+    } else if (response.status === 400) {
+      console.error(response.data.message);
+    } else {
+      console.error('Server responded with status:', response.status);
+    }
+  } catch (error) {
+    console.error('Error updating data:', error);
+  }
+}
+
+function nextLevel(): void {
+  currentChapterIndex.value = nextChapterIndex.value;
+  currentLevelIndex.value = nextLevelIndex.value;
+  fetchLevel();
+} 
 </script>
