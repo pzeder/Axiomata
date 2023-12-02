@@ -117,7 +117,8 @@ app.post('/newEdit', async (req, res) => {
       userName: userName,
       title: 'Neuer Kurs',
       chapters: [],
-      variables: []
+      variables: [],
+      symbols: []
     }
     const result = await db.collection('Edits').insertOne(newEdit);
     res.json({ editID: result.insertedId });
@@ -299,6 +300,22 @@ app.post('/addNewLevel', async (req, res) => {
     }
     const newEdit = await db.collection('Edits').findOne(filter);
     res.json({ chapters: newEdit.chapters });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/addNewSymbol', async (req, res) => {
+  try {
+    const { editID, newSymbol } = req.body;
+    const filter = ({ _id: new ObjectId(editID) });
+    const addSymbol = { $push: { symbols: newSymbol} };
+    result = await db.collection('Edits').updateOne(filter, addSymbol);
+    if (result.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to update status' });
+    }
+    const edit = await db.collection('Edits').findOne(filter);
+    res.json({ symbols: edit.symbols });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

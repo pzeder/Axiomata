@@ -1,14 +1,14 @@
 <template>
   <div v-if="symbolData" class="symbol" :style="{
     width: symbolWidth + 'vw',
-    height: symbolHeight + 'hw',
+    height: symbolWidth + 'vw',
     backgroundColor: symbolData.backgroundColor,
     color: symbolData.textColor,
     borderColor: borderColor,
     borderWidth: (symbolWidth / 13) + 'vw',
     borderRadius: (symbolWidth / 5) + 'vw',
     marginLeft: (-symbolWidth / 13) + 'vw',
-    fontSize: (symbolWidth * screenRatio * 0.5) + 'vh'
+    fontSize: (symbolWidth * 0.5) + 'vw'
   }"> {{ symbolData.text }} </div>
 </template>
 
@@ -18,30 +18,30 @@ import { ComputedRef, computed, defineProps, withDefaults } from "vue";
 
 interface Props {
   symbolWidth: number;
-  screenRatio: number;
   highlight: boolean;
   symbol: SeqSymbol;
-  symbolAlphabet: SymbolData[];
+  symbols: SymbolData[] | undefined;
   variables: VarData[];
   varColors: string[];
   varMap: Map<string, number>;
 }
 const props = withDefaults(defineProps<Props>(), {
+  highlight: () => false,
+  variables: () => [],
+  varColors: () => [],
   varMap: () => new Map<string, number>()
 });
 
-const symbolHeight = computed(() => props.symbolWidth * props.screenRatio);
-
 const symbolData = computed(() => {
   if (typeof props.symbol === 'number') {
-    return props.symbolAlphabet[props.symbol];
+    return props.symbols[props.symbol];
   }
   if ('varIndex' in props.symbol && 'colorIndex' in props.symbol) {
     const variable = props.symbol as SeqVar;
     let key = `${variable.varIndex},${variable.colorIndex}`;
     if (props.varMap.get(key) || props.varMap.get(key) === 0) {
       let symbolIndex: number = props.varMap.get(key) as number;
-      return props.symbolAlphabet[symbolIndex];
+      return props.symbols[symbolIndex];
     }
     return {
       backgroundColor: 'white',

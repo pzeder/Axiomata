@@ -15,23 +15,26 @@
       </div>
       <div class="button-container">
         <div class="cancel-button" @click="emit('closeSymbolEditor')"> abbrechen </div>
-        <div class="ok-symbol-button"> ok </div>
+        <div class="ok-symbol-button" @click="addNewSymbol"> ok </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ChapterData, SymbolData } from '@/scripts/Interfaces';
 import { Ref, ref, defineEmits, defineProps } from 'vue';
 import ColorEditor from './ColorEditor.vue';
+import axios from 'axios';
 
 interface Props {
+  editID: any
   text: string;
 }
 
 const props = defineProps<Props>();
 
-const emit = defineEmits(['editSymbolText', 'closeSymbolEditor']);
+const emit = defineEmits(['editSymbolText', 'closeSymbolEditor', 'updateSymbols']);
 
 const backgroundColor: Ref<string> = ref('white');
 const textColor: Ref<string> = ref('black');
@@ -42,6 +45,31 @@ function setBackgroundColor(color: string) {
 
 function setTextColor(color: string) {
   textColor.value = color;
+}
+
+async function addNewSymbol(): Promise<void> {
+  try {
+    const newSymbol: SymbolData = {
+      backgroundColor: backgroundColor.value,
+      text: props.text,
+      textColor: textColor.value
+    }
+    const updateData = {
+      editID: props.editID,
+      newSymbol: newSymbol
+    }
+    const response = await axios.post('http://localhost:3000/addNewSymbol', updateData);
+    if (response.status === 200) {
+      const updatedSymbols: ChapterData[] = response.data.symbols;
+      emit('updateSymbols', updatedSymbols);
+      emit('closeSymbolEditor');
+      console.log('New symbol added successfully:', response.data);
+    } else {
+      console.error('Server responded with status:', response.status);
+    }
+  } catch (error) {
+    console.error('Error adding new chapter:', error);
+  }
 }
 </script>
 

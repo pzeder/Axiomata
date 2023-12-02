@@ -1,7 +1,7 @@
 <template>
   <div ref="rootElement" class="slider-container">
     <input type="range" min="0" max="255" v-model="sliderValue" class="slider" id="myRange"
-      @mousemove="emit('changeValue', sliderValue)">
+      @mousemove="emit('changeValue', sliderValue)" @mouseup="emit('changeValue', sliderValue)">
     <div> {{ sliderValue }} </div>
   </div>
 </template>

@@ -23,6 +23,7 @@ export interface CourseData {
     title: string;
     chapters: ChapterData[];
     variables: number[];
+    symbols: SymbolData[];
 }
 
 export interface ChapterData {
@@ -32,7 +33,7 @@ export interface ChapterData {
 }
 
 export interface LevelData {
-    symbolAlphabet: SymbolData[];
+    symbols: SymbolData[];
     axioms: AxiomData[];
     derivates: AxiomData[];
     title: string;
