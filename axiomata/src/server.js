@@ -101,8 +101,6 @@ app.post('/newSaveState', async (req, res) => {
       userName: userName,
       title: courseTitle,
       symbols: courseData.symbols,
-      axioms: courseData.chapters[0].newAxioms,
-      derivates: [],
       chapters: courseData.chapters.map(ch => ({
         title: ch.title,
         newAxioms: ch.newAxioms,
