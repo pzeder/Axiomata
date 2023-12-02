@@ -2,7 +2,7 @@
   <div class="headbar" :style="{ height: height + 'vh' }">
     <button :style="{ position: 'relative', width: 5 + 'vw' }" @click="emit('openLevelMenu')"> Zurück </button>
     <div :style="{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 100 + '%' }">
-      <div :style="{ color: 'white' }"> {{ levelName }} </div>
+      <div :style="{ color: 'white' }"> {{ levelTitle }} </div>
     </div>
   </div>
 </template>
@@ -12,7 +12,7 @@ import { defineProps, defineEmits } from 'vue';
 
 interface Props {
   height: number;
-  levelName: string;
+  levelTitle: string | undefined;
 }
 const props = defineProps<Props>();
 const emit = defineEmits(['openLevelMenu']);

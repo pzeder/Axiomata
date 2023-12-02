@@ -1,15 +1,13 @@
 <template>
-  <ChapterScreen v-if="showChapterScreen" :chapters="course?.chapters" @openStartMenu="emit('openStartMenu')" @updateChapters="updateChapters"
-    @openSaveStateMenu="emit('openSaveStateMenu')" :saveID="saveID" />
-  <!--LevelScreen v-if="showLevelScreen" @openLevelMenu="openLevelMenu" @updateSequenceHistory="updateSequenceHistory"
-    @levelFinished="updateLevelEnd" @nextLevel="nextLevel" :levelData="currentLevel"
-    :hasNextLevel="nextChapterIndex !== -1" /-->
+  <ChapterScreen v-if="showChapterScreen" :chapters="course?.chapters" :currentLevelPointer="currentLevelPointer"
+    @openSaveStateMenu="emit('openSaveStateMenu')" @openLevel="openLevel" />
+  <LevelScreen :symbols="course?.symbols" :variables="course?.variables" :axioms="currentAxioms" :derivates="currentDerivates" :level="currentLevel" :hasNextLevel="hasNextLevel" v-if="showLevelScreen"  />
 </template>
 
 <script setup lang="ts">
-import { ChapterData, CourseData } from '@/scripts/Interfaces';
+import { AxiomData, ChapterData, CourseData, LevelData, LevelPointer } from '@/scripts/Interfaces';
 import axios from 'axios';
-import { Ref, ref, defineProps, defineEmits, onMounted } from 'vue';
+import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef } from 'vue';
 import ChapterScreen from './ChapterScreen.vue';
 import LevelScreen from './LevelScreen.vue';
 
@@ -25,6 +23,40 @@ const showLevelScreen: Ref<boolean> = ref(false);
 
 const course: Ref<CourseData | null> = ref(null);
 
+const currentLevelPointer: ComputedRef<LevelPointer | null> = computed(() => {
+  if (!course.value || !course.value.chapters) {
+    return null;
+  }
+  for (let ch = 0; ch < course.value.chapters.length; ch++) {
+    let chapter: ChapterData = course.value.chapters[ch];
+    for (let lvl = 0; lvl < chapter.levels.length; lvl++) {
+      let level: LevelData = chapter.levels[lvl];
+      if (!level.solved) {
+        return {
+        chapterIndex: ch,
+        levelIndex: lvl
+        };
+      }
+    }
+  }
+  return null;
+});
+
+const currentLevel: ComputedRef<LevelData | null> = computed(() => {
+    if (!currentLevelPointer.value || !course.value) {
+        return null;
+    }
+    let chapterIndex = currentLevelPointer.value.chapterIndex;
+    let levelIndex = currentLevelPointer.value.levelIndex;
+    return course.value.chapters[chapterIndex].levels[levelIndex];
+});
+
+const currentAxioms: ComputedRef<AxiomData[]> = computed(() => []); // TODO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+const currentDerivates: ComputedRef<AxiomData[]> = computed(() => []); // TODO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+const hasNextLevel: ComputedRef<boolean> = computed(() => true); // TODO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 onMounted(() => {
     fetchCourse();
     showChapterScreen.value = true;
@@ -36,13 +68,17 @@ async function fetchCourse(): Promise<void> {
     const response = await axios.get('http://localhost:3000/course' + query);
     if (response.status === 200) {
       course.value = response.data;
-      console.log(course.value);
     } else {
       console.error('Server responded with status', response.status);
     }
   } catch (error) {
     console.error('Error fetching data:', error);
   }    
+}
+
+function openLevel(): void {
+    showChapterScreen.value = false;
+    showLevelScreen.value = true;
 }
 
 function openChapterScreen(): void {

@@ -1,32 +1,32 @@
 <template>
-  <HeadBar :height="headBarHeight" :levelName="levelData.title" @openLevelMenu="emit('openLevelMenu')" />
+  <HeadBar :height="headBarHeight" :levelTitle="level?.title" @openLevelMenu="emit('openLevelMenu')" />
   <SequenceContainer class="workbench" :posX="workbenchX" :posY="workbenchY" :width="workbenchWidth"
     :height="workbenchHeight" :maxFill="workbenchMaxFill" :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio"
-    :screenRatio="screenRatio" :sequence="workSequence" :symbolAlphabet="levelData.symbolAlphabet"
-    :variables="levelData.variables" :varColors="varColors" :highlights="workHighlights" />
+    :screenRatio="screenRatio" :sequence="workSequence" :symbols="symbols"
+    :variables="variables" :varColors="varColors" :highlights="workHighlights" />
   <AxiomBar :title="'Bonus-Regeln'" :background="'rgb(187, 231, 247)'" :posX="derivateBarX" :posY="derivateBarY"
-    :width="derivateBarWidth" :height="derivateBarHeight" :screenRatio="screenRatio" :axioms="levelData.derivates"
-    :variables="levelData.variables" :varColors="varColors" :symbolAlphabet="levelData.symbolAlphabet"
+    :width="derivateBarWidth" :height="derivateBarHeight" :screenRatio="screenRatio" :axioms="derivates"
+    :variables="variables" :varColors="varColors" :symbols="symbols"
     @selectAxiom="selectAxiom" />
   <AxiomBar :title="'Tausch-Regeln'" :background="'rgb(252, 223, 203)'" :posX="axiomBarX" :posY="axiomBarY"
-    :width="axiomBarWidth" :height="axiomBarHeight" :screenRatio="screenRatio" :axioms="levelData.axioms"
-    :symbolAlphabet="levelData.symbolAlphabet" :variables="levelData.variables" :varColors="varColors"
+    :width="axiomBarWidth" :height="axiomBarHeight" :screenRatio="screenRatio" :axioms="axioms"
+    :symbols="symbols" :variables="variables" :varColors="varColors"
     @selectAxiom="selectAxiom" />
   <SequenceContainer class="goal-window" :title="'START'" :posX="startX" :posY="startY" :width="goalWidth"
     :height="goalWidth * screenRatio" :maxFill="0.8" :maxSymbolWidthRatio="0.33" :screenRatio="screenRatio"
-    :sequence="levelData.goalAxiom.upperSequence" :variables="levelData.variables" :varColors="varColors"
-    :symbolAlphabet="levelData.symbolAlphabet" />
+    :sequence="level?.goalAxiom.upperSequence" :variables="variables" :varColors="varColors"
+    :symbols="symbols" />
   <SequenceContainer class="goal-window" :title="'ZIEL'" :posX="startX" :posY="goalY" :width="goalWidth"
     :height="goalWidth * screenRatio" :maxFill="0.8" :maxSymbolWidthRatio="0.33" :screenRatio="screenRatio"
-    :sequence="levelData.goalAxiom.lowerSequence" :variables="levelData.variables" :varColors="varColors"
-    :symbolAlphabet="levelData.symbolAlphabet" />
-  <VictoryWindow v-if="levelData.levelFinished" :posX="workbenchX" :posY="headBarHeight" :width="workbenchWidth - 1.85"
+    :sequence="level?.goalAxiom.lowerSequence" :variables="variables" :varColors="varColors"
+    :symbols="symbols" />
+  <VictoryWindow v-if="level?.solved" :posX="workbenchX" :posY="headBarHeight" :width="workbenchWidth - 1.85"
     :height="workbenchHeight" :hasNextLevel="hasNextLevel" @openLevelMenu="emit('openLevelMenu')"
     @nextLevel="emit('nextLevel')" />
   <Cursor :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="workSymbolWidth"
-    :symbolAlphabet="levelData.symbolAlphabet" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
+    :symbols="symbols" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
     :centerDirectionY="centerDirectionY" :screenRatio="screenRatio" :workMatch="workMatch"
-    :variables="levelData.variables" :varColors="varColors" :varMap="varMap" @axiomDrop="axiomDrop"
+    :variables="variables" :varColors="varColors" :varMap="varMap" @axiomDrop="axiomDrop"
     @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
   <div v-if="goalMatch" @click="finishLevel"
     :style="{ position: 'absolute', userSelect: 'none', color: 'red', left: (startX + goalWidth / 2) + 'vw', top: (goalY + goalWidth * screenRatio / 2 + 10) + 'vh', width: (goalWidth) + 'vw', height: (goalWidth * screenRatio) + 'vh' }">
@@ -40,12 +40,16 @@ import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import VictoryWindow from './VictoryWindow.vue';
 import HeadBar from '@/components/play/HeadBar.vue'
 import Cursor from './Cursor.vue';
-import { AxiomData, LevelData, SeqVar, SeqSymbol, VarData } from '@/scripts/Interfaces';
+import { AxiomData, LevelData, SeqVar, SeqSymbol, VarData, SymbolData } from '@/scripts/Interfaces';
 import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount, computed, ComputedRef } from 'vue';
-import { axiomHeight, axiomWidth, maxSequenceLength } from '@/scripts/AxiomMethods';
+import { axiomHeight, axiomWidth } from '@/scripts/AxiomMethods';
 
 interface Props {
-  levelData: LevelData | null;
+  symbols: SymbolData[] | undefined;
+  variables: VarData[] | undefined;
+  axioms: AxiomData[];
+  derivates: AxiomData[];
+  level: LevelData | null;
   hasNextLevel: boolean;
 }
 const props = defineProps<Props>();
@@ -73,6 +77,9 @@ const goalY: ComputedRef<number> = computed(() =>
   workbenchHeight.value - goalWidth.value * screenRatio.value + 0.75);
 const goalWidth: Ref<number> = ref(10);
 const workSymbolWidth: ComputedRef<number> = computed(() => {
+  if (!workSequence.value) {
+    return 0;
+  }
   const w: number = workbenchMaxFill.value * workbenchWidth.value / workSequence.value.length;
   const maxWidth: number = workbenchMaxSymbolWidthRatio.value * workbenchWidth.value;
   return Math.min(w, maxWidth);
@@ -81,11 +88,11 @@ const varColors: Ref<string[]> = ref(['red', 'blue', 'green', 'purple', 'orange'
 
 // Level variables
 const goalMatch: ComputedRef<boolean> = computed(() => {
-  if (workSequence.value.length !== props.levelData?.goalAxiom.lowerSequence.length) {
+  if (!workSequence.value || workSequence.value?.length !== props.level?.goalAxiom.lowerSequence.length) {
     return false;
   }
   for (let i = 0; i < workSequence.value.length; i++) {
-    if (workSequence.value[i] !== props.levelData?.goalAxiom.lowerSequence[i]) {
+    if (workSequence.value[i] !== props.level?.goalAxiom.lowerSequence[i]) {
       return false;
     }
   }
@@ -111,8 +118,8 @@ let farSequence: SeqSymbol[];
 let nearHighlights: Ref<boolean[]>;
 const cursorAxiomDocked: Ref<boolean> = ref(false);
 const varMap: Ref<Map<string, number>> = ref(new Map<string, number>());
-const workSequence: ComputedRef<SeqSymbol[]> = computed(() =>
-  props.levelData.sequenceHistory[props.levelData.sequenceHistory.length - 1]);
+const workSequence: ComputedRef<SeqSymbol[] | undefined> = computed(() =>
+  props.level?.sequenceHistory[props.level.sequenceHistory.length - 1]);
 const workMatch: ComputedRef<boolean> = computed(() => {
   let docked: boolean = cursorAxiomDocked.value;
   if (!nearHighlights || nearHighlights.value.length === 0 || !docked) {
@@ -159,13 +166,13 @@ function handleTouchMove(event: TouchEvent) {
 }
 
 function resetHighlights() {
-  workHighlights.value = new Array(workSequence.value.length).fill(false);
+  workHighlights.value = new Array(workSequence.value?.length).fill(false);
   upperHighlights.value = new Array(cursorAxiom.value.upperSequence.length).fill(false);
   lowerHighlights.value = new Array(cursorAxiom.value.lowerSequence.length).fill(false);
 }
 
 function axiomDrop(): void {
-  if (cursorAxiom.value.upperSequence.length === 0) {
+  if (!workSymbolWidth.value || cursorAxiom.value.upperSequence.length === 0) {
     return;
   }
 
@@ -185,6 +192,10 @@ function axiomDrop(): void {
 }
 
 function dockCursorAxiom(): void {
+  if (!workSequence.value || !workSequence.value.length || !workSymbolWidth.value) {
+    return;
+  }
+
   const vx: number = cursorAxiomX.value;
   const vy: number = cursorAxiomY.value;
   const cursorCenterY: number = vy + axiomHeight(workSymbolWidth.value, screenRatio.value) / 2;
@@ -224,6 +235,10 @@ function dockCursorAxiom(): void {
 }
 
 function updateMatching(): void {
+  if (!props.level || !workSequence.value || !workSequence.value.length || !props.variables) {
+    return;
+  }
+
   let workIndex: number = dockIndex.value;
   let nearIndex = 0;
 
@@ -243,7 +258,7 @@ function updateMatching(): void {
       match = (workSymbol === nearSymbol);
     } else if ('varIndex' in nearSymbol && 'colorIndex' in nearSymbol) {
       let variable = nearSymbol as SeqVar;
-      let varData: VarData = props.levelData.variables[variable.varIndex];
+      let varData: VarData = props.variables[variable.varIndex];
       let workSymbolIndex: number = workSymbol as number;
       let key = `${variable.varIndex},${variable.colorIndex}`;
       if (!varMap.value.get(key) && varData.possibilities.includes(workSymbolIndex)) {
@@ -270,15 +285,16 @@ function selectAxiom(event: MouseEvent, axiom: AxiomData): void {
   handleMouseDown(event);
 }
 
-function updateCursorAxiomPos(event: MouseEvent | Touch) {
-  if (dragging.value) {
-    const mouseX: number = event.clientX / window.innerWidth * 100;
-    const mouseY: number = event.clientY / window.innerHeight * 100;
-    const width: number = axiomWidth(cursorAxiom.value, workSymbolWidth.value);
-    const height: number = axiomHeight(workSymbolWidth.value, screenRatio.value);
-    cursorAxiomX.value = mouseX - width / 2;
-    cursorAxiomY.value = mouseY - height / 2;
+function updateCursorAxiomPos(event: MouseEvent | Touch): void {
+  if (!dragging.value || !workSymbolWidth.value) {
+    return;
   }
+  const mouseX: number = event.clientX / window.innerWidth * 100;
+  const mouseY: number = event.clientY / window.innerHeight * 100;
+  const width: number = axiomWidth(cursorAxiom.value, workSymbolWidth.value);
+  const height: number = axiomHeight(workSymbolWidth.value, screenRatio.value);
+  cursorAxiomX.value = mouseX - width / 2;
+  cursorAxiomY.value = mouseY - height / 2;
 }
 
 function cursorAxiomClicked(): void {
@@ -296,6 +312,10 @@ function swap(): void {
 }
 
 function updateWorkSequence(): void {
+  if (!workSequence.value) {
+    return;
+  }
+
   let newSequence: SeqSymbol[] = [];
 
   // Keep all symbols left of the match
@@ -326,8 +346,8 @@ function updateWorkSequence(): void {
   emit('updateSequenceHistory', newSequence);
 }
 
-async function updateSequenceHistory(newSequence: number[]): Promise<void> {
-  currentLevel.value.sequenceHistory.push(newSequence);
+/* async function updateSequenceHistory(newSequence: number[]): Promise<void> {
+  props.level.sequenceHistory.push(newSequence);
   try {
     const updatedData = {
       saveID: saveID.value,
@@ -371,7 +391,7 @@ function nextLevel(): void {
   currentChapterIndex.value = nextChapterIndex.value;
   currentLevelIndex.value = nextLevelIndex.value;
   fetchLevel();
-}
+} */
 </script>
 
 <style>

@@ -4,7 +4,7 @@
     height: symbolHeight + 'vh'
   }">
     <SymbolComp v-for="(symbol, key) in sequence" :key="key" :symbolWidth="symbolWidth" :screenRatio="screenRatio"
-      :highlight="(highlights.length === 0) ? false : highlights[key]" :symbol="symbol" :symbolAlphabet="symbolAlphabet"
+      :highlight="(highlights.length === 0) ? false : highlights[key]" :symbol="symbol" :symbols="symbols"
       :variables="variables" :varColors="varColors" :varMap="varMap" />
   </div>
 </template>
@@ -19,8 +19,8 @@ interface Props {
   screenRatio: number;
   sequence: SeqSymbol[];
   highlights: boolean[];
-  symbolAlphabet: SymbolData[];
-  variables: VarData[];
+  symbols: SymbolData[] | undefined;
+  variables: VarData[] | undefined;
   varColors: string[];
   varMap: Map<string, number>;
 }

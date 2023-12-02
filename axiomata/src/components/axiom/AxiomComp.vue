@@ -8,13 +8,13 @@
       width: (symbolWidth / 2) + 'vw'
     }" />
     <SequenceComp :symbolWidth="symbolWidth" :screenRatio="screenRatio" :sequence="axiomData.upperSequence"
-      :variables="variables" :varColors="varColors" :varMap="varMap" :symbolAlphabet="symbolAlphabet"
+      :variables="variables" :varColors="varColors" :varMap="varMap" :symbols="symbols"
       :highlights="upperHighlights" :style="{
         left: (symbolWidth * (maxSequence - axiomData.upperSequence.length) / 2) + 'vw',
         top: 0
       }" />
     <SequenceComp :symbolWidth="symbolWidth" :screenRatio="screenRatio" :sequence="axiomData.lowerSequence"
-      :variables="variables" :varColors="varColors" :varMap="varMap" :symbolAlphabet="symbolAlphabet"
+      :variables="variables" :varColors="varColors" :varMap="varMap" :symbols="symbols"
       :highlights="lowerHighlights" :style="{
         left: (symbolWidth * (maxSequence - axiomData.lowerSequence.length) / 2) + 'vw',
         top: (1.5 * symbolHeight) + 'vh'
@@ -31,10 +31,10 @@ interface Props {
   symbolWidth: number;
   screenRatio: number;
   axiomData: AxiomData;
-  symbolAlphabet: SymbolData[];
+  symbols: SymbolData[] | undefined;
   upperHighlights: boolean[];
   lowerHighlights: boolean[];
-  variables: VarData[];
+  variables: VarData[] | undefined;
   varColors: string[];
   varMap: Map<string, number>;
 }

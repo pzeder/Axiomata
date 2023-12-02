@@ -3,7 +3,7 @@
     :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
     <div class="sequence-title" :style="{ width: width + 'vw', fontSize: (height * 0.2) + 'vh' }"> {{ title }} </div>
     <SequenceComp :symbolWidth="symbolWidth" :screenRatio="screenRatio" :sequence="sequence"
-      :symbolAlphabet="symbolAlphabet" :highlights="highlights" :variables="variables" :varColors="varColors"
+      :symbols="symbols" :highlights="highlights" :variables="variables" :varColors="varColors"
       :varMap="varMap" />
   </div>
 </template>
@@ -22,10 +22,10 @@ interface Props {
   maxFill: number;
   maxSymbolWidthRatio: number;
   screenRatio: number;
-  sequence: SeqSymbol[];
-  symbolAlphabet: SymbolData[];
+  sequence: SeqSymbol[] | undefined;
+  symbols: SymbolData[] | undefined;
   highlights: boolean[];
-  variables: VarData[];
+  variables: VarData[] | undefined;
   varColors: string[];
   varMap: Map<string, number>;
 }

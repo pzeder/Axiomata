@@ -22,7 +22,7 @@ export interface VarData {
 export interface CourseData {
     title: string;
     chapters: ChapterData[];
-    variables: number[];
+    variables: VarData[];
     symbols: SymbolData[];
 }
 
@@ -38,5 +38,10 @@ export interface LevelData {
     sequenceHistory: SeqSymbol[][];
     solved: boolean;
 }
+
+export interface LevelPointer {
+    chapterIndex: number;
+    levelIndex: number
+  }
 
 export type SeqSymbol = number | SeqVar;

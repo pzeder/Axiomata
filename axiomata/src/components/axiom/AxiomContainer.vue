@@ -1,7 +1,7 @@
 <template>
   <div class="axiom-container" @touchstart="handleTouchStart"
     :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
-    <AxiomComp :symbolWidth="symbolWidth" :screenRatio="screenRatio" :axiomData="axiom" :symbolAlphabet="symbolAlphabet"
+    <AxiomComp :symbolWidth="symbolWidth" :screenRatio="screenRatio" :axiomData="axiom" :symbols="symbols"
       :variables="variables" :varColors="varColors" :varMap="varMap" @mousedown="(event) => selectAxiom(event, axiom)" />
   </div>
 </template>
@@ -19,8 +19,8 @@ interface Props {
   height: number;
   screenRatio: number;
   axiom: AxiomData;
-  symbolAlphabet: SymbolData[];
-  variables: VarData[];
+  symbols: SymbolData[] | undefined;
+  variables: VarData[] | undefined;
   varColors: string[];
   varMap: Map<string, number>;
   upperHighlights: boolean[];

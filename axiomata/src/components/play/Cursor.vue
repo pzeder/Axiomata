@@ -5,7 +5,7 @@
     top: posY + 'vh'
   }">
     <AxiomComp v-if="cursorAxiom.upperSequence.length !== 0" :symbolWidth="symbolWidth" :screenRatio="screenRatio"
-      :axiomData="cursorAxiom" :symbolAlphabet="symbolAlphabet" :upperHighlights="upperHighlights" :variables="variables"
+      :axiomData="cursorAxiom" :symbols="symbols" :upperHighlights="upperHighlights" :variables="variables"
       :varColors="varColors" :lowerHighlights="lowerHighlights" :varMap="varMap" @mouseup="emit('axiomDrop')"
       @touchend="emit('axiomDrop')" @touchcancel="emit('axiomDrop')" @mousedown="emit('cursorAxiomClicked')"
       @touchstart="emit('cursorAxiomClicked')" />
@@ -31,13 +31,13 @@ interface Props {
   posY: number;
   cursorAxiom: AxiomData;
   symbolWidth: number;
-  symbolAlphabet: SymbolData[];
+  symbols: SymbolData[] | undefined;
   upperHighlights: boolean[];
   lowerHighlights: boolean[];
   centerDirectionY: number;
   screenRatio: number;
   workMatch: boolean;
-  variables: VarData[];
+  variables: VarData[] | undefined;
   varColors: string[];
   varMap: Map<string, number>;
 }

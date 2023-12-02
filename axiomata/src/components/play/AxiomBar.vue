@@ -7,7 +7,7 @@
     }"> {{ title }} </div>
     <AxiomContainer v-for="(axiom, index) in axioms" :key="index" :index="index" :posX="containerX(index)"
       :posY="titleHeight + containerY(index)" :width="containerWidth" :height="containerHeight" :screenRatio="screenRatio"
-      :axiom="axiom" :symbolAlphabet="symbolAlphabet" :variables="variables" :varColors="varColors"
+      :axiom="axiom" :symbols="symbols" :variables="variables" :varColors="varColors"
       @selectAxiom="(event) => emit('selectAxiom', event, axiom)" />
   </div>
 </template>
@@ -25,9 +25,9 @@ interface Props {
   width: number;
   height: number;
   screenRatio: number;
-  axioms: AxiomData[];
-  symbolAlphabet: SymbolData[];
-  variables: VarData[];
+  axioms: AxiomData[] | undefined;
+  symbols: SymbolData[] | undefined;
+  variables: VarData[] | undefined;
   varColors: string[];
 }
 const props = defineProps<Props>();
@@ -37,10 +37,10 @@ const titleHeight: Ref<number> = ref(5);
 
 const vertical = computed(() => props.width * props.screenRatio < props.height);
 const maxContainerWidth = computed(() => vertical.value ? props.width : 0.5 * props.height);
-const minContainerWidth = computed(() => vertical.value ? props.width : props.width / props.axioms.length)
+const minContainerWidth = computed(() => vertical.value || !props.axioms ? props.width : props.width / props.axioms.length)
 const containerWidth = computed(() => Math.min(minContainerWidth.value, maxContainerWidth.value));
 const maxContainerHeight = computed(() => vertical.value ? 0.5 * props.width * props.screenRatio : props.height);
-const minContainerHeight = computed(() => vertical.value ? props.height / props.axioms.length : props.height);
+const minContainerHeight = computed(() => vertical.value && props.axioms ? props.height / props.axioms.length : props.height);
 const containerHeight = computed(() => Math.min(minContainerHeight.value, maxContainerHeight.value));
 const containerX = (index: number) => vertical.value ? 0 : index * containerWidth.value;
 const containerY = (index: number) => vertical.value ? index * containerHeight.value : 0;

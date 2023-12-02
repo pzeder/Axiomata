@@ -21,7 +21,7 @@ interface Props {
   highlight: boolean;
   symbol: SeqSymbol;
   symbols: SymbolData[] | undefined;
-  variables: VarData[];
+  variables: VarData[] | undefined;
   varColors: string[];
   varMap: Map<string, number>;
 }

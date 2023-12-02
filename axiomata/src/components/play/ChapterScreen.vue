@@ -11,39 +11,17 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, ComputedRef, computed } from 'vue';
-import { ChapterData, LevelData } from '@/scripts/Interfaces';
+import { defineProps, defineEmits } from 'vue';
+import { ChapterData, LevelPointer } from '@/scripts/Interfaces';
 
 interface Props {
-  chapters: ChapterData[] | null;
+  chapters: ChapterData[] | undefined;
+  currentLevelPointer: LevelPointer | null;
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['openLevel', 'updateChapters', 'openSaveStateMenu', 'openStartMenu']);
+const emit = defineEmits(['openLevel', 'openSaveStateMenu']);
 
-interface LevelPointer {
-  chapterIndex: number;
-  levelIndex: number
-}
-
-const currentLevel: ComputedRef<LevelPointer | null> = computed(() => {
-  if (!props.chapters) {
-    return null;
-  }
-  for (let ch = 0; ch < props.chapters.length; ch++) {
-    let chapter: ChapterData = props.chapters[ch];
-    for (let lvl = 0; lvl < chapter.levels.length; lvl++) {
-      let level: LevelData = chapter.levels[lvl];
-      if (!level.solved) {
-        return {
-        chapterIndex: ch,
-        levelIndex: lvl
-        };
-      }
-    }
-  }
-  return null;
-});
 
 function trySelectingLevel(chapterIndex: number, levelIndex: number) {
   if (isCurrentLevel(chapterIndex, levelIndex)) {
@@ -52,7 +30,7 @@ function trySelectingLevel(chapterIndex: number, levelIndex: number) {
 }
 
 function isCurrentLevel(chapterIndex: number, levelIndex: number): boolean {
-  return currentLevel.value?.chapterIndex === chapterIndex && currentLevel.value?.levelIndex === levelIndex;
+  return props.currentLevelPointer?.chapterIndex === chapterIndex && props.currentLevelPointer?.levelIndex === levelIndex;
 }
 </script>
 
