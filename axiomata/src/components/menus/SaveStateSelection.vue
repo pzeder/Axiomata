@@ -1,4 +1,5 @@
 <template>
+  <HomeButton @click="emit('openStartMenu')" />
   <div class="save-container">
     <button v-for="ssh in saveStateHeaders" :key="ssh.saveID" @click="emit('openCourse', ssh.saveID)"> {{ ssh.title
     }} </button>
@@ -9,6 +10,7 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref, defineProps, defineEmits } from 'vue';
 import axios from 'axios';
+import HomeButton from './HomeButton.vue';
 
 interface Props {
   userName: string;
@@ -28,7 +30,7 @@ onMounted(() => {
   fetchCourseSaves();
 });
 
-const emit = defineEmits(['openCourse', 'openNewCourseMenu']);
+const emit = defineEmits(['openCourse', 'openNewCourseMenu', 'openStartMenu']);
 
 async function fetchCourseSaves(): Promise<void> {
   try {

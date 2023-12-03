@@ -1,4 +1,5 @@
 <template>
+  <HomeButton @click="emit('openStartMenu')" />
   <div class="chapter-container" v-for="(chapter, chIndex) in chapters" :key="chIndex">
     {{ chapter.title }}
     <div class="level-container" v-for="(level, lvlIndex) in chapter.levels" :key="lvlIndex"
@@ -7,12 +8,12 @@
       {{ level.title }}
     </div>
   </div>
-  <button :style="{ fontSize: 20 + 'pt' }" @click="emit('openSaveStateMenu')"> Ladebidschirm </button>
 </template>
 
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
 import { ChapterData, LevelPointer } from '@/scripts/Interfaces';
+import HomeButton from '../menus/HomeButton.vue';
 
 interface Props {
   chapters: ChapterData[] | undefined;
@@ -20,7 +21,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['openLevel', 'openSaveStateMenu']);
+const emit = defineEmits(['openLevel', 'openStartMenu']);
 
 
 function trySelectingLevel(chapterIndex: number, levelIndex: number) {

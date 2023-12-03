@@ -1,4 +1,5 @@
 <template>
+  <HomeButton @click="emit('openStartMenu')" />
   <div class="course-container">
     <button v-for="(course, index) in courseHeaders" :key="index" @click="createNewSaveState(course.title)"> {{ course.title
     }} </button>
@@ -8,6 +9,7 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref, defineProps, defineEmits } from 'vue';
 import axios from 'axios';
+import HomeButton from './HomeButton.vue';
 
 interface Props {
   userName: string;
@@ -24,7 +26,7 @@ onMounted(() => {
   fetchCourseHeaders();
 });
 
-const emit = defineEmits(['openCourse']);
+const emit = defineEmits(['openCourse', 'openStartMenu']);
 
 async function fetchCourseHeaders(): Promise<void> {
   try {

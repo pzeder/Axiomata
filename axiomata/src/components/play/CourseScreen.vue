@@ -1,9 +1,9 @@
 <template>
   <ChapterScreen v-if="showChapterScreen" :chapters="course?.chapters" :currentLevelPointer="currentLevelPointer"
-    @openSaveStateMenu="emit('openSaveStateMenu')" @openLevel="openLevel" />
+    @openSaveStateMenu="emit('openSaveStateMenu')" @openLevel="openLevel" @openStartMenu="emit('openStartMenu')" />
   <LevelScreen v-if="showLevelScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="currentAxioms" :derivates="currentDerivates" :level="currentLevel" :hasNextLevel="hasNextLevel" 
     @updateSequenceHistory="updateSequenceHistory" @openChapterScreen="openChapterScreen" @finishLevel="finishLevel"/>
-  <VictoryWindow v-if="showVictoryWindow" :hasNextLevel="hasNextLevel" @openLevelMenu="openChapterScreen"
+  <VictoryWindow v-if="showVictoryWindow" :hasNextLevel="currentLevelPointer !== null" @openLevelMenu="openChapterScreen"
     @nextLevel="openLevel" />
 </template>
 
@@ -85,18 +85,6 @@ const currentDerivates: ComputedRef<AxiomData[]> = computed(() => {
     derivates.push(course.value.chapters[chapterIndex].levels[lvl].goalAxiom);
   }
   return derivates;
-}); 
-
-const hasNextLevel: ComputedRef<boolean> = computed(() => {
-  if (!course.value || !currentLevelPointer.value) {
-    return false;
-  }
-  let chapterIndex: number = currentLevelPointer.value.chapterIndex;
-  let levelIndex: number = currentLevelPointer.value.levelIndex;
-  if (chapterIndex < course.value.chapters.length - 1) {
-    return true;
-  }
-  return levelIndex < course.value.chapters[chapterIndex].levels.length - 1;
 }); 
 
 onMounted(() => {

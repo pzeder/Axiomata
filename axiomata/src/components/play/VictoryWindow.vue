@@ -60,5 +60,6 @@ const emit = defineEmits(['openLevelMenu', 'nextLevel']);
   border-radius: 3vw;
   padding: 2vw;
   margin: 2vw;
+  user-select: none;
 }
 </style>

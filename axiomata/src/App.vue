@@ -1,12 +1,11 @@
 <template>
-  <button class="home" v-if="showHomeButton" @click="openStartMenu"> Home </button>
   <StartMenu v-if="showStartMenu" @openNewCourseMenu="openNewCourseMenu" @openSaveStateMenu="openSaveStateMenu"
     @openEditSelection="openEditSelection" />
   <SaveStateSelection v-if="showSaveSelection" :userName="userName" @openCourse="openCourse"
     @openNewCourseMenu="openNewCourseMenu" @openStartMenu="openStartMenu" />
   <NewCourseSelection v-if="showNewCourseSelection" :userName="userName" @openCourse="openCourse"
     @openStartMenu="openStartMenu" />
-  <CourseScreen v-if="showCourseScreen" :saveID="saveID" />
+  <CourseScreen v-if="showCourseScreen" :saveID="saveID" @openStartMenu="openStartMenu"/>
   <EditSelection v-if="showEditSelection" :userName="userName" @openEditor="openEditor" />
   <EditorScreen v-if="showEditorScreen" :editID="editID" />
 </template>
@@ -21,7 +20,6 @@ import EditSelection from '@/components/menus/EditSelection.vue'
 import EditorScreen from '@/components/editor/EditorScreen.vue';
 
 // menu variables
-const showHomeButton: Ref<boolean> = ref(false);
 const showStartMenu: Ref<boolean> = ref(true);
 const showSaveSelection: Ref<boolean> = ref(false);
 const showNewCourseSelection: Ref<boolean> = ref(false);
@@ -51,30 +49,25 @@ function openStartMenu(): void {
 
 function openSaveStateMenu(): void {
   hideAll();
-  showHomeButton.value = true;
   showSaveSelection.value = true;
 }
 
 function openNewCourseMenu(): void {
   hideAll();
-  showHomeButton.value = true;
   showNewCourseSelection.value = true;
 }
 
 function openEditSelection(): void {
   hideAll();
-  showHomeButton.value = true;
   showEditSelection.value = true;
 }
 
 function openEditor(newEditID: any): void {
   editID.value = newEditID;
   hideAll();
-  showHomeButton.value = true;
   showEditorScreen.value = true;
 }
 function hideAll(): void {
-  showHomeButton.value = false;
   showStartMenu.value = false;
   showSaveSelection.value = false;
   showNewCourseSelection.value = false;
@@ -98,10 +91,5 @@ body {
 button {
   font-family: 'Fredoka One', cursive;
   border-radius: 20pt;
-}
-
-.home {
-  font-size: 20pt;
-  margin-top: 5vh;
 }
 </style>
