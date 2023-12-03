@@ -69,7 +69,23 @@ const currentAxioms: ComputedRef<AxiomData[]> = computed(() => {
 }
 ); 
 
-const currentDerivates: ComputedRef<AxiomData[]> = computed(() => []); // TODO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+const currentDerivates: ComputedRef<AxiomData[]> = computed(() => {
+  if (!course.value || !currentLevelPointer.value) {
+    return [];
+  }
+  let derivates: AxiomData[] = [];
+  const chapterIndex: number = currentLevelPointer.value.chapterIndex;
+  const levelIndex: number = currentLevelPointer.value.levelIndex;
+  for (let ch = 0; ch < chapterIndex; ch++) {
+    for (let lvl = 0; lvl < course.value.chapters[ch].levels.length; lvl++) {
+      derivates.push(course.value.chapters[ch].levels[lvl].goalAxiom);
+    }
+  }
+  for (let lvl = 0; lvl < levelIndex; lvl++) {
+    derivates.push(course.value.chapters[chapterIndex].levels[lvl].goalAxiom);
+  }
+  return derivates;
+}); 
 
 const hasNextLevel: ComputedRef<boolean> = computed(() => {
   if (!course.value || !currentLevelPointer.value) {
