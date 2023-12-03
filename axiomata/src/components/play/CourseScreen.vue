@@ -71,7 +71,17 @@ const currentAxioms: ComputedRef<AxiomData[]> = computed(() => {
 
 const currentDerivates: ComputedRef<AxiomData[]> = computed(() => []); // TODO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-const hasNextLevel: ComputedRef<boolean> = computed(() => true); // TODO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+const hasNextLevel: ComputedRef<boolean> = computed(() => {
+  if (!course.value || !currentLevelPointer.value) {
+    return false;
+  }
+  let chapterIndex: number = currentLevelPointer.value.chapterIndex;
+  let levelIndex: number = currentLevelPointer.value.levelIndex;
+  if (chapterIndex < course.value.chapters.length - 1) {
+    return true;
+  }
+  return levelIndex < course.value.chapters[chapterIndex].levels.length - 1;
+}); 
 
 onMounted(() => {
     fetchCourse();
