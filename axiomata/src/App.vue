@@ -41,7 +41,6 @@ const editID: Ref<any> = ref(null);
 function openCourse(newSaveID: number): void {
   saveID.value = newSaveID;
   hideAll();
-  showHomeButton.value = true;
   showCourseScreen.value = true;
 }
 
@@ -81,6 +80,7 @@ function hideAll(): void {
   showNewCourseSelection.value = false;
   showEditSelection.value = false;
   showEditorScreen.value = false;
+  showCourseScreen.value = false;
 }
 </script>
 

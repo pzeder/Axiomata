@@ -1,5 +1,5 @@
 <template>
-  <HeadBar :height="headBarHeight" :levelTitle="level?.title" @openLevelMenu="emit('openLevelMenu')" />
+  <HeadBar :height="headBarHeight" :levelTitle="level?.title" @openLevelMenu="emit('openChapterScreen')" />
   <SequenceContainer class="workbench" :posX="workbenchX" :posY="workbenchY" :width="workbenchWidth"
     :height="workbenchHeight" :maxFill="workbenchMaxFill" :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio"
     :screenRatio="screenRatio" :sequence="workSequence" :symbols="symbols"
@@ -20,15 +20,12 @@
     :height="goalWidth * screenRatio" :maxFill="0.8" :maxSymbolWidthRatio="0.33" :screenRatio="screenRatio"
     :sequence="level?.goalAxiom.lowerSequence" :variables="variables" :varColors="varColors"
     :symbols="symbols" />
-  <VictoryWindow v-if="level?.solved" :posX="workbenchX" :posY="headBarHeight" :width="workbenchWidth - 1.85"
-    :height="workbenchHeight" :hasNextLevel="hasNextLevel" @openLevelMenu="emit('openLevelMenu')"
-    @nextLevel="emit('nextLevel')" />
   <Cursor :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="workSymbolWidth"
     :symbols="symbols" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
     :centerDirectionY="centerDirectionY" :screenRatio="screenRatio" :workMatch="workMatch"
     :variables="variables" :varColors="varColors" :varMap="varMap" @axiomDrop="axiomDrop"
     @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
-  <div v-if="goalMatch" @click="finishLevel"
+  <div v-if="goalMatch" @click="emit('finishLevel')"
     :style="{ position: 'absolute', userSelect: 'none', color: 'red', left: (startX + goalWidth / 2) + 'vw', top: (goalY + goalWidth * screenRatio / 2 + 10) + 'vh', width: (goalWidth) + 'vw', height: (goalWidth * screenRatio) + 'vh' }">
     MATCH
   </div>
@@ -37,7 +34,6 @@
 <script setup lang=ts>
 import AxiomBar from './AxiomBar.vue';
 import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
-import VictoryWindow from './VictoryWindow.vue';
 import HeadBar from '@/components/play/HeadBar.vue'
 import Cursor from './Cursor.vue';
 import { AxiomData, LevelData, SeqVar, SeqSymbol, VarData, SymbolData } from '@/scripts/Interfaces';
@@ -136,7 +132,7 @@ onMounted(() => {
   window.addEventListener('touchend', axiomDrop, { passive: false });
 });
 
-const emit = defineEmits(['openLevelMenu', 'levelFinished', 'updateSequenceHistory', 'nextLevel']);
+const emit = defineEmits(['openChapterScreen', 'finishLevel', 'updateSequenceHistory', 'nextLevel']);
 
 onBeforeUnmount(() => {
   document.body.classList.remove('no-scroll');
@@ -271,10 +267,6 @@ function updateMatching(): void {
     workIndex++;
     nearIndex++;
   }
-}
-
-function finishLevel(): void {
-  emit('levelFinished');
 }
 
 function selectAxiom(event: MouseEvent, axiom: AxiomData): void {

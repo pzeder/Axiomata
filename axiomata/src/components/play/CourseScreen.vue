@@ -1,7 +1,10 @@
 <template>
   <ChapterScreen v-if="showChapterScreen" :chapters="course?.chapters" :currentLevelPointer="currentLevelPointer"
     @openSaveStateMenu="emit('openSaveStateMenu')" @openLevel="openLevel" />
-  <LevelScreen :symbols="course?.symbols" :variables="course?.variables" :axioms="currentAxioms" :derivates="currentDerivates" :level="currentLevel" :hasNextLevel="hasNextLevel" v-if="showLevelScreen"  />
+  <LevelScreen v-if="showLevelScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="currentAxioms" :derivates="currentDerivates" :level="currentLevel" :hasNextLevel="hasNextLevel" 
+    @updateSequenceHistory="updateSequenceHistory" @openChapterScreen="openChapterScreen" @finishLevel="finishLevel"/>
+  <VictoryWindow v-if="showVictoryWindow" :hasNextLevel="hasNextLevel" @openLevelMenu="openChapterScreen"
+    @nextLevel="openLevel" />
 </template>
 
 <script setup lang="ts">
@@ -10,6 +13,7 @@ import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef } from 'vue';
 import ChapterScreen from './ChapterScreen.vue';
 import LevelScreen from './LevelScreen.vue';
+import VictoryWindow from './VictoryWindow.vue';
 
 interface Props {
     saveID: any;
@@ -20,6 +24,7 @@ const emit = defineEmits(['openStartMenu', 'openSaveStateMenu']);
 
 const showChapterScreen: Ref<boolean> = ref(false);
 const showLevelScreen: Ref<boolean> = ref(false);
+const showVictoryWindow: Ref<boolean> = ref(false);
 
 const course: Ref<CourseData | null> = ref(null);
 
@@ -51,7 +56,18 @@ const currentLevel: ComputedRef<LevelData | null> = computed(() => {
     return course.value.chapters[chapterIndex].levels[levelIndex];
 });
 
-const currentAxioms: ComputedRef<AxiomData[]> = computed(() => [{upperSequence: [0], lowerSequence: [1]}]); // TODO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+const currentAxioms: ComputedRef<AxiomData[]> = computed(() => {
+  if (!course.value || !currentLevelPointer.value) {
+    return [];
+  }
+  let axioms: AxiomData[] = []
+  const chapterIndex: number = currentLevelPointer.value.chapterIndex;
+  for (let i = 0; i <= chapterIndex; i++) {
+    axioms.push(...course.value.chapters[i].newAxioms);
+  }
+  return axioms;
+}
+); 
 
 const currentDerivates: ComputedRef<AxiomData[]> = computed(() => []); // TODO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -77,28 +93,34 @@ async function fetchCourse(): Promise<void> {
 }
 
 function openLevel(): void {
-    showChapterScreen.value = false;
-    showLevelScreen.value = true;
+  hideAll();
+  showLevelScreen.value = true;
 }
 
 function openChapterScreen(): void {
-  showLevelScreen.value = false;
+  hideAll();
   showChapterScreen.value = true;
 }
 
-function updateChapters(updatedChapters: ChapterData[]): void {
-    if (course.value) {
-        course.value.chapters = updatedChapters;
-    }
+function openVictoryWindow(): void {
+  hideAll();
+  showVictoryWindow.value = true;
+}
+
+function hideAll(): void {
+  showChapterScreen.value = false;
+  showLevelScreen.value = false;
+  showVictoryWindow.value = false;
 }
 
 async function updateSequenceHistory(newSequence: number[]): Promise<void> {
+  currentLevel.value?.sequenceHistory.push(newSequence);
   try {
     const updatedData = {
       saveID: props.saveID,
       chapterIndex: currentLevelPointer.value?.chapterIndex,
       levelIndex: currentLevelPointer.value?.levelIndex,
-      newSequence: newSequence
+      newHistory: currentLevel.value?.sequenceHistory
     };
     const response = await axios.patch(`http://localhost:3000/sequenceHistory`, updatedData);
     if (response.status === 200) {
@@ -111,16 +133,25 @@ async function updateSequenceHistory(newSequence: number[]): Promise<void> {
   }
 }
 
-async function updateLevelEnd(): Promise<void> {
-  currentLevelData.value.levelFinished = true;
+function finishLevel(): void {
+  openVictoryWindow();
+  updateLevelSolved();
+  console.log(currentLevel.value);
+}
+
+async function updateLevelSolved(): Promise<void> {
+  if (!course.value) {
+    return;
+  }
   try {
     const updatedData = {
-      saveID: saveID.value,
-      chapterIndex: currentChapterIndex.value,
-      levelIndex: currentLevelIndex.value,
+      saveID: props.saveID,
+      chapterIndex: currentLevelPointer.value?.chapterIndex,
+      levelIndex: currentLevelPointer.value?.levelIndex,
     };
-    const response = await axios.patch(`http://localhost:3000/levelEnd`, updatedData);
+    const response = await axios.patch(`http://localhost:3000/levelSolved`, updatedData);
     if (response.status === 200) {
+      course.value.chapters = response.data.chapters;
       console.log('Course updated successfully:', response.data);
     } else if (response.status === 400) {
       console.error(response.data.message);
@@ -131,10 +162,4 @@ async function updateLevelEnd(): Promise<void> {
     console.error('Error updating data:', error);
   }
 }
-
-function nextLevel(): void {
-  currentChapterIndex.value = nextChapterIndex.value;
-  currentLevelIndex.value = nextLevelIndex.value;
-  fetchLevel();
-} 
 </script>
