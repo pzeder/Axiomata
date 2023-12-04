@@ -1,6 +1,6 @@
 <template>
   <div class="axiom-bar"
-    :style="{ bottom: (vertical ? 'auto' : 0), width: width + 'vw', height: height + 'vw', backgroundColor: background }">
+    :style="{ width: width + 'vw', height: height + 'vw', backgroundColor: background }">
     <div class="axiom-bar-title" :style="{ position: (vertical ? 'static' : 'absolute')}"> {{ title }} </div>
     <div v-if="vertical"> 
       <AxiomContainer v-for="(axiom, index) in axioms" :key="index" :width="containerWidth" :height="containerHeight"
@@ -44,9 +44,10 @@ const containerHeight = computed(() => Math.min(minContainerHeight.value, maxCon
 
 <style>
 .axiom-bar-title {
-  font-size: 2vw;
-  color: black;
+  font-size: 1.5vw;
+  color: rgb(120, 120, 120);
   margin-left: 2vw;
+  margin-top: 0.4vw;
   user-select: none;
 }
 </style>

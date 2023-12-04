@@ -1,7 +1,7 @@
 <template>
   <div class="sequence-container"
     :style="{ width: width + 'vw', height: height + 'vw' }">
-    <div class="sequence-title" :style="{ width: width + 'vw', fontSize: (height * 0.2) + 'vw' }"> {{ title }} </div>
+    <div class="sequence-title" :style="{ width: width + 2 + 'vw', fontSize: (height * 0.15) + 'vw' }"> {{ title }} </div>
     <SequenceComp :symbolWidth="symbolWidth" :sequence="sequence"
       :symbols="symbols" :highlights="highlights" :variables="variables" :varColors="varColors"
       :varMap="varMap" />
@@ -49,13 +49,14 @@ const symbolWidth = computed(() => {
   place-items: center;
   box-sizing: border-box;
   position: relative;
+  background-color: #ffffff;
+  border: 1vw solid rgb(89, 204, 245);
 }
 
 .sequence-title {
   position: absolute;
-  font-size: 4vw;
   color: black;
-  left: 0;
+  left: -1;
   top: 0;
   user-select: none;
   display: grid;

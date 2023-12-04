@@ -6,19 +6,21 @@
           :width="axiomBarWidth" :height="axiomBarHeight" :axioms="axioms"
           :symbols="symbols" :variables="variables" :varColors="varColors"
           @selectAxiom="selectAxiom" />
-        <div> 
+        <div class="right-side"> 
           <div :style="{ display: 'flex' }">
-            <SequenceContainer :width="workbenchWidth"
+            <div :style="{ marginTop: -1 + 'vw'}">
+              <SequenceContainer :width="workbenchWidth"
               :height="workbenchHeight" :maxFill="workbenchMaxFill" :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio"
               :sequence="workSequence" :symbols="symbols"
               :variables="variables" :varColors="varColors" :highlights="workHighlights" />
-            <div :style="{ display: 'grid', placeItems: 'center'}">
-              <SequenceContainer class="goal-window" :title="'START'" :posX="startX" :posY="startY" :width="goalWidth"
-                :height="goalWidth" :maxFill="0.8" :maxSymbolWidthRatio="0.33" 
+            </div>
+            <div :style="{ display: 'grid', placeItems: 'center', width: goalContainerWidth + 'vw'}">
+              <SequenceContainer class="goal-window" :title="'START'" :width="goalWidth"
+                :height="goalWidth" :maxFill="0.6" :maxSymbolWidthRatio="0.33" 
                 :sequence="level?.goalAxiom.upperSequence" :variables="variables" :varColors="varColors"
                 :symbols="symbols" />
-              <SequenceContainer class="goal-window" :title="'ZIEL'" :posX="startX" :posY="goalY" :width="goalWidth"
-                :height="goalWidth" :maxFill="0.8" :maxSymbolWidthRatio="0.33"
+              <SequenceContainer class="goal-window" :title="'ZIEL'" :width="goalWidth"
+                :height="goalWidth" :maxFill="0.6" :maxSymbolWidthRatio="0.33"
                 :sequence="level?.goalAxiom.lowerSequence" :variables="variables" :varColors="varColors"
                 :symbols="symbols" />
             </div>
@@ -36,7 +38,7 @@
       :variables="variables" :varColors="varColors" :varMap="varMap" @axiomDrop="axiomDrop"
       @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
     <div v-if="goalMatch" @click="emit('finishLevel')"
-      :style="{ position: 'absolute', userSelect: 'none', color: 'red', left: (startX + goalWidth / 2) + 'vw', top: (goalY + goalWidth * 0.8) + 'vw', width: (goalWidth) + 'vw', height: (goalWidth ) + 'vw' }">
+      :style="{ position: 'absolute', userSelect: 'none', color: 'red', left: 90 + 'vw', top: 58 + 'vh', width: (goalWidth) + 'vw', height: (goalWidth ) + 'vw', fontSize: 1 + 'vw' }">
       Geschafft!
     </div>
 </template>
@@ -61,21 +63,19 @@ interface Props {
 const props = defineProps<Props>();
 
 // Layout variables
+const screenRatio: Ref<number> = ref(window.innerWidth / window.innerHeight);
 const headBarHeight: Ref<number> = ref(3)
-const axiomBarWidth: Ref<number> = ref(20);
+const axiomBarWidth: Ref<number> = ref(15);
 const axiomBarHeight: Ref<number> = ref(100);
 const derivateBarWidth: Ref<number> = ref(100);
-const derivateBarHeight: Ref<number> = ref(20);
-const workbenchX: Ref<number> = ref(20);
-const workbenchY: ComputedRef<number> = computed(() => headBarHeight.value);
-const workbenchWidth: Ref<number> = ref(70);
-const workbenchHeight: ComputedRef<number> = computed(() => 42);
+const derivateBarHeight: Ref<number> = ref(15);
+const workbenchX: ComputedRef<number> = computed(() => axiomBarWidth.value);
+const workbenchY: ComputedRef<number> = computed(() => headBarHeight.value - 1); // -1 because of margin-top of workbench
+const workbenchWidth: ComputedRef<number> = computed(() => 100 - axiomBarWidth.value - goalContainerWidth.value);
+const workbenchHeight: ComputedRef<number> = computed(() => 100 / screenRatio.value - (headBarHeight.value + derivateBarHeight.value) + 1); // + 1 because of margin-top of workbench
 const workbenchMaxFill: Ref<number> = ref(0.6);
 const workbenchMaxSymbolWidthRatio: Ref<number> = ref(0.05);
-const startX: Ref<number> = ref(88);
-const startY: ComputedRef<number> = computed(() => headBarHeight.value);
-const goalY: ComputedRef<number> = computed(() =>
-  workbenchHeight.value - goalWidth.value + 0.75);
+const goalContainerWidth: Ref<number> = ref(15);
 const goalWidth: Ref<number> = ref(10);
 const workSymbolWidth: ComputedRef<number> = computed(() => {
   if (!workSequence.value) {
@@ -156,6 +156,7 @@ function handleMouseDown(event: MouseEvent) {
 }
 
 function handleResize() {
+  screenRatio.value = window.innerWidth / window.innerHeight;
   axiomDrop();
 }
 
@@ -352,9 +353,11 @@ function updateWorkSequence(): void {
   height: 100vh;
 }
 
-.goal-window {
-  background-color: #ffffff;
-  border: 1vw solid rgb(63, 196, 244);
+.right-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .no-scroll {

@@ -1,9 +1,7 @@
 <template>
-  <div class="headbar" :style="{ height: height + 'vw'}">
-    <button :style="{ position: 'relative', width: 5 + 'vw' }" @click="emit('openLevelMenu')"> Zurück </button>
-    <div :style="{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 100 + '%' }">
-      <div :style="{ color: 'white' }"> {{ levelTitle }} </div>
-    </div>
+  <div class="level-headbar" :style="{ height: height + 'vw', color: 'white' }">
+    <div class="back-button" @click="emit('openLevelMenu')"> Zurück </div>
+    <div class="head-title"> {{ levelTitle }} </div>
   </div>
 </template>
 
@@ -19,11 +17,33 @@ const emit = defineEmits(['openLevelMenu']);
 </script>
 
 <style>
-.headbar {
+.level-headbar {
   display: flex;
-  top: 0;
-  left: 0;
   width: 100%;
   background: rgb(89, 204, 245);
+}
+
+.back-button {
+  flex-shrink: 0;
+  flex-basis: 5%;
+  width: 5%;
+  height: 100%;
+  border: 0.2vw solid black;
+  border-radius: 1vw;
+  box-sizing: border-box;
+  display: grid;
+  place-content: center;
+  background: orange;
+  font-size: 1vw;
+  color: white;
+}
+
+.head-title {
+  width: 75%;
+  height: 100%;
+  font-size: 1.5vw;
+  color: white;
+  display: grid;
+  place-items: center;
 }
 </style>
