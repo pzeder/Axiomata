@@ -6,6 +6,7 @@ import SymbolComp from '../axiom/SymbolComp.vue';
         <div class="symbol-bar-title"> Verfügbare Symbole </div>
         <SymbolComp :symbolWidth=3 :symbol="index" :symbols="symbols" v-for="(symbol, index) in symbols" :key="index"/>
         <AddButton target="symbol" @click="emit('openSymbolEditor')"/>
+        <DeleteButton text="Letzes Symbol löschen" @click="emit('deleteSymbol')"/>
     </div>
 </template>
 
@@ -13,6 +14,7 @@ import SymbolComp from '../axiom/SymbolComp.vue';
 import { defineProps, defineEmits } from 'vue';
 import SymbolComp from '../axiom/SymbolComp.vue';
 import AddButton from './AddButton.vue';
+import DeleteButton from './DeleteButton.vue';
 import { SymbolData } from '@/scripts/Interfaces';
 
 interface Props {
@@ -20,7 +22,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['openSymbolEditor']);
+const emit = defineEmits(['openSymbolEditor', 'deleteSymbol']);
 </script>
 
 <style>

@@ -1,23 +1,19 @@
 <template>
-  <div class="sequence" :style="{
-    width: (sequence.length * symbolWidth) + 'vw',
-    height: symbolHeight + 'vh'
-  }">
-    <SymbolComp v-for="(symbol, key) in sequence" :key="key" :symbolWidth="symbolWidth" :screenRatio="screenRatio"
-      :highlight="(highlights.length === 0) ? false : highlights[key]" :symbol="symbol" :symbols="symbols"
-      :variables="variables" :varColors="varColors" :varMap="varMap" />
+  <div class="sequence">
+    <SymbolComp v-for="(symbol, index) in sequence" :key="index" :symbolWidth="symbolWidth"
+      :highlight="(highlights.length === 0) ? false : highlights[index]" :symbol="symbol" :symbols="symbols"
+      :variables="variables" :varColors="varColors" :varMap="varMap" :shiftLeft="index !== 0"/>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, withDefaults } from "vue";
+import { defineProps, withDefaults } from "vue";
 import SymbolComp from '@/components/axiom/SymbolComp.vue'
 import { SymbolData, VarData, SeqSymbol } from "@/scripts/Interfaces";
 
 interface Props {
   symbolWidth: number;
-  screenRatio: number;
-  sequence: SeqSymbol[];
+  sequence: SeqSymbol[] | undefined;
   highlights: boolean[];
   symbols: SymbolData[] | undefined;
   variables: VarData[] | undefined;
@@ -28,19 +24,10 @@ const props = withDefaults(defineProps<Props>(), {
   highlights: () => [],
   varMap: () => new Map<string, number>()
 });
-const symbolHeight = computed(() => props.symbolWidth * props.screenRatio);
 </script>
 
 <style scoped>
 .sequence {
   display: flex;
-  position: absolute;
-  background-color: none;
-  color: white;
-}
-
-.sequence> :first-child {
-  margin-left: 0;
-  margin-top: 0;
 }
 </style>

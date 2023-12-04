@@ -2,9 +2,9 @@
   <div :style="{
     position: 'absolute',
     left: posX + 'vw',
-    top: posY + 'vh'
+    top: posY + 'vw'
   }">
-    <AxiomComp v-if="cursorAxiom.upperSequence.length !== 0" :symbolWidth="symbolWidth" :screenRatio="screenRatio"
+    <AxiomComp v-if="cursorAxiom.upperSequence.length !== 0" :symbolWidth="symbolWidth" 
       :axiomData="cursorAxiom" :symbols="symbols" :upperHighlights="upperHighlights" :variables="variables"
       :varColors="varColors" :lowerHighlights="lowerHighlights" :varMap="varMap" @mouseup="emit('axiomDrop')"
       @touchend="emit('axiomDrop')" @touchcancel="emit('axiomDrop')" @mousedown="emit('cursorAxiomClicked')"
@@ -14,9 +14,9 @@
       placeItems: 'center',
       position: 'absolute',
       left: ((Math.max(cursorAxiom.upperSequence.length, cursorAxiom.lowerSequence.length) - 1) * symbolWidth / 2) + 'vw',
-      top: (centerDirectionY > 0 ? (-symbolWidth * screenRatio * 1.5) : (symbolWidth * screenRatio * 3)) + 'vh',
+      top: (centerDirectionY > 0 ? (-symbolWidth * 1.5) : (symbolWidth * 3)) + 'vw',
       width: symbolWidth + 'vw',
-      height: (symbolWidth * screenRatio) + 'vh',
+      height: (symbolWidth) + 'vw',
     }"> SWAP </div>
   </div>
 </template>
@@ -35,7 +35,6 @@ interface Props {
   upperHighlights: boolean[];
   lowerHighlights: boolean[];
   centerDirectionY: number;
-  screenRatio: number;
   workMatch: boolean;
   variables: VarData[] | undefined;
   varColors: string[];

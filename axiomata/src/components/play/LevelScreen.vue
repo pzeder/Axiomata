@@ -1,34 +1,34 @@
 <template>
-  <HeadBar :height="headBarHeight" :levelTitle="level?.title" @openLevelMenu="emit('openChapterScreen')" />
-  <SequenceContainer class="workbench" :posX="workbenchX" :posY="workbenchY" :width="workbenchWidth"
-    :height="workbenchHeight" :maxFill="workbenchMaxFill" :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio"
-    :screenRatio="screenRatio" :sequence="workSequence" :symbols="symbols"
-    :variables="variables" :varColors="varColors" :highlights="workHighlights" />
-  <AxiomBar :title="'Bonus-Regeln'" :background="'rgb(187, 231, 247)'" :posX="derivateBarX" :posY="derivateBarY"
-    :width="derivateBarWidth" :height="derivateBarHeight" :screenRatio="screenRatio" :axioms="derivates"
-    :variables="variables" :varColors="varColors" :symbols="symbols"
-    @selectAxiom="selectAxiom" />
-  <AxiomBar :title="'Tausch-Regeln'" :background="'rgb(252, 223, 203)'" :posX="axiomBarX" :posY="axiomBarY"
-    :width="axiomBarWidth" :height="axiomBarHeight" :screenRatio="screenRatio" :axioms="axioms"
-    :symbols="symbols" :variables="variables" :varColors="varColors"
-    @selectAxiom="selectAxiom" />
-  <SequenceContainer class="goal-window" :title="'START'" :posX="startX" :posY="startY" :width="goalWidth"
-    :height="goalWidth * screenRatio" :maxFill="0.8" :maxSymbolWidthRatio="0.33" :screenRatio="screenRatio"
-    :sequence="level?.goalAxiom.upperSequence" :variables="variables" :varColors="varColors"
-    :symbols="symbols" />
-  <SequenceContainer class="goal-window" :title="'ZIEL'" :posX="startX" :posY="goalY" :width="goalWidth"
-    :height="goalWidth * screenRatio" :maxFill="0.8" :maxSymbolWidthRatio="0.33" :screenRatio="screenRatio"
-    :sequence="level?.goalAxiom.lowerSequence" :variables="variables" :varColors="varColors"
-    :symbols="symbols" />
-  <Cursor :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="workSymbolWidth"
-    :symbols="symbols" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
-    :centerDirectionY="centerDirectionY" :screenRatio="screenRatio" :workMatch="workMatch"
-    :variables="variables" :varColors="varColors" :varMap="varMap" @axiomDrop="axiomDrop"
-    @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
-  <div v-if="goalMatch" @click="emit('finishLevel')"
-    :style="{ position: 'absolute', userSelect: 'none', color: 'red', left: (startX + goalWidth / 2) + 'vw', top: (goalY + goalWidth * screenRatio / 2 + 10) + 'vh', width: (goalWidth) + 'vw', height: (goalWidth * screenRatio) + 'vh' }">
-    MATCH
-  </div>
+    <HeadBar :levelTitle="level?.title" :height="headBarHeight" @openLevelMenu="emit('openChapterScreen')" />
+    <AxiomBar :title="'Tausch-Regeln'" :background="'rgb(252, 223, 203)'" :posX="axiomBarX" :posY="axiomBarY"
+      :width="axiomBarWidth" :height="axiomBarHeight" :axioms="axioms"
+      :symbols="symbols" :variables="variables" :varColors="varColors"
+      @selectAxiom="selectAxiom" />
+    <SequenceContainer :posX="workbenchX" :posY="workbenchY" :width="workbenchWidth"
+      :height="workbenchHeight" :maxFill="workbenchMaxFill" :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio"
+      :sequence="workSequence" :symbols="symbols"
+      :variables="variables" :varColors="varColors" :highlights="workHighlights" />
+    <AxiomBar :title="'Bonus-Regeln'" :background="'rgb(187, 231, 247)'" :posX="derivateBarX" :posY="derivateBarY"
+      :width="derivateBarWidth" :height="derivateBarHeight" :axioms="derivates"
+      :variables="variables" :varColors="varColors" :symbols="symbols"
+      @selectAxiom="selectAxiom" />
+    <SequenceContainer class="goal-window" :title="'START'" :posX="startX" :posY="startY" :width="goalWidth"
+      :height="goalWidth" :maxFill="0.8" :maxSymbolWidthRatio="0.33" 
+      :sequence="level?.goalAxiom.upperSequence" :variables="variables" :varColors="varColors"
+      :symbols="symbols" />
+    <SequenceContainer class="goal-window" :title="'ZIEL'" :posX="startX" :posY="goalY" :width="goalWidth"
+      :height="goalWidth" :maxFill="0.8" :maxSymbolWidthRatio="0.33"
+      :sequence="level?.goalAxiom.lowerSequence" :variables="variables" :varColors="varColors"
+      :symbols="symbols" />
+    <Cursor :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="workSymbolWidth"
+      :symbols="symbols" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
+      :centerDirectionY="centerDirectionY" :workMatch="workMatch"
+      :variables="variables" :varColors="varColors" :varMap="varMap" @axiomDrop="axiomDrop"
+      @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
+    <div v-if="goalMatch" @click="emit('finishLevel')"
+      :style="{ position: 'absolute', userSelect: 'none', color: 'red', left: (startX + goalWidth / 2) + 'vw', top: (goalY + goalWidth / 2 + 10) + 'vw', width: (goalWidth) + 'vw', height: (goalWidth ) + 'vw' }">
+      MATCH
+    </div>
 </template>
 
 <script setup lang=ts>
@@ -51,10 +51,9 @@ interface Props {
 const props = defineProps<Props>();
 
 // Layout variables
-const screenRatio: Ref<number> = ref(window.innerWidth / window.innerHeight);
-const headBarHeight: Ref<number> = ref(5);
+const headBarHeight: Ref<number> = ref(3)
 const axiomBarX: Ref<number> = ref(0);
-const axiomBarY: Ref<number> = ref(5);
+const axiomBarY: ComputedRef<number> = computed(() => headBarHeight.value);
 const axiomBarWidth: Ref<number> = ref(20);
 const axiomBarHeight: Ref<number> = ref(100);
 const derivateBarX = computed(() => axiomBarWidth.value);
@@ -62,15 +61,15 @@ const derivateBarY = computed(() => workbenchY.value + workbenchHeight.value);
 const derivateBarWidth: Ref<number> = ref(100);
 const derivateBarHeight: Ref<number> = ref(25);
 const workbenchX: Ref<number> = ref(20);
-const workbenchY: Ref<number> = ref(5);
+const workbenchY: ComputedRef<number> = computed(() => headBarHeight.value);
 const workbenchWidth: Ref<number> = ref(70);
-const workbenchHeight: Ref<number> = ref(70);
+const workbenchHeight: Ref<number> = ref(30);
 const workbenchMaxFill: Ref<number> = ref(0.6);
 const workbenchMaxSymbolWidthRatio: Ref<number> = ref(0.05);
 const startX: Ref<number> = ref(88);
-const startY: Ref<number> = ref(5);
+const startY: ComputedRef<number> = computed(() => headBarHeight.value);
 const goalY: ComputedRef<number> = computed(() =>
-  workbenchHeight.value - goalWidth.value * screenRatio.value + 0.75);
+  workbenchHeight.value - goalWidth.value + 0.75);
 const goalWidth: Ref<number> = ref(10);
 const workSymbolWidth: ComputedRef<number> = computed(() => {
   if (!workSequence.value) {
@@ -151,7 +150,6 @@ function handleMouseDown(event: MouseEvent) {
 }
 
 function handleResize() {
-  screenRatio.value = window.innerWidth / window.innerHeight;
   axiomDrop();
 }
 
@@ -173,7 +171,7 @@ function axiomDrop(): void {
   }
 
   const centerX: number = cursorAxiomX.value + axiomWidth(cursorAxiom.value, workSymbolWidth.value) / 2;
-  const centerY: number = cursorAxiomY.value + axiomHeight(workSymbolWidth.value, screenRatio.value) / 2;
+  const centerY: number = cursorAxiomY.value + axiomHeight(workSymbolWidth.value) / 2;
 
   // Remove the selected Axiom if the mouse is NOT inside workbench
 
@@ -194,21 +192,20 @@ function dockCursorAxiom(): void {
 
   const vx: number = cursorAxiomX.value;
   const vy: number = cursorAxiomY.value;
-  const cursorCenterY: number = vy + axiomHeight(workSymbolWidth.value, screenRatio.value) / 2;
+  const cursorCenterY: number = vy + axiomHeight(workSymbolWidth.value) / 2;
 
   /* Check if selected Axiom is in the upper or lower half of the workbench and
     snap it to the workSequence accordingly */
 
   const workbenchCenterY: number = workbenchY.value + workbenchHeight.value / 2;
   const workSequenceX: number = workbenchX.value + (workbenchWidth.value - workSequence.value.length * workSymbolWidth.value) / 2;
-  const symbolHeight: number = workSymbolWidth.value * screenRatio.value;
   const upperLength: number = cursorAxiom.value.upperSequence.length;
   const lowerLength: number = cursorAxiom.value.lowerSequence.length;
   let axiomOffset: number;
   if (cursorCenterY < workbenchCenterY) {
     // Upper Half
     axiomOffset = (upperLength <= lowerLength) ? 0 : ((upperLength - lowerLength) / 2 * workSymbolWidth.value);
-    cursorAxiomY.value = workbenchCenterY - 6 * symbolHeight / 2;
+    cursorAxiomY.value = workbenchCenterY - workSymbolWidth.value * 0.5 - axiomHeight(workSymbolWidth.value);
     nearSequence = cursorAxiom.value.lowerSequence;
     farSequence = cursorAxiom.value.upperSequence;
     nearHighlights = lowerHighlights;
@@ -216,7 +213,7 @@ function dockCursorAxiom(): void {
   } else {
     // Lower half
     axiomOffset = (lowerLength <= upperLength) ? 0 : ((lowerLength - upperLength) / 2 * workSymbolWidth.value);
-    cursorAxiomY.value = workbenchCenterY + symbolHeight / 2;
+    cursorAxiomY.value = workbenchCenterY + workSymbolWidth.value * 0.5;
     nearSequence = cursorAxiom.value.upperSequence;
     farSequence = cursorAxiom.value.lowerSequence;
     nearHighlights = upperHighlights;
@@ -282,9 +279,9 @@ function updateCursorAxiomPos(event: MouseEvent | Touch): void {
     return;
   }
   const mouseX: number = event.clientX / window.innerWidth * 100;
-  const mouseY: number = event.clientY / window.innerHeight * 100;
+  const mouseY: number = event.clientY / window.innerWidth * 100;
   const width: number = axiomWidth(cursorAxiom.value, workSymbolWidth.value);
-  const height: number = axiomHeight(workSymbolWidth.value, screenRatio.value);
+  const height: number = axiomHeight(workSymbolWidth.value);
   cursorAxiomX.value = mouseX - width / 2;
   cursorAxiomY.value = mouseY - height / 2;
 }

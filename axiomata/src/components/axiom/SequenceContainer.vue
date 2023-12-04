@@ -1,8 +1,8 @@
 <template>
   <div class="sequence-container"
-    :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
-    <div class="sequence-title" :style="{ width: width + 'vw', fontSize: (height * 0.2) + 'vh' }"> {{ title }} </div>
-    <SequenceComp :symbolWidth="symbolWidth" :screenRatio="screenRatio" :sequence="sequence"
+    :style="{ left: posX + 'vw', top: posY + 'vw', width: width + 'vw', height: height + 'vw' }">
+    <div class="sequence-title" :style="{ width: width + 'vw', fontSize: (height * 0.2) + 'vw' }"> {{ title }} </div>
+    <SequenceComp :symbolWidth="symbolWidth" :sequence="sequence"
       :symbols="symbols" :highlights="highlights" :variables="variables" :varColors="varColors"
       :varMap="varMap" />
   </div>
@@ -21,7 +21,6 @@ interface Props {
   height: number;
   maxFill: number;
   maxSymbolWidthRatio: number;
-  screenRatio: number;
   sequence: SeqSymbol[] | undefined;
   symbols: SymbolData[] | undefined;
   highlights: boolean[];
@@ -37,6 +36,9 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const symbolWidth = computed(() => {
+  if (!props.sequence) {
+    return 0;
+  }
   const w: number = props.maxFill * props.width / props.sequence.length;
   const maxWidth: number = props.maxSymbolWidthRatio * props.width;
   return Math.min(w, maxWidth);
@@ -45,15 +47,14 @@ const symbolWidth = computed(() => {
 
 <style>
 .sequence-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  place-items: center;
   position: absolute;
 }
 
 .sequence-title {
   position: absolute;
-  font-size: 4vh;
+  font-size: 4vw;
   color: black;
   left: 0;
   top: 0;

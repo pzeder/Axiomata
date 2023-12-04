@@ -142,7 +142,8 @@ app.get('/edit', async (req, res) => {
     const editData = ({
       title: edit.title,
       chapters: edit.chapters,
-      variables: edit.variables
+      variables: edit.variables,
+      symbols: edit.symbols
     });
     res.json(editData);
   } catch (error) {
@@ -318,6 +319,32 @@ app.patch('/deleteLevel', async (req, res) => {
   }
 });
 
+app.patch('/deleteSymbol', async (req, res) => {
+  try {
+    const { editID, symbolIndex } = req.body;
+    const filter = ({ _id: new ObjectId(editID) });
+    const deleteSymbol = {
+      $unset: {
+        [`symbols.${symbolIndex}`]: ""
+      }
+    };
+    const removeNull = {
+      $pull: { symbols: null }
+    };
+    result = await db.collection('Edits').updateOne(filter, deleteSymbol);
+    if (result.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to update status' });
+    }
+    result = await db.collection('Edits').updateOne(filter, removeNull);
+    if (result.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to update status' });
+    }
+    const edit = await db.collection('Edits').findOne(filter);
+    res.json({ symbols: edit.symbols });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 app.patch('/text', async (req, res) => {
   try {
     const { editID, text, target, chapterIndex, levelIndex } = req.body;

@@ -3,10 +3,10 @@
     <div class="axiom-editor-screen">
         <div class="axiom-editor">
             <div class="sequence-editors"> 
-                <div> uppder sequence </div>   
-                <div> lower sequence </div> 
+                <SequenceContainer />   
+                <SequenceContainer /> 
             </div>
-            <SymbolBar :symbols="symbols" @openSymbolEditor="emit('openSymbolEditor')"/>
+            <SymbolBar :symbols="symbols" @openSymbolEditor="emit('openSymbolEditor')" @deleteSymbol="emit('deleteSymbol')"/>
         </div>
     </div>
 </template>
@@ -15,13 +15,14 @@
 import { SymbolData } from '@/scripts/Interfaces';
 import { defineProps, defineEmits } from 'vue';
 import SymbolBar from './SymbolBar.vue'
+import SequenceContainer from '../axiom/SequenceContainer.vue';
 
 interface Props {
     symbols: SymbolData[] | undefined;
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['openSymbolEditor']);
+const emit = defineEmits(['openSymbolEditor', 'deleteSymbol']);
 </script>
 
 <style>

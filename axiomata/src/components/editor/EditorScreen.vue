@@ -2,7 +2,7 @@
   <TitleBar :title="course?.title" :height=10 @editTitle="editCourseTitle" />
   <EditChapterList v-if="course" :editID="editID" :chapters="course.chapters" @updateChapters="updateChapters"
     @editChapterTitle="editChapterTitle" @editLevelTitle="editLevelTitle" />
-  <AxiomEditor v-if="showAxiomEditor" :symbols="course?.symbols" @openSymbolEditor="openSymbolEditor"/>
+  <AxiomEditor v-if="showAxiomEditor" :symbols="course?.symbols" @openSymbolEditor="openSymbolEditor" @deleteSymbol="deleteSymbol"/>
   <SymbolEditor v-if="showSymbolEditor" :editID="editID" :text="symbolText" @editSymbolText="editSymbolText"
     @closeSymbolEditor="showSymbolEditor = false" @updateSymbols="updateSymbols" />
   <TextInput v-if="showTextInput" :placeholder="textInputPlaceholder" :target="textInputTarget" @updateText="updateText"
@@ -87,6 +87,26 @@ async function updateText(text: string): Promise<void> {
     if (response.status === 200) {
       const updatedCourse: CourseData = response.data.course;
       course.value = updatedCourse;
+    } else {
+      console.error('Server responded with status', response.status);
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
+
+async function deleteSymbol(): Promise<void> {
+  if (!course.value) {
+    return;
+  }
+  try {
+    const updateData = {
+      editID: props.editID,
+      symbolIndex: course.value.symbols.length-1
+    };
+    const response = await axios.patch('http://localhost:3000/deleteSymbol', updateData);
+    if (response.status === 200) {
+      course.value.symbols = response.data.symbols;
     } else {
       console.error('Server responded with status', response.status);
     }

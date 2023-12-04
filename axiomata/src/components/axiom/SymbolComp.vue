@@ -5,9 +5,9 @@
     backgroundColor: symbolData.backgroundColor,
     color: symbolData.textColor,
     borderColor: borderColor,
-    borderWidth: (symbolWidth / 13) + 'vw',
-    borderRadius: (symbolWidth / 5) + 'vw',
-    marginLeft: (-symbolWidth / 13) + 'vw',
+    borderWidth: (symbolWidth * 0.077) + 'vw',
+    borderRadius: (symbolWidth * 0.2) + 'vw',
+    marginLeft: (shiftLeft ? -symbolWidth * 0.077 : 0) + 'vw',
     fontSize: (symbolWidth * 0.5) + 'vw'
   }"> {{ symbolData.text }} </div>
 </template>
@@ -24,15 +24,20 @@ interface Props {
   variables: VarData[] | undefined;
   varColors: string[];
   varMap: Map<string, number>;
+  shiftLeft: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   highlight: () => false,
   variables: () => [],
   varColors: () => [],
-  varMap: () => new Map<string, number>()
+  varMap: () => new Map<string, number>(),
+  shiftLeft: () => false
 });
 
 const symbolData = computed(() => {
+  if (!props.symbols) {
+    return null;
+  }
   if (typeof props.symbol === 'number') {
     return props.symbols[props.symbol];
   }
