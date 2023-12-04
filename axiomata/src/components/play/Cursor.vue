@@ -17,7 +17,7 @@
       top: (centerDirectionY > 0 ? (-symbolWidth * 1.5) : (symbolWidth * 3)) + 'vw',
       width: symbolWidth + 'vw',
       height: (symbolWidth) + 'vw',
-    }"> SWAP </div>
+    }"> TAUSCH </div>
   </div>
 </template>
 

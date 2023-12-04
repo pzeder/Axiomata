@@ -1,6 +1,6 @@
 <template>
   <div class="axiom-container" @touchstart="handleTouchStart"
-    :style="{ left: posX + 'vw', top: posY + 'vh', width: width + 'vw', height: height + 'vh' }">
+    :style="{ left: posX + 'vw', top: posY + 'vw', width: width + 'vw', height: height + 'vw' }">
     <AxiomComp :symbolWidth="symbolWidth" :axiomData="axiom" :symbols="symbols"
       :variables="variables" :varColors="varColors" :varMap="varMap" @mousedown="(event) => selectAxiom(event, axiom)" />
   </div>

@@ -2,7 +2,7 @@
   <div class="sequence">
     <SymbolComp v-for="(symbol, index) in sequence" :key="index" :symbolWidth="symbolWidth"
       :highlight="(highlights.length === 0) ? false : highlights[index]" :symbol="symbol" :symbols="symbols"
-      :variables="variables" :varColors="varColors" :varMap="varMap" :shiftLeft="index !== 0"/>
+      :variables="variables" :varColors="varColors" :varMap="varMap" :shiftLeft="index !== 0 && false"/>
   </div>
 </template>
 

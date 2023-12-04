@@ -26,8 +26,8 @@
       :variables="variables" :varColors="varColors" :varMap="varMap" @axiomDrop="axiomDrop"
       @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
     <div v-if="goalMatch" @click="emit('finishLevel')"
-      :style="{ position: 'absolute', userSelect: 'none', color: 'red', left: (startX + goalWidth / 2) + 'vw', top: (goalY + goalWidth / 2 + 10) + 'vw', width: (goalWidth) + 'vw', height: (goalWidth ) + 'vw' }">
-      MATCH
+      :style="{ position: 'absolute', userSelect: 'none', color: 'red', left: (startX + goalWidth / 2) + 'vw', top: (goalY + goalWidth * 0.8) + 'vw', width: (goalWidth) + 'vw', height: (goalWidth ) + 'vw' }">
+      Geschafft!
     </div>
 </template>
 
@@ -59,11 +59,11 @@ const axiomBarHeight: Ref<number> = ref(100);
 const derivateBarX = computed(() => axiomBarWidth.value);
 const derivateBarY = computed(() => workbenchY.value + workbenchHeight.value);
 const derivateBarWidth: Ref<number> = ref(100);
-const derivateBarHeight: Ref<number> = ref(25);
+const derivateBarHeight: Ref<number> = ref(13);
 const workbenchX: Ref<number> = ref(20);
 const workbenchY: ComputedRef<number> = computed(() => headBarHeight.value);
 const workbenchWidth: Ref<number> = ref(70);
-const workbenchHeight: Ref<number> = ref(30);
+const workbenchHeight: Ref<number> = ref(35);
 const workbenchMaxFill: Ref<number> = ref(0.6);
 const workbenchMaxSymbolWidthRatio: Ref<number> = ref(0.05);
 const startX: Ref<number> = ref(88);
@@ -204,7 +204,8 @@ function dockCursorAxiom(): void {
   let axiomOffset: number;
   if (cursorCenterY < workbenchCenterY) {
     // Upper Half
-    axiomOffset = (upperLength <= lowerLength) ? 0 : ((upperLength - lowerLength) / 2 * workSymbolWidth.value);
+    axiomOffset = (upperLength <= lowerLength) ? 0 : ((upperLength - lowerLength) * 0.5 * workSymbolWidth.value);
+    console.log(workSymbolWidth.value);
     cursorAxiomY.value = workbenchCenterY - workSymbolWidth.value * 0.5 - axiomHeight(workSymbolWidth.value);
     nearSequence = cursorAxiom.value.lowerSequence;
     farSequence = cursorAxiom.value.upperSequence;
@@ -212,7 +213,7 @@ function dockCursorAxiom(): void {
     centerDirectionY.value = 1;
   } else {
     // Lower half
-    axiomOffset = (lowerLength <= upperLength) ? 0 : ((lowerLength - upperLength) / 2 * workSymbolWidth.value);
+    axiomOffset = (lowerLength <= upperLength) ? 0 : ((lowerLength - upperLength) * 0.5 * workSymbolWidth.value);
     cursorAxiomY.value = workbenchCenterY + workSymbolWidth.value * 0.5;
     nearSequence = cursorAxiom.value.upperSequence;
     farSequence = cursorAxiom.value.lowerSequence;
