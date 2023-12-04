@@ -1,6 +1,6 @@
 <template>
   <div class="sequence-container"
-    :style="{ left: posX + 'vw', top: posY + 'vw', width: width + 'vw', height: height + 'vw' }">
+    :style="{ width: width + 'vw', height: height + 'vw' }">
     <div class="sequence-title" :style="{ width: width + 'vw', fontSize: (height * 0.2) + 'vw' }"> {{ title }} </div>
     <SequenceComp :symbolWidth="symbolWidth" :sequence="sequence"
       :symbols="symbols" :highlights="highlights" :variables="variables" :varColors="varColors"
@@ -15,8 +15,6 @@ import SequenceComp from '@/components/axiom/SequenceComp.vue';
 
 interface Props {
   title: string;
-  posX: number;
-  posY: number;
   width: number;
   height: number;
   maxFill: number;
@@ -49,7 +47,8 @@ const symbolWidth = computed(() => {
 .sequence-container {
   display: grid;
   place-items: center;
-  position: absolute;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .sequence-title {
@@ -59,6 +58,7 @@ const symbolWidth = computed(() => {
   left: 0;
   top: 0;
   user-select: none;
-  text-align: center;
+  display: grid;
+  place-items: center;
 }
 </style>

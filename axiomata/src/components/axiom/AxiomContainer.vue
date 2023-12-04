@@ -1,6 +1,6 @@
 <template>
   <div class="axiom-container" @touchstart="handleTouchStart"
-    :style="{ left: posX + 'vw', top: posY + 'vw', width: width + 'vw', height: height + 'vw' }">
+    :style="{ width: width + 'vw', height: height + 'vw' }">
     <AxiomComp :symbolWidth="symbolWidth" :axiomData="axiom" :symbols="symbols"
       :variables="variables" :varColors="varColors" :varMap="varMap" @mousedown="(event) => selectAxiom(event, axiom)" />
   </div>
@@ -13,8 +13,6 @@ import AxiomComp from '@/components/axiom/AxiomComp.vue';
 import { maxSequenceLength } from '@/scripts/AxiomMethods';
 
 interface Props {
-  posX: number;
-  posY: number;
   width: number;
   height: number;
   axiom: AxiomData;
@@ -51,11 +49,7 @@ const symbolWidth = computed(() => {
 
 <style>
 .axiom-container {
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 20vh;
+  display: grid;
+  place-items: center;
 }
 </style>

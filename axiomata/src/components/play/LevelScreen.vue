@@ -1,25 +1,35 @@
 <template>
-    <HeadBar :levelTitle="level?.title" :height="headBarHeight" @openLevelMenu="emit('openChapterScreen')" />
-    <AxiomBar :title="'Tausch-Regeln'" :background="'rgb(252, 223, 203)'" :posX="axiomBarX" :posY="axiomBarY"
-      :width="axiomBarWidth" :height="axiomBarHeight" :axioms="axioms"
-      :symbols="symbols" :variables="variables" :varColors="varColors"
-      @selectAxiom="selectAxiom" />
-    <SequenceContainer :posX="workbenchX" :posY="workbenchY" :width="workbenchWidth"
-      :height="workbenchHeight" :maxFill="workbenchMaxFill" :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio"
-      :sequence="workSequence" :symbols="symbols"
-      :variables="variables" :varColors="varColors" :highlights="workHighlights" />
-    <AxiomBar :title="'Bonus-Regeln'" :background="'rgb(187, 231, 247)'" :posX="derivateBarX" :posY="derivateBarY"
-      :width="derivateBarWidth" :height="derivateBarHeight" :axioms="derivates"
-      :variables="variables" :varColors="varColors" :symbols="symbols"
-      @selectAxiom="selectAxiom" />
-    <SequenceContainer class="goal-window" :title="'START'" :posX="startX" :posY="startY" :width="goalWidth"
-      :height="goalWidth" :maxFill="0.8" :maxSymbolWidthRatio="0.33" 
-      :sequence="level?.goalAxiom.upperSequence" :variables="variables" :varColors="varColors"
-      :symbols="symbols" />
-    <SequenceContainer class="goal-window" :title="'ZIEL'" :posX="startX" :posY="goalY" :width="goalWidth"
-      :height="goalWidth" :maxFill="0.8" :maxSymbolWidthRatio="0.33"
-      :sequence="level?.goalAxiom.lowerSequence" :variables="variables" :varColors="varColors"
-      :symbols="symbols" />
+    <div class="screen-container">
+      <HeadBar :levelTitle="level?.title" :height="headBarHeight" @openLevelMenu="emit('openChapterScreen')" />
+      <div :style="{ display: 'flex'}">
+        <AxiomBar :title="'Tausch-Regeln'" :background="'rgb(252, 223, 203)'"
+          :width="axiomBarWidth" :height="axiomBarHeight" :axioms="axioms"
+          :symbols="symbols" :variables="variables" :varColors="varColors"
+          @selectAxiom="selectAxiom" />
+        <div> 
+          <div :style="{ display: 'flex' }">
+            <SequenceContainer :width="workbenchWidth"
+              :height="workbenchHeight" :maxFill="workbenchMaxFill" :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio"
+              :sequence="workSequence" :symbols="symbols"
+              :variables="variables" :varColors="varColors" :highlights="workHighlights" />
+            <div :style="{ display: 'grid', placeItems: 'center'}">
+              <SequenceContainer class="goal-window" :title="'START'" :posX="startX" :posY="startY" :width="goalWidth"
+                :height="goalWidth" :maxFill="0.8" :maxSymbolWidthRatio="0.33" 
+                :sequence="level?.goalAxiom.upperSequence" :variables="variables" :varColors="varColors"
+                :symbols="symbols" />
+              <SequenceContainer class="goal-window" :title="'ZIEL'" :posX="startX" :posY="goalY" :width="goalWidth"
+                :height="goalWidth" :maxFill="0.8" :maxSymbolWidthRatio="0.33"
+                :sequence="level?.goalAxiom.lowerSequence" :variables="variables" :varColors="varColors"
+                :symbols="symbols" />
+            </div>
+          </div>
+          <AxiomBar :title="'Bonus-Regeln'" :background="'rgb(187, 231, 247)'"
+            :width="derivateBarWidth" :height="derivateBarHeight" :axioms="derivates"
+            :variables="variables" :varColors="varColors" :symbols="symbols"
+            @selectAxiom="selectAxiom" />
+        </div>
+      </div>
+    </div>
     <Cursor :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="workSymbolWidth"
       :symbols="symbols" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
       :centerDirectionY="centerDirectionY" :workMatch="workMatch"
@@ -52,18 +62,14 @@ const props = defineProps<Props>();
 
 // Layout variables
 const headBarHeight: Ref<number> = ref(3)
-const axiomBarX: Ref<number> = ref(0);
-const axiomBarY: ComputedRef<number> = computed(() => headBarHeight.value);
 const axiomBarWidth: Ref<number> = ref(20);
 const axiomBarHeight: Ref<number> = ref(100);
-const derivateBarX = computed(() => axiomBarWidth.value);
-const derivateBarY = computed(() => workbenchY.value + workbenchHeight.value);
 const derivateBarWidth: Ref<number> = ref(100);
-const derivateBarHeight: Ref<number> = ref(13);
+const derivateBarHeight: Ref<number> = ref(20);
 const workbenchX: Ref<number> = ref(20);
 const workbenchY: ComputedRef<number> = computed(() => headBarHeight.value);
 const workbenchWidth: Ref<number> = ref(70);
-const workbenchHeight: Ref<number> = ref(35);
+const workbenchHeight: ComputedRef<number> = computed(() => 42);
 const workbenchMaxFill: Ref<number> = ref(0.6);
 const workbenchMaxSymbolWidthRatio: Ref<number> = ref(0.05);
 const startX: Ref<number> = ref(88);
@@ -338,6 +344,14 @@ function updateWorkSequence(): void {
 </script>
 
 <style>
+.screen-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
 .goal-window {
   background-color: #ffffff;
   border: 1vw solid rgb(63, 196, 244);

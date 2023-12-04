@@ -23,7 +23,7 @@ const emit = defineEmits(['openLevelMenu']);
   display: flex;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: 100%;
   background: rgb(89, 204, 245);
 }
 </style>

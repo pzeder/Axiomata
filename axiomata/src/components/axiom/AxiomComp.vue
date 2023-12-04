@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="axiom">
     <SequenceComp class="infront" :symbolWidth="symbolWidth" :sequence="axiomData.upperSequence"
       :variables="variables" :varColors="varColors" :varMap="varMap" :symbols="symbols"
       :highlights="upperHighlights" :style="{
@@ -10,13 +10,13 @@
       :highlights="lowerHighlights" />
     <div class="connection" :style="{
       width: (symbolWidth * 0.5) + 'vw',
-      height: (symbolWidth * 1.5) + 'vw'
+      height: (axiomHeight(symbolWidth) * 0.8) + 'vw'
       }" /> 
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, withDefaults } from 'vue';
+import { defineProps, withDefaults } from 'vue';
 import { AxiomData, SymbolData, VarData } from '@/scripts/Interfaces';
 import { axiomHeight } from '@/scripts/AxiomMethods';
 import SequenceComp from '@/components/axiom/SequenceComp.vue';
@@ -36,15 +36,14 @@ const props = withDefaults(defineProps<Props>(), {
   lowerHighlights: () => [],
   varMap: () => new Map<string, number>()
 });
-
-const maxSequence = computed(() => Math.max(props.axiomData.upperSequence.length, props.axiomData.lowerSequence.length));
 </script>
 
 <style>
-.container {
+.axiom {
   background-color: none;
   display: grid;
   place-items: center;
+  position: relative;
 }
 
 .infront {
