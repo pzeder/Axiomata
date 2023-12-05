@@ -1,15 +1,15 @@
 <template>
   <div class="sequence">
     <SymbolComp v-for="(symbol, index) in sequence" :key="index" :symbolWidth="symbolWidth"
-      :highlight="(highlights.length === 0) ? false : highlights[index]" :symbol="symbol" :symbols="symbols"
-      :variables="variables" :varColors="varColors" :varMap="varMap" :shiftLeft="index !== 0 && false"/>
+      :highlight="(highlights.length === 0) ? false : highlights[index]" :symbol="symbolData(symbol)" :symbols="symbols"
+      :variables="variables" :varColors="varColors" :varMap="varMap" :shiftLeft="index !== 0 && false" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { defineProps, withDefaults } from "vue";
 import SymbolComp from '@/components/axiom/SymbolComp.vue'
-import { SymbolData, VarData, SeqSymbol } from "@/scripts/Interfaces";
+import { SymbolData, VarData, SeqSymbol, SeqVar } from "@/scripts/Interfaces";
 
 interface Props {
   symbolWidth: number;
@@ -24,6 +24,29 @@ const props = withDefaults(defineProps<Props>(), {
   highlights: () => [],
   varMap: () => new Map<string, number>()
 });
+
+function symbolData(symbol: SeqSymbol): SymbolData | null {
+  if (!props.symbols || !props.variables) {
+    return null;
+  }
+  if (typeof symbol === 'number') {
+    return props.symbols[symbol];
+  }
+  if ('varIndex' in symbol && 'colorIndex' in symbol) {
+    const variable = symbol as SeqVar;
+    let key = `${variable.varIndex},${variable.colorIndex}`;
+    if (props.varMap.get(key) || props.varMap.get(key) === 0) {
+      let symbolIndex: number = props.varMap.get(key) as number;
+      return props.symbols[symbolIndex];
+    }
+    return {
+      backgroundColor: 'white',
+      text: props.variables[variable.varIndex].varText,
+      textColor: 'grey'
+    };
+  }
+  return null;
+}
 </script>
 
 <style scoped>
