@@ -7,9 +7,12 @@
       </div>
       <div class="flex-container">
         <ColorEditor title="Hintergrundfarbe" :defaultValue=255 @changeColor="setBackgroundColor" />
-        <SymbolComp :symbolWidth=20 :symbol="editSymbol" @click="emit('editSymbolText')" />
-        <FontSizeSlider />
-        <ColorEditor title="Textfarbe" :defaultValue=0 @changeColor="setTextColor" />
+        <div class="middle">
+          <SymbolComp :symbolWidth=20 :symbol="editSymbol" @click="emit('editSymbolText')" />
+          <div class="font-size-title"> Schriftgrösse </div>
+          <ValueSlider :defaultValue="50" :maxValue=100 />
+        </div>
+        <ColorEditor title="Schriftfarbe" :defaultValue=0 @changeColor="setTextColor" />
       </div>
       <div class="button-container">
         <div class="cancel-button" @click="emit('closeSymbolEditor')"> abbrechen </div>
@@ -25,6 +28,7 @@ import { Ref, ref, defineEmits, defineProps, ComputedRef, computed } from 'vue';
 import ColorEditor from './ColorEditor.vue';
 import axios from 'axios';
 import SymbolComp from '@/components/axiom/SymbolComp.vue';
+import ValueSlider from './ValueSlider.vue';
 
 interface Props {
   editID: any
@@ -107,17 +111,33 @@ async function addNewSymbol(): Promise<void> {
   margin-bottom: 0;
   font-size: 5vh;
   background: orange;
-  width: 30vw;
+  width: 100%;
   display: grid;
   place-items: center;
   border-radius: 2vw;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .flex-container {
   display: flex;
   justify-content: center;
+  gap: 2vw;
   background-color: rgb(192, 191, 191);
-  border-radius: 20vw;
+  border-radius: 1vw;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  padding: 2vw;
+}
+
+.middle {
+  display: grid;
+  place-items: center;
+}
+
+.font-size-title {
+  margin-top: 2vw;
+  margin-bottom: 1vw;
 }
 
 .button-container {

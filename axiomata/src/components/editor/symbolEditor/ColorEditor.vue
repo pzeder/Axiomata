@@ -1,15 +1,15 @@
 <template>
   <div class="color-editor">
     <div class="color-editor-title"> {{ title }} </div>
-    <ColorSlider :defaultValue="defaultValue" color="red" @changeValue="setRed" />
-    <ColorSlider :defaultValue="defaultValue" color='green' @changeValue="setGreen" />
-    <ColorSlider :defaultValue="defaultValue" color='blue' @changeValue="setBlue" />
+    <ValueSlider :maxValue=255 :defaultValue="defaultValue" color="red" @changeValue="setRed" />
+    <ValueSlider :maxValue=255 :defaultValue="defaultValue" color='green' @changeValue="setGreen" />
+    <ValueSlider :maxValue=255 :defaultValue="defaultValue" color='blue' @changeValue="setBlue" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ComputedRef, Ref, computed, ref, defineEmits, defineProps } from 'vue';
-import ColorSlider from './ColorSlider.vue';
+import ValueSlider from './ValueSlider.vue';
 
 interface Props {
   title: string;
@@ -50,5 +50,9 @@ function setBlue(value: number) {
   background-color: none;
   display: grid;
   place-items: center;
+}
+
+.color-editor-title {
+  margin-bottom: 2vw;
 }
 </style>

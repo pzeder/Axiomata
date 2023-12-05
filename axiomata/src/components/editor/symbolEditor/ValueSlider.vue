@@ -1,6 +1,6 @@
 <template>
   <div ref="rootElement" class="slider-container">
-    <input type="range" min="0" max="255" v-model="sliderValue" class="slider" id="myRange"
+    <input type="range" min="0" :max="maxValue" v-model="sliderValue" class="slider" id="myRange"
       @mousemove="emit('changeValue', sliderValue)" @mouseup="emit('changeValue', sliderValue)">
     <div> {{ sliderValue }} </div>
   </div>
@@ -8,15 +8,18 @@
 
 
 <script setup lang="ts">
-import { Ref, ref, defineEmits, defineProps, onMounted } from 'vue';
+import { Ref, ref, defineEmits, defineProps, onMounted, withDefaults } from 'vue';
 
 interface Props {
   color: string;
+  maxValue: number;
   defaultValue: number;
 }
 
 const rootElement: Ref<HTMLElement | null> = ref(null);
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  color: 'black'
+});
 const emit = defineEmits(['changeValue']);
 const sliderValue = ref(props.defaultValue);
 
@@ -29,14 +32,14 @@ onMounted(() => {
 
 <style scoped>
 .slider-container {
-  width: 50%;
+  width: 80%;
 }
 
 .slider {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 25px;
+  height: 3vw;
   background: #ffffff;
   outline: none;
   opacity: 0.7;
@@ -51,8 +54,8 @@ onMounted(() => {
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 25px;
-  height: 25px;
+  width: 3vw;
+  height: 3vw;
   cursor: pointer;
   background: var(--slider-thumb-color);
 }
