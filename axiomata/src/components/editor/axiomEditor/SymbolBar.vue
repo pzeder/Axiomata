@@ -1,7 +1,8 @@
 <template>
     <div class="symbol-bar">
         <div class="symbol-bar-title"> Verfügbare Symbole </div>
-        <SymbolComp v-for="(symbol, index) in symbols" :key="index" :symbolWidth=3 :symbol="symbol" />
+        <SymbolComp v-for="(symbol, index) in symbols" :key="index" :symbolWidth=3 :symbol="symbol"
+            @click="emit('symbolClicked', index)" />
         <DeleteButton class="delete-symbol" v-if="symbols && symbols.length > 0" text="Letztes Symbol löschen"
             @click="emit('deleteSymbol')" />
         <AddButton target="symbol" @click="emit('openSymbolEditor')" />
@@ -20,7 +21,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['openSymbolEditor', 'deleteSymbol']);
+const emit = defineEmits(['openSymbolEditor', 'deleteSymbol', 'symbolClicked']);
 </script>
 
 <style>
