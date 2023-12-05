@@ -29,6 +29,7 @@ onMounted(() => {
   if (rootElement.value) {
     rootElement.value.style.setProperty('--slider-thumb-color', props.color);
   }
+  emit('changeValue', sliderValue.value);
 });
 </script>
 

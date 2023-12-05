@@ -10,7 +10,7 @@
         <div class="middle">
           <SymbolComp :symbolWidth=20 :symbol="editSymbol" @click="emit('editSymbolText')" />
           <div class="font-size-title"> Schriftgrösse </div>
-          <ValueSlider :minValue=1 :defaultValue=50 :maxValue=100 @changeValue="(value) => { fontSize = value }" />
+          <ValueSlider :minValue=1 :defaultValue=35 :maxValue=100 @changeValue="(value) => { fontSize = value }" />
         </div>
         <ColorEditor title="Schriftfarbe" :defaultValue=0 @changeColor="setTextColor" />
       </div>
@@ -45,9 +45,9 @@ const editSymbol: ComputedRef<SymbolData> = computed(() => ({
   textColor: textColor.value,
   fontSize: fontSize.value
 }))
-const backgroundColor: Ref<string> = ref('white');
-const textColor: Ref<string> = ref('black');
-const fontSize: Ref<number> = ref(10);
+const backgroundColor: Ref<string> = ref('');
+const textColor: Ref<string> = ref('');
+const fontSize: Ref<number> = ref(0);
 
 function setBackgroundColor(color: string) {
   backgroundColor.value = color;
