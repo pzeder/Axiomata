@@ -7,8 +7,8 @@
 
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
-import TitleBar from './TitleBar.vue'
-import DeleteButton from './DeleteButton.vue';
+import TitleBar from '../TitleBar.vue'
+import DeleteButton from '@/components/editor/DeleteButton.vue';
 import { LevelData } from '@/scripts/Interfaces';
 
 interface Props {

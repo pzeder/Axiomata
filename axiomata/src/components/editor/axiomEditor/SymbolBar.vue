@@ -1,6 +1,3 @@
-
-import SymbolComp from '../axiom/SymbolComp.vue';
-
 <template>
     <div class="symbol-bar">
         <div class="symbol-bar-title"> Verfügbare Symbole </div>
@@ -13,9 +10,9 @@ import SymbolComp from '../axiom/SymbolComp.vue';
 
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
-import SymbolComp from '../axiom/SymbolComp.vue';
-import AddButton from './AddButton.vue';
-import DeleteButton from './DeleteButton.vue';
+import SymbolComp from '@/components/axiom/SymbolComp.vue';
+import AddButton from '../AddButton.vue';
+import DeleteButton from '../DeleteButton.vue';
 import { SymbolData } from '@/scripts/Interfaces';
 
 interface Props {
@@ -46,7 +43,5 @@ const emit = defineEmits(['openSymbolEditor', 'deleteSymbol']);
 
 .delete-symbol {
     margin-top: 1vw;
-    display: grid;
-    place-items: center;
 }
 </style>

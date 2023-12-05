@@ -1,10 +1,8 @@
 <template>
-  <div class="sequence-container"
-    :style="{ width: width + 'vw', height: height + 'vw' }">
+  <div class="sequence-container" :style="{ width: width + 'vw', height: height + 'vw' }">
     <div class="sequence-title" :style="{ width: width + 2 + 'vw', fontSize: (height * 0.15) + 'vw' }"> {{ title }} </div>
-    <SequenceComp :symbolWidth="symbolWidth" :sequence="sequence"
-      :symbols="symbols" :highlights="highlights" :variables="variables" :varColors="varColors"
-      :varMap="varMap" />
+    <SequenceComp :symbolWidth="symbolWidth" :sequence="sequence" :symbols="symbols" :highlights="highlights"
+      :variables="variables" :varMap="varMap" />
   </div>
 </template>
 
@@ -23,7 +21,6 @@ interface Props {
   symbols: SymbolData[] | undefined;
   highlights: boolean[];
   variables: VarData[] | undefined;
-  varColors: string[];
   varMap: Map<string, number>;
 }
 

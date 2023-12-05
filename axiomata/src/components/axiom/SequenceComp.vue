@@ -2,7 +2,7 @@
   <div class="sequence">
     <SymbolComp v-for="(symbol, index) in sequence" :key="index" :symbolWidth="symbolWidth"
       :highlight="(highlights.length === 0) ? false : highlights[index]" :symbol="symbolData(symbol)" :symbols="symbols"
-      :variables="variables" :varColors="varColors" :varMap="varMap" :shiftLeft="index !== 0 && false" />
+      :variables="variables" :varMap="varMap" :shiftLeft="index !== 0 && false" />
   </div>
 </template>
 
@@ -17,7 +17,6 @@ interface Props {
   highlights: boolean[];
   symbols: SymbolData[] | undefined;
   variables: VarData[] | undefined;
-  varColors: string[];
   varMap: Map<string, number>;
 }
 const props = withDefaults(defineProps<Props>(), {

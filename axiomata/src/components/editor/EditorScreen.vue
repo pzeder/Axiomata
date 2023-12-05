@@ -2,7 +2,8 @@
   <TitleBar :title="course?.title" :height=10 @editTitle="editCourseTitle" />
   <EditChapterList v-if="course" :editID="editID" :chapters="course.chapters" @updateChapters="updateChapters"
     @editChapterTitle="editChapterTitle" @editLevelTitle="editLevelTitle" />
-  <AxiomEditor v-if="showAxiomEditor" :symbols="course?.symbols" @openSymbolEditor="openSymbolEditor" @deleteSymbol="deleteSymbol"/>
+  <AxiomEditor v-if="showAxiomEditor" :symbols="course?.symbols" @openSymbolEditor="openSymbolEditor"
+    @deleteSymbol="deleteSymbol" />
   <SymbolEditor v-if="showSymbolEditor" :editID="editID" :text="symbolText" @editSymbolText="editSymbolText"
     @closeSymbolEditor="showSymbolEditor = false" @updateSymbols="updateSymbols" />
   <TextInput v-if="showTextInput" :placeholder="textInputPlaceholder" :target="textInputTarget" @updateText="updateText"
@@ -13,11 +14,11 @@
 import axios from 'axios';
 import { Ref, ref, defineProps, onMounted, ComputedRef, computed } from 'vue';
 import { CourseData, ChapterData, SymbolData } from '@/scripts/Interfaces';
-import EditChapterList from '@/components/editor/EditChapterList.vue';
-import TextInput from '@/components/editor/TextInput.vue';
+import EditChapterList from './chapterEditor/EditChapterList.vue';
+import TextInput from './TextInput.vue';
 import TitleBar from './TitleBar.vue';
-import AxiomEditor from './AxiomEditor.vue'
-import SymbolEditor from './SymbolEditor.vue';
+import AxiomEditor from './axiomEditor/AxiomEditor.vue'
+import SymbolEditor from './symbolEditor/SymbolEditor.vue';
 
 interface Props {
   editID: any;
@@ -102,7 +103,7 @@ async function deleteSymbol(): Promise<void> {
   try {
     const updateData = {
       editID: props.editID,
-      symbolIndex: course.value.symbols.length-1
+      symbolIndex: course.value.symbols.length - 1
     };
     const response = await axios.patch('http://localhost:3000/deleteSymbol', updateData);
     if (response.status === 200) {

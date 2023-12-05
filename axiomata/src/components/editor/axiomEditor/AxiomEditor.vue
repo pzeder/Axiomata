@@ -1,12 +1,15 @@
 <template>
-    <div class="backdrop"/>
+    <div class="backdrop" />
     <div class="axiom-editor-screen">
         <div class="axiom-editor">
-            <div class="sequence-editors"> 
-                <SequenceContainer />   
-                <SequenceContainer /> 
+            <div class="sequence-editors">
+                <SequenceContainer :width=30 :height=20 :maxFill="0.6" :maxSymbolWidthRatio="0.33" :sequence=[]
+                    :symbols="symbols" :variables=[] />
+                <SequenceContainer :width=30 :height=20 :maxFill="0.6" :maxSymbolWidthRatio="0.33" :sequence=[]
+                    :symbols="symbols" :variables=[] />
             </div>
-            <SymbolBar :symbols="symbols" @openSymbolEditor="emit('openSymbolEditor')" @deleteSymbol="emit('deleteSymbol')"/>
+            <SymbolBar :symbols="symbols" @openSymbolEditor="emit('openSymbolEditor')"
+                @deleteSymbol="emit('deleteSymbol')" />
         </div>
     </div>
 </template>
@@ -15,7 +18,7 @@
 import { SymbolData } from '@/scripts/Interfaces';
 import { defineProps, defineEmits } from 'vue';
 import SymbolBar from './SymbolBar.vue'
-import SequenceContainer from '../axiom/SequenceContainer.vue';
+import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 
 interface Props {
     symbols: SymbolData[] | undefined;

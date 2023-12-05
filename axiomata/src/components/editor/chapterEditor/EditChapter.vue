@@ -9,9 +9,9 @@
 
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
-import TitleBar from './TitleBar.vue';
+import TitleBar from '../TitleBar.vue';
 import EditLevelList from './EditLevelList.vue';
-import DeleteButton from './DeleteButton.vue';
+import DeleteButton from '../DeleteButton.vue';
 import { ChapterData } from '@/scripts/Interfaces';
 
 interface Props {

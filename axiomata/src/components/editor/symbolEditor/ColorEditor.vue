@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { ComputedRef, Ref, computed, ref, defineEmits, defineProps } from 'vue';
-import ColorSlider from '@/components/editor/ColorSlider.vue';
+import ColorSlider from './ColorSlider.vue';
 
 interface Props {
   title: string;

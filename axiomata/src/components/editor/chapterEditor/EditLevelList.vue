@@ -10,7 +10,7 @@
 import { LevelData } from '@/scripts/Interfaces';
 import { defineProps, defineEmits } from 'vue';
 import AddButton from '@/components/editor/AddButton.vue'
-import EditLevel from '@/components/editor/EditLevel.vue'
+import EditLevel from './EditLevel.vue'
 
 interface Props {
   levels: LevelData[];

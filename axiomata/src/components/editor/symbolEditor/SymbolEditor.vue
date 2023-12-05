@@ -8,6 +8,7 @@
       <div class="flex-container">
         <ColorEditor title="Hintergrundfarbe" :defaultValue=255 @changeColor="setBackgroundColor" />
         <SymbolComp :symbolWidth=20 :symbol="editSymbol" @click="emit('editSymbolText')" />
+        <FontSizeSlider />
         <ColorEditor title="Textfarbe" :defaultValue=0 @changeColor="setTextColor" />
       </div>
       <div class="button-container">
@@ -23,7 +24,7 @@ import { ChapterData, SymbolData } from '@/scripts/Interfaces';
 import { Ref, ref, defineEmits, defineProps, ComputedRef, computed } from 'vue';
 import ColorEditor from './ColorEditor.vue';
 import axios from 'axios';
-import SymbolComp from '../axiom/SymbolComp.vue';
+import SymbolComp from '@/components/axiom/SymbolComp.vue';
 
 interface Props {
   editID: any
