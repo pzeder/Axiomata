@@ -6,9 +6,11 @@
                 Ausgewählt >>> </div>
             <div class="sequence-editors">
                 <SequenceContainer title="START" :width=30 :height=15 :maxFill="0.6" :maxSymbolWidthRatio="0.33"
-                    :sequence="axiom?.upperSequence" :symbols="symbols" :variables=[] @click="upperSeqSelected = true" />
+                    :sequence="axiom?.upperSequence" :symbols="symbols" :variables=[] @click="upperSeqSelected = true"
+                    @symbolClicked="removeFromUpperSeq" />
                 <SequenceContainer title="ZIEL" :width=30 :height=15 :maxFill="0.6" :maxSymbolWidthRatio="0.33"
-                    :sequence="axiom?.lowerSequence" :symbols="symbols" :variables=[] @click="upperSeqSelected = false" />
+                    :sequence="axiom?.lowerSequence" :symbols="symbols" :variables=[] @click="upperSeqSelected = false"
+                    @symbolClicked="removeFromLowerSeq" />
             </div>
             <SymbolBar :symbols="symbols" @openSymbolEditor="emit('openSymbolEditor')" @deleteSymbol="emit('deleteSymbol')"
                 @symbolClicked="addSymbol" />
@@ -40,6 +42,14 @@ function addSymbol(symbol: SeqSymbol): void {
         axiom.value?.lowerSequence.push(symbol);
     }
     console.log(axiom.value);
+}
+
+function removeFromUpperSeq(index: number): void {
+    axiom.value.upperSequence.splice(index, 1);
+}
+
+function removeFromLowerSeq(index: number): void {
+    axiom.value.lowerSequence.splice(index, 1);
 }
 </script>
 

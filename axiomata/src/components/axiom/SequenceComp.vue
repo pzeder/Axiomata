@@ -2,12 +2,12 @@
   <div class="sequence">
     <SymbolComp v-for="(symbol, index) in sequence" :key="index" :symbolWidth="symbolWidth"
       :highlight="(highlights.length === 0) ? false : highlights[index]" :symbol="symbolData(symbol)" :symbols="symbols"
-      :variables="variables" :varMap="varMap" :shiftLeft="index !== 0 && false" />
+      :variables="variables" :varMap="varMap" :shiftLeft="index !== 0 && false" @click="emit('symbolClicked', index)" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, withDefaults } from "vue";
+import { defineProps, withDefaults, defineEmits } from "vue";
 import SymbolComp from '@/components/axiom/SymbolComp.vue'
 import { SymbolData, VarData, SeqSymbol, SeqVar } from "@/scripts/Interfaces";
 
@@ -23,6 +23,8 @@ const props = withDefaults(defineProps<Props>(), {
   highlights: () => [],
   varMap: () => new Map<string, number>()
 });
+
+const emit = defineEmits(['symbolClicked']);
 
 function symbolData(symbol: SeqSymbol): SymbolData | null {
   if (!props.symbols || !props.variables) {

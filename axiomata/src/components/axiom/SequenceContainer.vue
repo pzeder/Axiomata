@@ -2,12 +2,12 @@
   <div class="sequence-container" :style="{ width: width + 'vw', height: height + 'vw' }">
     <div class="sequence-title" :style="{ width: width + 2 + 'vw', fontSize: (height * 0.15) + 'vw' }"> {{ title }} </div>
     <SequenceComp :symbolWidth="symbolWidth" :sequence="sequence" :symbols="symbols" :highlights="highlights"
-      :variables="variables" :varMap="varMap" />
+      :variables="variables" :varMap="varMap" @symbolClicked="(index) => emit('symbolClicked', index)" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, withDefaults } from 'vue';
+import { computed, defineProps, withDefaults, defineEmits } from 'vue';
 import { SeqSymbol, SymbolData, VarData } from '@/scripts/Interfaces';
 import SequenceComp from '@/components/axiom/SequenceComp.vue';
 
@@ -29,6 +29,8 @@ const props = withDefaults(defineProps<Props>(), {
   highlights: () => [],
   varMap: () => new Map<string, number>()
 });
+
+const emit = defineEmits(['symbolClicked']);
 
 const symbolWidth = computed(() => {
   if (!props.sequence) {
