@@ -1,6 +1,6 @@
 <template>
     <div class="symbol-bar">
-        <div class="symbol-bar-title"> Verfügbare Symbole </div>
+        <div class="symbol-bar-title"> Symbole </div>
         <SymbolComp v-for="(symbol, index) in symbols" :key="index" :symbolWidth=3 :symbol="symbol"
             @click="emit('symbolClicked', index)" />
         <DeleteButton class="delete-symbol" v-if="symbols && symbols.length > 0" text="Letztes Symbol löschen"

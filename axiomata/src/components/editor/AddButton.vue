@@ -1,5 +1,6 @@
 <template>
-  <div class="add-button-container" :style="{ width: (target === 'chapter' ? 100 : (target === 'level' ? 60 : 30)) + 'vw' }">
+  <div class="add-button-container"
+    :style="{ width: (target === 'chapter' ? 100 : (target === 'level' ? 60 : 30)) + 'vw' }">
     <div class="add-new-button" :style="{ background: color }"> {{ text }} </div>
   </div>
 </template>
@@ -19,7 +20,7 @@ const text: ComputedRef<string> = computed(() => {
     case 'level':
       return "Neues Level hinzufügen";
     case 'symbol':
-      return "Neues Symbol hinzufügen"
+      return "Neues Symbol erstellen"
     default:
       return "ERROR: faulty target";
   }
