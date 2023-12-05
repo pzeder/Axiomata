@@ -2,11 +2,12 @@
 import SymbolComp from '../axiom/SymbolComp.vue';
 
 <template>
-    <div class="symbol-bar"> 
+    <div class="symbol-bar">
         <div class="symbol-bar-title"> Verfügbare Symbole </div>
-        <SymbolComp :symbolWidth=3 :symbol="index" :symbols="symbols" v-for="(symbol, index) in symbols" :key="index"/>
-        <AddButton target="symbol" @click="emit('openSymbolEditor')"/>
-        <DeleteButton text="Letzes Symbol löschen" @click="emit('deleteSymbol')"/>
+        <SymbolComp v-for="(symbol, index) in symbols" :key="index" :symbolWidth=3 :symbol="symbol" />
+        <DeleteButton class="delete-symbol" v-if="symbols && symbols.length > 0" text="Letzes Symbol löschen"
+            @click="emit('deleteSymbol')" />
+        <AddButton target="symbol" @click="emit('openSymbolEditor')" />
     </div>
 </template>
 
@@ -41,5 +42,11 @@ const emit = defineEmits(['openSymbolEditor', 'deleteSymbol']);
 .symbol-bar-title {
     font-size: 2vw;
     color: white;
+}
+
+.delete-symbol {
+    margin-top: 1vw;
+    display: grid;
+    place-items: center;
 }
 </style>

@@ -7,10 +7,7 @@
       </div>
       <div class="flex-container">
         <ColorEditor title="Hintergrundfarbe" :defaultValue=255 @changeColor="setBackgroundColor" />
-        <div class="edit-symbol" :style="{ background: backgroundColor, color: textColor }"
-          @click="emit('editSymbolText')">
-          {{ text }}
-        </div>
+        <SymbolComp :symbolWidth=20 :symbol="editSymbol" @click="emit('editSymbolText')" />
         <ColorEditor title="Textfarbe" :defaultValue=0 @changeColor="setTextColor" />
       </div>
       <div class="button-container">
@@ -23,9 +20,10 @@
 
 <script setup lang="ts">
 import { ChapterData, SymbolData } from '@/scripts/Interfaces';
-import { Ref, ref, defineEmits, defineProps } from 'vue';
+import { Ref, ref, defineEmits, defineProps, ComputedRef, computed } from 'vue';
 import ColorEditor from './ColorEditor.vue';
 import axios from 'axios';
+import SymbolComp from '../axiom/SymbolComp.vue';
 
 interface Props {
   editID: any
@@ -36,6 +34,11 @@ const props = defineProps<Props>();
 
 const emit = defineEmits(['editSymbolText', 'closeSymbolEditor', 'updateSymbols']);
 
+const editSymbol: ComputedRef<SymbolData> = computed(() => ({
+  backgroundColor: backgroundColor.value,
+  text: props.text,
+  textColor: textColor.value
+}))
 const backgroundColor: Ref<string> = ref('white');
 const textColor: Ref<string> = ref('black');
 
@@ -114,17 +117,6 @@ async function addNewSymbol(): Promise<void> {
   justify-content: center;
   background-color: rgb(192, 191, 191);
   border-radius: 20vw;
-}
-
-.edit-symbol {
-  width: 20vw;
-  height: 20vw;
-  border: 1vw solid black;
-  border-radius: 5vw;
-  display: grid;
-  place-items: center;
-  font-size: 10vh;
-  user-select: none;
 }
 
 .button-container {

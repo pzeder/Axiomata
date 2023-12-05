@@ -13,23 +13,17 @@
 </template>
 
 <script setup lang="ts">
-import { SeqSymbol, SeqVar, SymbolData, VarData } from "@/scripts/Interfaces";
+import { SymbolData } from "@/scripts/Interfaces";
 import { ComputedRef, computed, defineProps, withDefaults } from "vue";
 
 interface Props {
   symbolWidth: number;
   highlight: boolean;
   symbol: SymbolData | null;
-  variables: VarData[] | undefined;
-  varColors: string[];
-  varMap: Map<string, number>;
   shiftLeft: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   highlight: () => false,
-  variables: () => [],
-  varColors: () => [],
-  varMap: () => new Map<string, number>(),
   shiftLeft: () => false
 });
 
