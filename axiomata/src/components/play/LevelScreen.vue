@@ -1,46 +1,40 @@
 <template>
-    <div class="screen-container">
-      <HeadBar :levelTitle="level?.title" :height="headBarHeight" @openLevelMenu="emit('openChapterScreen')" />
-      <div :style="{ display: 'flex'}">
-        <AxiomBar :title="'Tausch-Regeln'" :background="'rgb(252, 223, 203)'"
-          :width="axiomBarWidth" :height="axiomBarHeight" :axioms="axioms"
-          :symbols="symbols" :variables="variables" :varColors="varColors"
-          @selectAxiom="selectAxiom" />
-        <div class="right-side"> 
-          <div :style="{ display: 'flex' }">
-            <div :style="{ marginTop: -1 + 'vw'}">
-              <SequenceContainer :width="workbenchWidth"
-              :height="workbenchHeight" :maxFill="workbenchMaxFill" :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio"
-              :sequence="workSequence" :symbols="symbols"
+  <div class="screen-container">
+    <HeadBar :levelTitle="level?.title" :height="headBarHeight" @openLevelMenu="emit('openChapterScreen')" />
+    <div :style="{ display: 'flex' }">
+      <AxiomBar :title="'Tausch-Regeln'" :background="'rgb(252, 223, 203)'" :width="axiomBarWidth"
+        :height="axiomBarHeight" :axioms="axioms" :symbols="symbols" :variables="variables" :varColors="varColors"
+        @selectAxiom="selectAxiom" />
+      <div class="right-side">
+        <div :style="{ display: 'flex' }">
+          <div :style="{ marginTop: -1 + 'vw' }">
+            <SequenceContainer :width="workbenchWidth" :height="workbenchHeight" :maxFill="workbenchMaxFill"
+              :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio" :sequence="workSequence" :symbols="symbols"
               :variables="variables" :varColors="varColors" :highlights="workHighlights" />
-            </div>
-            <div :style="{ display: 'grid', placeItems: 'center', width: goalContainerWidth + 'vw'}">
-              <SequenceContainer class="goal-window" :title="'START'" :width="goalWidth"
-                :height="goalWidth" :maxFill="0.6" :maxSymbolWidthRatio="0.33" 
-                :sequence="level?.goalAxiom.upperSequence" :variables="variables" :varColors="varColors"
-                :symbols="symbols" />
-              <SequenceContainer class="goal-window" :title="'ZIEL'" :width="goalWidth"
-                :height="goalWidth" :maxFill="0.6" :maxSymbolWidthRatio="0.33"
-                :sequence="level?.goalAxiom.lowerSequence" :variables="variables" :varColors="varColors"
-                :symbols="symbols" />
-            </div>
           </div>
-          <AxiomBar :title="'Bonus-Regeln'" :background="'rgb(187, 231, 247)'"
-            :width="derivateBarWidth" :height="derivateBarHeight" :axioms="derivates"
-            :variables="variables" :varColors="varColors" :symbols="symbols"
-            @selectAxiom="selectAxiom" />
+          <div :style="{ display: 'grid', placeItems: 'center', width: goalContainerWidth + 'vw' }">
+            <SequenceContainer class="goal-window" :title="'START'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
+              :maxSymbolWidthRatio="0.33" :sequence="level?.goalAxiom.upperSequence" :variables="variables"
+              :varColors="varColors" :symbols="symbols" />
+            <SequenceContainer class="goal-window" :title="'ZIEL'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
+              :maxSymbolWidthRatio="0.33" :sequence="level?.goalAxiom.lowerSequence" :variables="variables"
+              :varColors="varColors" :symbols="symbols" />
+          </div>
         </div>
+        <AxiomBar :title="'Bonus-Regeln'" :background="'rgb(187, 231, 247)'" :width="derivateBarWidth"
+          :height="derivateBarHeight" :axioms="derivates" :variables="variables" :varColors="varColors" :symbols="symbols"
+          @selectAxiom="selectAxiom" />
       </div>
     </div>
-    <Cursor :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="workSymbolWidth"
-      :symbols="symbols" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
-      :centerDirectionY="centerDirectionY" :workMatch="workMatch"
-      :variables="variables" :varColors="varColors" :varMap="varMap" @axiomDrop="axiomDrop"
-      @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
-    <div v-if="goalMatch" @click="emit('finishLevel')"
-      :style="{ position: 'absolute', userSelect: 'none', color: 'red', left: 90 + 'vw', top: 58 + 'vh', width: (goalWidth) + 'vw', height: (goalWidth ) + 'vw', fontSize: 1 + 'vw' }">
-      Geschafft!
-    </div>
+  </div>
+  <Cursor :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="workSymbolWidth"
+    :symbols="symbols" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
+    :aboveCenter="cursorAboveCenter" :workMatch="workMatch" :variables="variables" :varColors="varColors" :varMap="varMap"
+    @axiomDrop="axiomDrop" @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
+  <div v-if="goalMatch" @click="emit('finishLevel')"
+    :style="{ position: 'absolute', userSelect: 'none', color: 'red', left: 90 + 'vw', top: 58 + 'vh', width: (goalWidth) + 'vw', height: (goalWidth) + 'vw', fontSize: 1 + 'vw' }">
+    Geschafft!
+  </div>
 </template>
 
 <script setup lang=ts>
@@ -100,20 +94,18 @@ const goalMatch: ComputedRef<boolean> = computed(() => {
   return true;
 });
 
-// Cursor variables
-const cursorAxiom: Ref<AxiomData> = ref({ upperSequence: [], lowerSequence: [] });
-const cursorAxiomX: Ref<number> = ref(0);
-const cursorAxiomY: Ref<number> = ref(0);
-const dragging: Ref<boolean> = ref(false);
-
 // Workbench variables
 const dockIndex: Ref<number> = ref(0);
 const workHighlights: Ref<boolean[]> = ref([]);
 
 // Cursor variables
+const cursorAxiom: Ref<AxiomData> = ref({ upperSequence: [], lowerSequence: [] });
+const cursorAxiomX: Ref<number> = ref(0);
+const cursorAxiomY: Ref<number> = ref(0);
+const dragging: Ref<boolean> = ref(false);
 const upperHighlights: Ref<boolean[]> = ref([]);
 const lowerHighlights: Ref<boolean[]> = ref([]);
-const centerDirectionY: Ref<number> = ref(0);
+const cursorAboveCenter: Ref<boolean> = ref(false);
 let nearSequence: SeqSymbol[];
 let farSequence: SeqSymbol[];
 let nearHighlights: Ref<boolean[]>;
@@ -217,7 +209,7 @@ function dockCursorAxiom(): void {
     nearSequence = cursorAxiom.value.lowerSequence;
     farSequence = cursorAxiom.value.upperSequence;
     nearHighlights = lowerHighlights;
-    centerDirectionY.value = 1;
+    cursorAboveCenter.value = true;
   } else {
     // Lower half
     axiomOffset = (lowerLength <= upperLength) ? 0 : ((lowerLength - upperLength) * 0.5 * workSymbolWidth.value);
@@ -225,7 +217,7 @@ function dockCursorAxiom(): void {
     nearSequence = cursorAxiom.value.upperSequence;
     farSequence = cursorAxiom.value.lowerSequence;
     nearHighlights = upperHighlights;
-    centerDirectionY.value = -1;
+    cursorAboveCenter.value = false;
   }
 
   dockIndex.value = Math.round((vx + axiomOffset - workSequenceX) / workSymbolWidth.value);
