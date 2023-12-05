@@ -3,9 +3,9 @@
     <div class="axiom-editor-screen">
         <div class="axiom-editor">
             <div class="sequence-editors">
-                <SequenceContainer :width=30 :height=20 :maxFill="0.6" :maxSymbolWidthRatio="0.33" :sequence=[]
-                    :symbols="symbols" :variables=[] />
-                <SequenceContainer :width=30 :height=20 :maxFill="0.6" :maxSymbolWidthRatio="0.33" :sequence=[]
+                <SequenceContainer title="START" :width=30 :height=20 :maxFill="0.6" :maxSymbolWidthRatio="0.33"
+                    :sequence=[] :symbols="symbols" :variables=[] />
+                <SequenceContainer title="ZIEL" :width=30 :height=20 :maxFill="0.6" :maxSymbolWidthRatio="0.33" :sequence=[]
                     :symbols="symbols" :variables=[] />
             </div>
             <SymbolBar :symbols="symbols" @openSymbolEditor="emit('openSymbolEditor')"

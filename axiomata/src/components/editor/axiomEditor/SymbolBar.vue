@@ -2,7 +2,7 @@
     <div class="symbol-bar">
         <div class="symbol-bar-title"> Verfügbare Symbole </div>
         <SymbolComp v-for="(symbol, index) in symbols" :key="index" :symbolWidth=3 :symbol="symbol" />
-        <DeleteButton class="delete-symbol" v-if="symbols && symbols.length > 0" text="Letzes Symbol löschen"
+        <DeleteButton class="delete-symbol" v-if="symbols && symbols.length > 0" text="Letztes Symbol löschen"
             @click="emit('deleteSymbol')" />
         <AddButton target="symbol" @click="emit('openSymbolEditor')" />
     </div>
