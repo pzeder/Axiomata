@@ -10,7 +10,7 @@
         <div class="middle">
           <SymbolComp :symbolWidth=20 :symbol="editSymbol" @click="emit('editSymbolText')" />
           <div class="font-size-title"> Schriftgrösse </div>
-          <ValueSlider :defaultValue="50" :maxValue=100 />
+          <ValueSlider :minValue=1 :defaultValue=50 :maxValue=100 @changeValue="(value) => { fontSize = value }" />
         </div>
         <ColorEditor title="Schriftfarbe" :defaultValue=0 @changeColor="setTextColor" />
       </div>
@@ -42,10 +42,12 @@ const emit = defineEmits(['editSymbolText', 'closeSymbolEditor', 'updateSymbols'
 const editSymbol: ComputedRef<SymbolData> = computed(() => ({
   backgroundColor: backgroundColor.value,
   text: props.text,
-  textColor: textColor.value
+  textColor: textColor.value,
+  fontSize: fontSize.value
 }))
 const backgroundColor: Ref<string> = ref('white');
 const textColor: Ref<string> = ref('black');
+const fontSize: Ref<number> = ref(10);
 
 function setBackgroundColor(color: string) {
   backgroundColor.value = color;
@@ -57,14 +59,9 @@ function setTextColor(color: string) {
 
 async function addNewSymbol(): Promise<void> {
   try {
-    const newSymbol: SymbolData = {
-      backgroundColor: backgroundColor.value,
-      text: props.text,
-      textColor: textColor.value
-    }
     const updateData = {
       editID: props.editID,
-      newSymbol: newSymbol
+      newSymbol: editSymbol.value
     }
     const response = await axios.post('http://localhost:3000/addNewSymbol', updateData);
     if (response.status === 200) {

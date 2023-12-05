@@ -7,6 +7,7 @@ export interface SymbolData {
     backgroundColor: string;
     text: string;
     textColor: string;
+    fontSize: number;
 }
 
 export interface SeqVar {
@@ -42,6 +43,6 @@ export interface LevelData {
 export interface LevelPointer {
     chapterIndex: number;
     levelIndex: number
-  }
+}
 
 export type SeqSymbol = number | SeqVar;

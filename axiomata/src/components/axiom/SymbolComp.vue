@@ -8,7 +8,7 @@
     borderWidth: (symbolWidth * 0.077) + 'vw',
     borderRadius: (symbolWidth * 0.2) + 'vw',
     marginLeft: (shiftLeft ? -symbolWidth * 0.077 : 0) + 'vw',
-    fontSize: (symbolWidth * 0.5) + 'vw'
+    fontSize: (symbol.fontSize / 100 * symbolWidth) + 'vw'
   }"> {{ symbol.text }} </div>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
   <div ref="rootElement" class="slider-container">
-    <input type="range" min="0" :max="maxValue" v-model="sliderValue" class="slider" id="myRange"
+    <input type="range" :min="minValue" :max="maxValue" v-model="sliderValue" class="slider" id="myRange"
       @mousemove="emit('changeValue', sliderValue)" @mouseup="emit('changeValue', sliderValue)">
     <div> {{ sliderValue }} </div>
   </div>
@@ -12,13 +12,15 @@ import { Ref, ref, defineEmits, defineProps, onMounted, withDefaults } from 'vue
 
 interface Props {
   color: string;
+  minValue: number;
   maxValue: number;
   defaultValue: number;
 }
 
 const rootElement: Ref<HTMLElement | null> = ref(null);
 const props = withDefaults(defineProps<Props>(), {
-  color: 'black'
+  color: () => 'black',
+  minValue: () => 0
 });
 const emit = defineEmits(['changeValue']);
 const sliderValue = ref(props.defaultValue);
