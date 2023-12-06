@@ -17,14 +17,14 @@
         </div>
         <div class="button-container">
             <div class="axiom-cancel-button" @click="emit('closeAxiomEditor')"> Abbrechen </div>
-            <div class="axiom-save-button" @click="emit('saveLevel')"> Speichern </div>
+            <div v-if="axiomValid" class="axiom-save-button" @click="emit('saveLevel')"> Speichern </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { AxiomData, LevelData, SeqSymbol, SymbolData } from '@/scripts/Interfaces';
-import { defineProps, defineEmits, Ref, ref } from 'vue';
+import { defineProps, defineEmits, Ref, ref, ComputedRef, computed } from 'vue';
 import SymbolBar from './SymbolBar.vue'
 import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 
@@ -42,6 +42,10 @@ const axiom: Ref<AxiomData> = ref({
     upperSequence: props.level ? [...props.level.goalAxiom.upperSequence] : [],
     lowerSequence: props.level ? [...props.level.goalAxiom.lowerSequence] : []
 });
+
+const axiomValid: ComputedRef<boolean> = computed(() =>
+    axiom.value.upperSequence.length !== 0 && axiom.value.lowerSequence.length !== 0
+);
 
 function addSymbol(symbol: SeqSymbol): void {
     if (upperSeqSelected.value) {
