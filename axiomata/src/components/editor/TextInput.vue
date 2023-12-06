@@ -41,7 +41,7 @@ const textInput: Ref<string> = ref('');
   width: 100%;
   height: 100%;
   background-color: black;
-  opacity: 20%;
+  opacity: 60%;
 }
 
 .text-input-window {
