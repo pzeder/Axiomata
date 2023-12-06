@@ -5,10 +5,10 @@
             <div :style="{ marginTop: (upperSeqSelected ? -15 : 15) + 'vw', color: 'orange', fontSize: 2 + 'vw' }">
                 Ausgewählt >>> </div>
             <div class="sequence-editors">
-                <SequenceContainer title="START" :width=30 :height=15 :maxFill="0.6" :maxSymbolWidthRatio="0.33"
+                <SequenceContainer title="START" :width=30 :height=15 :maxFill="0.6" :maxSymbolWidthRatio="0.2"
                     :sequence="axiom?.upperSequence" :symbols="symbols" :variables=[] @click="upperSeqSelected = true"
                     @symbolClicked="removeFromUpperSeq" />
-                <SequenceContainer title="ZIEL" :width=30 :height=15 :maxFill="0.6" :maxSymbolWidthRatio="0.33"
+                <SequenceContainer title="ZIEL" :width=30 :height=15 :maxFill="0.6" :maxSymbolWidthRatio="0.2"
                     :sequence="axiom?.lowerSequence" :symbols="symbols" :variables=[] @click="upperSeqSelected = false"
                     @symbolClicked="removeFromLowerSeq" />
             </div>
