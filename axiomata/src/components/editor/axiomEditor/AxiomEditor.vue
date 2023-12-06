@@ -17,7 +17,7 @@
         </div>
         <div class="button-container">
             <div class="axiom-cancel-button" @click="emit('closeAxiomEditor')"> Abbrechen </div>
-            <div v-if="axiomValid" class="axiom-save-button" @click="emit('saveAxiom', axiom)"> Speichern </div>
+            <div v-if="axiomValid(axiom)" class="axiom-save-button" @click="emit('saveAxiom', axiom)"> Speichern </div>
         </div>
     </div>
 </template>
@@ -27,6 +27,7 @@ import { AxiomData, LevelData, SeqSymbol, SymbolData } from '@/scripts/Interface
 import { defineProps, defineEmits, Ref, ref, ComputedRef, computed } from 'vue';
 import SymbolBar from './SymbolBar.vue'
 import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
+import { axiomValid } from '@/scripts/AxiomMethods';
 
 interface Props {
     editID: any;
@@ -35,17 +36,13 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['updateSymbols', 'saveLevel', 'closeAxiomEditor']);
+const emit = defineEmits(['updateSymbols', 'saveLevel', 'closeAxiomEditor', 'saveAxiom']);
 
 const upperSeqSelected: Ref<boolean> = ref(true);
 const axiom: Ref<AxiomData> = ref({
     upperSequence: props.level ? [...props.level.goalAxiom.upperSequence] : [],
     lowerSequence: props.level ? [...props.level.goalAxiom.lowerSequence] : []
 });
-
-const axiomValid: ComputedRef<boolean> = computed(() =>
-    axiom.value.upperSequence.length !== 0 && axiom.value.lowerSequence.length !== 0
-);
 
 function addSymbol(symbol: SeqSymbol): void {
     if (upperSeqSelected.value) {

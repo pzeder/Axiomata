@@ -1,8 +1,8 @@
 <template>
   <div class="edit-level">
     <div :style="{ display: 'flex', alignItems: 'center' }">
-      <AxiomContainer :width="20" :height="20" :axiom="level.goalAxiom" :symbols="symbols" :variables="[]" :varColors="[]"
-        @click="emit('editGoalAxiom')" />
+      <AxiomContainer v-if="axiomValid(level.goalAxiom)" :width="20" :height="20" :axiom="level.goalAxiom"
+        :symbols="symbols" :variables="[]" :varColors="[]" @click="emit('editGoalAxiom')" />
       <TitleBar :title="level.title" :height=5 @editTitle="emit('editLevelTitle')" />
     </div>
     <DeleteButton text="Level löschen" @click="emit('deleteLevel')" />
@@ -15,6 +15,7 @@ import TitleBar from '../TitleBar.vue'
 import AxiomContainer from '@/components/axiom/AxiomContainer.vue';
 import DeleteButton from '@/components/editor/DeleteButton.vue';
 import { LevelData, SymbolData } from '@/scripts/Interfaces';
+import { axiomValid } from '@/scripts/AxiomMethods';
 
 interface Props {
   level: LevelData;
