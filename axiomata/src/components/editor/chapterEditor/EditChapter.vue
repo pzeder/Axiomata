@@ -4,7 +4,7 @@
     <div :style="{ display: 'flex' }">
       <AxiomBar title="Neue Tauschregeln in diesem Kapitel" background="white" :width="50" :height="20"
         :axioms="chapter.newAxioms" :symbols="symbols" :variables="[]" :varColors="[]" />
-      <div class="add-axiom-button"> Tauschregel hinzufügen </div>
+      <div class="add-axiom-button" @click="emit('editNewAxiom')"> Tauschregel hinzufügen </div>
     </div>
     <EditLevelList :editID="editID" :chapterIndex="chapterIndex" :levels="chapter.levels" :symbols="symbols"
       @updateChapters="(updatedChapters) => emit('updateChapters', updatedChapters)"
@@ -29,7 +29,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'updateChapters', 'updateSymbols']);
+const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'updateChapters', 'updateSymbols', 'editNewAxiom']);
 </script>
 
 <style>

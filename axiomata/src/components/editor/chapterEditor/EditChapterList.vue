@@ -4,23 +4,25 @@
     <EditChapter :editID="editID" :chapterIndex="index" :chapter="chapter" :symbols="course.symbols"
       @editChapterTitle="editChapterTitle(index)" @deleteChapter="deleteChapter(index)"
       @updateChapters="(updatedChapters) => emit('updateChapters', updatedChapters)"
-      @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" />
+      @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" @editNewAxiom="editNewAxiom(index)" />
   </div>
   <AddButton target="chapter" @click="addNewChapter(course.chapters.length)" />
-  <AxiomEditor v-if="showAxiomEditor" :editID="editID" :level="editLevel" :symbols="course?.symbols"
-    @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" />
+  <AxiomEditor v-if="showAxiomEditor" :editID="editID" :symbols="course?.symbols"
+    @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" @closeAxiomEditor="showAxiomEditor = false"
+    @saveAxiom="addNewAxiom" />
   <TextInput v-if="showTextInput" title="Titel des Kapitels ändern" :placeholder="editChapter?.title"
     @updateText="updateChapterTitle" @click="showTextInput = false" />
 </template>
 
 <script setup lang="ts">
 import { defineProps, defineEmits, Ref, ref, ComputedRef, computed } from 'vue';
-import { ChapterData, CourseData, LevelData, LevelPointer } from '@/scripts/Interfaces';
+import { AxiomData, ChapterData, CourseData } from '@/scripts/Interfaces';
 import axios from 'axios';
 import EditChapter from './EditChapter.vue';
 import AddButton from '@/components/editor/AddButton.vue';
 import AxiomEditor from '../axiomEditor/AxiomEditor.vue';
 import TextInput from '../TextInput.vue';
+import CourseScreen from '@/components/play/CourseScreen.vue';
 
 interface Props {
   editID: any;
@@ -32,23 +34,12 @@ const emit = defineEmits(['updateChapters', 'updateSymbols']);
 
 const showAxiomEditor: Ref<boolean> = ref(false);
 const showTextInput: Ref<boolean> = ref(false);
-const editLevelPointer: Ref<LevelPointer> = ref({
-  chapterIndex: -1,
-  levelIndex: -1
-});
+const editChapterIndex: Ref<number> = ref(-1);
 const editChapter: ComputedRef<ChapterData | null> = computed(() => {
-  const chapterIndex: number = editLevelPointer.value.chapterIndex;
-  if (chapterIndex === -1) {
+  if (editChapterIndex.value === -1) {
     return null;
   }
-  return props.course.chapters[chapterIndex];
-});
-const editLevel: ComputedRef<LevelData | null> = computed(() => {
-  const levelIndex: number = editLevelPointer.value.levelIndex;
-  if (!editChapter.value || levelIndex === -1) {
-    return null;
-  }
-  return editChapter.value.levels[levelIndex];
+  return props.course.chapters[editChapterIndex.value];
 });
 
 async function addNewChapter(position: number): Promise<void> {
@@ -98,7 +89,7 @@ async function updateChapterTitle(text: string): Promise<void> {
     const updateData = {
       editID: props.editID,
       text: text,
-      chapterIndex: editLevelPointer.value.chapterIndex
+      chapterIndex: editChapterIndex.value
     };
     const response = await axios.patch('http://localhost:3000/chapterTitle', updateData);
     if (response.status === 200) {
@@ -112,14 +103,34 @@ async function updateChapterTitle(text: string): Promise<void> {
   }
 }
 
+async function addNewAxiom(axiom: AxiomData): Promise<void> {
+  showAxiomEditor.value = false;
+  try {
+    const updateData = {
+      editID: props.editID,
+      chapterIndex: editChapterIndex.value,
+      axiom: axiom
+    }
+    const response = await axios.post('http://localhost:3000/addNewAxiom', updateData);
+    if (response.status === 200) {
+      const updatedChapters: ChapterData[] = response.data.chapters;
+      emit('updateChapters', updatedChapters);
+      console.log('New axiom added successfully:', response.data);
+    } else {
+      console.error('Server responded with status:', response.status);
+    }
+  } catch (error) {
+    console.error('Error adding new chapter:', error);
+  }
+}
+
 function editChapterTitle(index: number): void {
-  editLevelPointer.value.chapterIndex = index;
+  editChapterIndex.value = index;
   showTextInput.value = true;
 }
 
-function editGoalAxiom(chapterIndex: number, levelIndex: number): void {
-  editLevelPointer.value.chapterIndex = chapterIndex;
-  editLevelPointer.value.levelIndex = levelIndex;
+function editNewAxiom(index: number): void {
+  editChapterIndex.value = index;
   showAxiomEditor.value = true;
 }
 </script>

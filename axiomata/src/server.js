@@ -271,6 +271,24 @@ app.post('/addNewSymbol', async (req, res) => {
   }
 });
 
+app.post('/addNewAxiom', async (req, res) => {
+  try {
+    const { editID, chapterIndex, axiom } = req.body;
+    const filter = ({ _id: new ObjectId(editID) });
+    const addAxiom = {
+      $push: { [`chapters.${chapterIndex}.newAxioms`]: axiom }
+    };
+    result = await db.collection('Edits').updateOne(filter, addAxiom);
+    if (result.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to update status' });
+    }
+    const edit = await db.collection('Edits').findOne(filter);
+    res.json({ chapters: edit.chapters });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.patch('/deleteChapter', async (req, res) => {
   try {
     const { editID, chapterIndex } = req.body;

@@ -23,25 +23,27 @@
 </template>
 
 <script setup lang="ts">
-import { AxiomData, LevelData, SeqSymbol, SymbolData } from '@/scripts/Interfaces';
-import { defineProps, defineEmits, Ref, ref, ComputedRef, computed } from 'vue';
+import { AxiomData, SeqSymbol, SymbolData } from '@/scripts/Interfaces';
+import { defineProps, defineEmits, Ref, ref, withDefaults } from 'vue';
 import SymbolBar from './SymbolBar.vue'
 import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import { axiomValid } from '@/scripts/AxiomMethods';
 
 interface Props {
     editID: any;
-    level: LevelData | null;
+    axiom: AxiomData | undefined;
     symbols: SymbolData[] | undefined;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+    axiom: () => ({ upperSequence: [], lowerSequence: [] })
+});
 const emit = defineEmits(['updateSymbols', 'saveLevel', 'closeAxiomEditor', 'saveAxiom']);
 
 const upperSeqSelected: Ref<boolean> = ref(true);
 const axiom: Ref<AxiomData> = ref({
-    upperSequence: props.level ? [...props.level.goalAxiom.upperSequence] : [],
-    lowerSequence: props.level ? [...props.level.goalAxiom.lowerSequence] : []
+    upperSequence: props.axiom ? [...props.axiom.upperSequence] : [],
+    lowerSequence: props.axiom ? [...props.axiom.lowerSequence] : []
 });
 
 function addSymbol(symbol: SeqSymbol): void {
@@ -100,6 +102,7 @@ function removeFromLowerSeq(index: number): void {
     font-size: 2vw;
     padding: 3vw;
     background: rgb(230, 33, 3);
+    user-select: none;
 }
 
 .axiom-save-button {
@@ -110,5 +113,6 @@ function removeFromLowerSeq(index: number): void {
     font-size: 2vw;
     padding: 3vw;
     background: green;
+    user-select: none;
 }
 </style>
