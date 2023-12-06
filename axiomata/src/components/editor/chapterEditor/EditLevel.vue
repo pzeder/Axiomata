@@ -1,8 +1,10 @@
 <template>
   <div class="edit-level">
-    <TitleBar :title="level.title" :height=5 @editTitle="emit('editLevelTitle')" />
-    <AxiomContainer :width="10" :height="10" :axiom="level.goalAxiom" :symbols="symbols" :variables="[]" :varColors="[]"
-      @click="emit('editGoalAxiom')" />
+    <div :style="{ display: 'flex', alignItems: 'center' }">
+      <AxiomContainer :width="20" :height="20" :axiom="level.goalAxiom" :symbols="symbols" :variables="[]" :varColors="[]"
+        @click="emit('editGoalAxiom')" />
+      <TitleBar :title="level.title" :height=5 @editTitle="emit('editLevelTitle')" />
+    </div>
     <DeleteButton text="Level löschen" @click="emit('deleteLevel')" />
   </div>
 </template>

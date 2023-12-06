@@ -17,7 +17,7 @@
         </div>
         <div class="button-container">
             <div class="axiom-cancel-button" @click="emit('closeAxiomEditor')"> Abbrechen </div>
-            <div v-if="axiomValid" class="axiom-save-button" @click="emit('saveLevel')"> Speichern </div>
+            <div v-if="axiomValid" class="axiom-save-button" @click="emit('saveAxiom', axiom)"> Speichern </div>
         </div>
     </div>
 </template>

@@ -403,3 +403,21 @@ app.patch('/levelTitle', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+app.patch('/goalAxiom', async (req, res) => {
+  try {
+    const { editID, goalAxiom, chapterIndex, levelIndex } = req.body;
+    const filter = ({ _id: new ObjectId(editID) });
+    const updateGoalAxiom = { $set: { [`chapters.${chapterIndex}.levels.${levelIndex}.goalAxiom`]: goalAxiom } };
+    const patch = await db.collection('Edits').updateOne(filter, updateGoalAxiom);
+
+    if (patch.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to update status' });
+    }
+
+    const course = await db.collection('Edits').findOne(filter);
+    res.json({ chapters: course.chapters });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});

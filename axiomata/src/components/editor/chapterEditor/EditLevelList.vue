@@ -6,14 +6,14 @@
   </div>
   <AddButton target="level" @click="addNewLevel(levels.length)" />
   <AxiomEditor v-if="showAxiomEditor" :editID="editID" :level="editLevel" :symbols="symbols"
-    @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)"
-    @closeAxiomEditor="showAxiomEditor = false" />
+    @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" @closeAxiomEditor="showAxiomEditor = false"
+    @saveAxiom="updateGoalAxiom" />
   <TextInput v-if="showTextInput" title="Titel des Levels ändern" :placeholder="editLevel?.title"
     @updateText="updateLevelTitle" @click="showTextInput = false" />
 </template>
 
 <script setup lang="ts">
-import { ChapterData, LevelData, SymbolData } from '@/scripts/Interfaces';
+import { AxiomData, ChapterData, LevelData, SymbolData } from '@/scripts/Interfaces';
 import { defineProps, defineEmits, Ref, ref, ComputedRef, computed } from 'vue';
 import AddButton from '@/components/editor/AddButton.vue'
 import EditLevel from './EditLevel.vue'
@@ -104,6 +104,29 @@ async function updateLevelTitle(text: string): Promise<void> {
     console.error('Error fetching data:', error);
   }
 }
+
+async function updateGoalAxiom(goalAxiom: AxiomData): Promise<void> {
+  showAxiomEditor.value = false;
+  try {
+    const updateData = {
+      editID: props.editID,
+      goalAxiom: goalAxiom,
+      chapterIndex: props.chapterIndex,
+      levelIndex: editLevelIndex.value
+    };
+    const response = await axios.patch('http://localhost:3000/goalAxiom', updateData);
+    if (response.status === 200) {
+      const updatedChapters: ChapterData[] = response.data.chapters;
+      emit('updateChapters', updatedChapters);
+    } else {
+      console.error('Server responded with status', response.status);
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
+
+
 
 function editLevelTitle(levelIndex: number) {
   editLevelIndex.value = levelIndex;
