@@ -10,7 +10,7 @@
         <div class="middle">
           <SymbolComp :symbolWidth=20 :symbol="editSymbol" @click="emit('editSymbolText')" />
           <div class="font-size-title"> Schriftgrösse </div>
-          <ValueSlider :minValue=1 :defaultValue=35 :maxValue=100 @changeValue="(value) => { fontSize = value }" />
+          <ValueSlider :minValue=1 :defaultValue=35 :maxValue=100 @changeValue="setFontSize" />
         </div>
         <ColorEditor title="Schriftfarbe" :defaultValue=0 @changeColor="setTextColor" />
       </div>
@@ -20,11 +20,13 @@
       </div>
     </div>
   </div>
+  <TextInput v-if="showTextInput" title="Symboltext ändern" :placeholder="editSymbol.text" @updateText="setText"
+    @click="showTextInput = false" />
 </template>
 
 <script setup lang="ts">
 import { ChapterData, SymbolData } from '@/scripts/Interfaces';
-import { Ref, ref, defineEmits, defineProps, ComputedRef, computed } from 'vue';
+import { Ref, ref, defineEmits, defineProps } from 'vue';
 import ColorEditor from './ColorEditor.vue';
 import axios from 'axios';
 import SymbolComp from '@/components/axiom/SymbolComp.vue';
@@ -32,29 +34,34 @@ import ValueSlider from './ValueSlider.vue';
 
 interface Props {
   editID: any
-  text: string;
 }
 
 const props = defineProps<Props>();
 
 const emit = defineEmits(['editSymbolText', 'closeSymbolEditor', 'updateSymbols']);
+const showTextInput: Ref<boolean> = ref(false);
 
-const editSymbol: ComputedRef<SymbolData> = computed(() => ({
-  backgroundColor: backgroundColor.value,
-  text: props.text,
-  textColor: textColor.value,
-  fontSize: fontSize.value
-}))
-const backgroundColor: Ref<string> = ref('');
-const textColor: Ref<string> = ref('');
-const fontSize: Ref<number> = ref(0);
+const editSymbol: Ref<SymbolData> = ref({
+  backgroundColor: '',
+  text: 'text',
+  textColor: '',
+  fontSize: 35
+});
 
 function setBackgroundColor(color: string) {
-  backgroundColor.value = color;
+  editSymbol.value.backgroundColor = color;
+}
+
+function setText(text: string): void {
+  editSymbol.value.text = text;
 }
 
 function setTextColor(color: string) {
-  textColor.value = color;
+  editSymbol.value.textColor = color;
+}
+
+function setFontSize(fontSize: number) {
+  editSymbol.value.fontSize = fontSize;
 }
 
 async function addNewSymbol(): Promise<void> {

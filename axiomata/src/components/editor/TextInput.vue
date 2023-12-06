@@ -2,7 +2,7 @@
   <div class="text-input-container">
     <div class="backdrop" />
     <div class="text-input-window" @click.stop="() => { }">
-      <div class="ti-headbar"> {{ headbarTitle }} </div>
+      <div class="ti-headbar"> {{ title }} </div>
       <div :style="{ display: 'flex' }">
         <input id="input-bar" type="text" maxLength=50 v-model="textInput" :placeholder="placeholder"
           @keyup.enter="emit('updateText', textInput)">
@@ -16,28 +16,14 @@
 import { defineProps, Ref, ref, defineEmits, ComputedRef, computed } from 'vue';
 
 interface Props {
+  title: string;
   placeholder: string | undefined;
-  target: string;
 }
 
 const props = defineProps<Props>();
 const emit = defineEmits(['updateText']);
 
 const textInput: Ref<string> = ref('');
-const headbarTitle: ComputedRef<string> = computed(() => {
-  switch (props.target) {
-    case 'course':
-      return 'Titel des Kurses ändern';
-    case 'chapter':
-      return 'Titel des Kapitels ändern';
-    case 'level':
-      return 'Titel des Levels ändern'
-    case 'symbol':
-      return 'Symboltext ändern';
-    default:
-      return '';
-  }
-});
 </script>
 
 <style>

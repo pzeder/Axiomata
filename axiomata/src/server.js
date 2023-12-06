@@ -227,7 +227,11 @@ app.post('/addNewLevel', async (req, res) => {
     const filter = ({ _id: new ObjectId(editID) });
     const edit = await db.collection('Edits').findOne(filter);
     const newLevel = {
-      title: 'Neues Level'
+      title: 'Neues Level',
+      goalAxiom: {
+        upperSequence: [],
+        lowerSequence: []
+      }
     }
     if (edit && edit.chapters && edit.chapters[chapterIndex]) {
       edit.chapters[chapterIndex].levels.splice(levelIndex, 0, newLevel);
@@ -255,7 +259,7 @@ app.post('/addNewSymbol', async (req, res) => {
   try {
     const { editID, newSymbol } = req.body;
     const filter = ({ _id: new ObjectId(editID) });
-    const addSymbol = { $push: { symbols: newSymbol} };
+    const addSymbol = { $push: { symbols: newSymbol } };
     result = await db.collection('Edits').updateOne(filter, addSymbol);
     if (result.modifiedCount === 0) {
       return res.status(500).json({ error: 'Failed to update status' });
@@ -345,19 +349,13 @@ app.patch('/deleteSymbol', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-app.patch('/text', async (req, res) => {
+app.patch('/courseTitle', async (req, res) => {
   try {
     const { editID, text, target, chapterIndex, levelIndex } = req.body;
     const filter = ({ _id: new ObjectId(editID) });
 
-    let update;
-    switch (target) {
-      case 'course':
-        update = {
-          $set: { [`title`]: text },
-        };
-        break;
-      case 'chapter':
+    const updateTitle = { $set: { [`title`]: text } };
+    /*
         update = {
           $set: { [`chapters.${chapterIndex}.title`]: text },
         };
@@ -367,16 +365,17 @@ app.patch('/text', async (req, res) => {
           $set: { [`chapters.${chapterIndex}.levels.${levelIndex}.title`]: text },
         };
         break;
-    }
+  }*/
 
-    const patch = await db.collection('Edits').updateOne(filter, update);
+    const patch = await db.collection('Edits').updateOne(filter, updateTitle);
 
     if (patch.modifiedCount === 0) {
       return res.status(500).json({ error: 'Failed to update status' });
     }
 
     const course = await db.collection('Edits').findOne(filter);
-    res.json({ course: course });
+    console.log(course.title)
+    res.json({ courseTitle: course.title });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

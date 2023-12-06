@@ -12,28 +12,33 @@
                     :sequence="axiom?.lowerSequence" :symbols="symbols" :variables=[] @click="upperSeqSelected = false"
                     @symbolClicked="removeFromLowerSeq" />
             </div>
-            <SymbolBar :symbols="symbols" @openSymbolEditor="emit('openSymbolEditor')" @deleteSymbol="emit('deleteSymbol')"
-                @symbolClicked="addSymbol" />
+            <SymbolBar :editID="editID" :symbols="symbols"
+                @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" @symbolClicked="addSymbol" />
         </div>
-        <div class="axiom-save-button"> OK </div>
+        <div class="axiom-save-button" @click="emit('saveLevel')"> OK </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { AxiomData, SeqSymbol, SymbolData } from '@/scripts/Interfaces';
+import { AxiomData, LevelData, SeqSymbol, SymbolData } from '@/scripts/Interfaces';
 import { defineProps, defineEmits, Ref, ref } from 'vue';
 import SymbolBar from './SymbolBar.vue'
 import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 
 interface Props {
+    editID: any;
+    level: LevelData | null;
     symbols: SymbolData[] | undefined;
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['openSymbolEditor', 'deleteSymbol']);
+const emit = defineEmits(['updateSymbols', 'saveLevel']);
 
 const upperSeqSelected: Ref<boolean> = ref(true);
-const axiom: Ref<AxiomData> = ref({ upperSequence: [], lowerSequence: [] });
+const axiom: Ref<AxiomData> = ref({
+    upperSequence: props.level ? [...props.level.goalAxiom.upperSequence] : [],
+    lowerSequence: props.level ? [...props.level.goalAxiom.lowerSequence] : []
+});
 
 function addSymbol(symbol: SeqSymbol): void {
     if (upperSeqSelected.value) {

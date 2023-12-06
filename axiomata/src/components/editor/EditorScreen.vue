@@ -1,24 +1,18 @@
 <template>
-  <TitleBar :title="course?.title" :height=10 @editTitle="editCourseTitle" />
-  <EditChapterList v-if="course" :editID="editID" :chapters="course.chapters" @updateChapters="updateChapters"
-    @editChapterTitle="editChapterTitle" @editLevelTitle="editLevelTitle" />
-  <AxiomEditor v-if="showAxiomEditor" :symbols="course?.symbols" @openSymbolEditor="openSymbolEditor"
-    @deleteSymbol="deleteSymbol" />
-  <SymbolEditor v-if="showSymbolEditor" :editID="editID" :text="symbolText" @editSymbolText="editSymbolText"
-    @closeSymbolEditor="showSymbolEditor = false" @updateSymbols="updateSymbols" />
-  <TextInput v-if="showTextInput" :placeholder="textInputPlaceholder" :target="textInputTarget" @updateText="updateText"
-    @click="showTextInput = false" />
+  <TitleBar :title="course?.title" :height=10 @editTitle="showTextInput = true" />
+  <EditChapterList v-if="course" :editID="editID" :course="course" @updateChapters="updateChapters"
+    @updateSymbols="updateSymbols" />
+  <TextInput v-if="showTextInput" title="Titel des Kurses ändern" :placeholder="course?.title"
+    @updateText="updateCourseTitle" @click="showTextInput = false" />
 </template>
 
 <script setup lang="ts">
 import axios from 'axios';
 import { Ref, ref, defineProps, onMounted, ComputedRef, computed } from 'vue';
-import { CourseData, ChapterData, SymbolData } from '@/scripts/Interfaces';
+import { CourseData, ChapterData, SymbolData, LevelPointer } from '@/scripts/Interfaces';
 import EditChapterList from './chapterEditor/EditChapterList.vue';
 import TextInput from './TextInput.vue';
 import TitleBar from './TitleBar.vue';
-import AxiomEditor from './axiomEditor/AxiomEditor.vue'
-import SymbolEditor from './symbolEditor/SymbolEditor.vue';
 
 interface Props {
   editID: any;
@@ -27,27 +21,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const course: Ref<CourseData | null> = ref(null);
-const chapterIndex: Ref<number> = ref(-1);
-const levelIndex: Ref<number> = ref(-1);
-const showAxiomEditor: Ref<boolean> = ref(true);
-const showSymbolEditor: Ref<boolean> = ref(false);
 const showTextInput: Ref<boolean> = ref(false);
-const textInputTarget: Ref<string> = ref('');
-const symbolText: Ref<string> = ref('text');
-const textInputPlaceholder: ComputedRef<string | undefined> = computed(() => {
-  switch (textInputTarget.value) {
-    case 'course':
-      return course.value?.title;
-    case 'chapter':
-      return course.value?.chapters[chapterIndex.value].title;
-    case 'level':
-      return course.value?.chapters[chapterIndex.value].levels[levelIndex.value].title;
-    case 'symbol':
-      return symbolText.value;
-    default:
-      return '';
-  }
-});
 
 onMounted(() => {
   fetchEdit();
@@ -67,76 +41,26 @@ async function fetchEdit(): Promise<void> {
   }
 }
 
-async function updateText(text: string): Promise<void> {
+async function updateCourseTitle(text: string): Promise<void> {
   showTextInput.value = false;
-  if (textInputTarget.value === 'symbol') {
-    symbolText.value = text;
-    return
-  }
-  if (text.length === 0) {
+  if (text.length === 0 || !course.value) {
     return;
   }
   try {
     const updateData = {
       editID: props.editID,
-      text: text,
-      target: textInputTarget.value,
-      chapterIndex: chapterIndex.value,
-      levelIndex: levelIndex.value
+      text: text
     };
-    const response = await axios.patch('http://localhost:3000/text', updateData);
+    const response = await axios.patch('http://localhost:3000/courseTitle', updateData);
     if (response.status === 200) {
-      const updatedCourse: CourseData = response.data.course;
-      course.value = updatedCourse;
+      const updatedCourseTitle: string = response.data.courseTitle;
+      course.value.title = updatedCourseTitle;
     } else {
       console.error('Server responded with status', response.status);
     }
   } catch (error) {
     console.error('Error fetching data:', error);
   }
-}
-
-async function deleteSymbol(): Promise<void> {
-  if (!course.value) {
-    return;
-  }
-  try {
-    const updateData = {
-      editID: props.editID,
-      symbolIndex: course.value.symbols.length - 1
-    };
-    const response = await axios.patch('http://localhost:3000/deleteSymbol', updateData);
-    if (response.status === 200) {
-      course.value.symbols = response.data.symbols;
-    } else {
-      console.error('Server responded with status', response.status);
-    }
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
-}
-
-function editCourseTitle(): void {
-  textInputTarget.value = 'course';
-  showTextInput.value = true;
-}
-
-function editChapterTitle(index: number): void {
-  textInputTarget.value = 'chapter';
-  chapterIndex.value = index;
-  showTextInput.value = true;
-}
-
-function editLevelTitle(chIndex: number, lvlIndex: number): void {
-  textInputTarget.value = 'level';
-  chapterIndex.value = chIndex;
-  levelIndex.value = lvlIndex;
-  showTextInput.value = true;
-}
-
-function editSymbolText(): void {
-  textInputTarget.value = 'symbol';
-  showTextInput.value = true;
 }
 
 function updateChapters(updatedChapters: ChapterData[]): void {
@@ -149,10 +73,5 @@ function updateSymbols(updatedSymbols: SymbolData[]): void {
   if (course.value) {
     course.value.symbols = updatedSymbols;
   }
-}
-
-function openSymbolEditor(): void {
-  symbolText.value = 'text';
-  showSymbolEditor.value = true;
 }
 </script>
