@@ -1,8 +1,9 @@
 <template>
   <div class="edit-chapter">
     <TitleBar :title="chapter.title" :height=5 @editTitle="emit('editChapterTitle')" />
-    <EditLevelList :levels="chapter.levels" @addNewLevel="addNewLevel" @deleteLevel="deleteLevel"
-      @editLevelTitle="editLevelTitle" @editGoalAxiom="(lvlIndex) => emit('editGoalAxiom', lvlIndex)" />
+    <EditLevelList :editID="editID" :chapterIndex="chapterIndex" :levels="chapter.levels" :symbols="symbols"
+      @updateChapters="(updatedChapters) => emit('updateChapters', updatedChapters)"
+      @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" />
     <DeleteButton text="Kapitel löschen" @click="emit('deleteChapter')" />
   </div>
 </template>
@@ -12,27 +13,17 @@ import { defineProps, defineEmits } from 'vue';
 import TitleBar from '../TitleBar.vue';
 import EditLevelList from './EditLevelList.vue';
 import DeleteButton from '../DeleteButton.vue';
-import { ChapterData } from '@/scripts/Interfaces';
+import { ChapterData, SymbolData } from '@/scripts/Interfaces';
 
 interface Props {
+  editID: any;
+  chapterIndex: number;
   chapter: ChapterData;
+  symbols: SymbolData[];
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'addNewLevel',
-  'editLevelTitle', 'deleteLevel', 'editGoalAxiom']);
-
-function addNewLevel(levelIndex: number): void {
-  emit('addNewLevel', levelIndex);
-}
-
-function editLevelTitle(levelIndex: number): void {
-  emit('editLevelTitle', levelIndex);
-}
-
-function deleteLevel(levelIndex: number): void {
-  emit('deleteLevel', levelIndex);
-}
+const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'updateChapters', 'updateSymbols']);
 </script>
 
 <style>

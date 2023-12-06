@@ -1,8 +1,10 @@
 <template>
   <div v-for="(chapter, index) in course.chapters" :key="index">
     <AddButton target="chapter" @click="addNewChapter(index)" />
-    <EditChapter :chapter="chapter" :index="index" @editChapterTitle="editChapterTitle(index)"
-      @deleteChapter="deleteChapter(index)" />
+    <EditChapter :editID="editID" :chapterIndex="index" :chapter="chapter" :symbols="course.symbols"
+      @editChapterTitle="editChapterTitle(index)" @deleteChapter="deleteChapter(index)"
+      @updateChapters="(updatedChapters) => emit('updateChapters', updatedChapters)"
+      @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" />
   </div>
   <AddButton target="chapter" @click="addNewChapter(course.chapters.length)" />
   <AxiomEditor v-if="showAxiomEditor" :editID="editID" :level="editLevel" :symbols="course?.symbols"
