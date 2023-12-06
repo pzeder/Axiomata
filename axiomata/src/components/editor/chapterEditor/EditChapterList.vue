@@ -2,8 +2,7 @@
   <div v-for="(chapter, index) in course.chapters" :key="index">
     <AddButton target="chapter" @click="addNewChapter(index)" />
     <EditChapter :chapter="chapter" :index="index" @editChapterTitle="editChapterTitle(index)"
-      @deleteChapter="deleteChapter(index)" @addNewLevel="(lvlIndex) => addNewLevel(index, lvlIndex)"
-      @editGoalAxiom="(lvlIndex) => editGoalAxiom(index, lvlIndex)" />
+      @deleteChapter="deleteChapter(index)" />
   </div>
   <AddButton target="chapter" @click="addNewChapter(course.chapters.length)" />
   <AxiomEditor v-if="showAxiomEditor" :editID="editID" :level="editLevel" :symbols="course?.symbols"
@@ -19,6 +18,7 @@ import axios from 'axios';
 import EditChapter from './EditChapter.vue';
 import AddButton from '@/components/editor/AddButton.vue';
 import AxiomEditor from '../axiomEditor/AxiomEditor.vue';
+import TextInput from '../TextInput.vue';
 
 interface Props {
   editID: any;
@@ -87,7 +87,7 @@ async function deleteChapter(index: number) {
   }
 }
 
-async function updateCourseTitle(text: string): Promise<void> {
+async function updateChapterTitle(text: string): Promise<void> {
   showTextInput.value = false;
   if (text.length === 0) {
     return;
@@ -95,12 +95,13 @@ async function updateCourseTitle(text: string): Promise<void> {
   try {
     const updateData = {
       editID: props.editID,
-      text: text
+      text: text,
+      chapterIndex: editLevelPointer.value.chapterIndex
     };
-    const response = await axios.patch('http://localhost:3000/chaperTitle', updateData);
+    const response = await axios.patch('http://localhost:3000/chapterTitle', updateData);
     if (response.status === 200) {
-      const updatedCourse: CourseData = response.data.course;
-      //course.value = updatedCourse;
+      const updatedChapters: ChapterData[] = response.data.chapters;
+      emit('updateChapters', updatedChapters);
     } else {
       console.error('Server responded with status', response.status);
     }
