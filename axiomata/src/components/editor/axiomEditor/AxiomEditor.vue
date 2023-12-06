@@ -1,5 +1,5 @@
 <template>
-    <div class="backdrop" />
+    <div class="backdrop-axiom-editor" />
     <div class="axiom-editor-screen">
         <div class="axiom-editor">
             <div :style="{ marginTop: (upperSeqSelected ? -15 : 15) + 'vw', color: 'orange', fontSize: 2 + 'vw' }">
@@ -15,7 +15,10 @@
             <SymbolBar :editID="editID" :symbols="symbols"
                 @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" @symbolClicked="addSymbol" />
         </div>
-        <div class="axiom-save-button" @click="emit('saveLevel')"> OK </div>
+        <div class="button-container">
+            <div class="axiom-cancel-button" @click="emit('closeAxiomEditor')"> Abbrechen </div>
+            <div class="axiom-save-button" @click="emit('saveLevel')"> Speichern </div>
+        </div>
     </div>
 </template>
 
@@ -32,7 +35,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['updateSymbols', 'saveLevel']);
+const emit = defineEmits(['updateSymbols', 'saveLevel', 'closeAxiomEditor']);
 
 const upperSeqSelected: Ref<boolean> = ref(true);
 const axiom: Ref<AxiomData> = ref({
@@ -59,6 +62,16 @@ function removeFromLowerSeq(index: number): void {
 </script>
 
 <style>
+.backdrop-axiom-editor {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    opacity: 70%;
+}
+
 .axiom-editor-screen {
     position: fixed;
     width: 100vw;
@@ -72,6 +85,20 @@ function removeFromLowerSeq(index: number): void {
 .axiom-editor {
     display: flex;
     place-items: center;
+}
+
+.button-container {
+    display: flex;
+}
+
+.axiom-cancel-button {
+    display: grid;
+    place-items: center;
+    border: 0.2vw solid black;
+    border-radius: 2vw;
+    font-size: 2vw;
+    padding: 3vw;
+    background: rgb(230, 33, 3);
 }
 
 .axiom-save-button {

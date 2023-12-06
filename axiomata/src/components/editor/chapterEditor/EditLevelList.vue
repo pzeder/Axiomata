@@ -6,7 +6,8 @@
   </div>
   <AddButton target="level" @click="addNewLevel(levels.length)" />
   <AxiomEditor v-if="showAxiomEditor" :editID="editID" :level="editLevel" :symbols="symbols"
-    @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" />
+    @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)"
+    @closeAxiomEditor="showAxiomEditor = false" />
   <TextInput v-if="showTextInput" title="Titel des Levels ändern" :placeholder="editLevel?.title"
     @updateText="updateLevelTitle" @click="showTextInput = false" />
 </template>
