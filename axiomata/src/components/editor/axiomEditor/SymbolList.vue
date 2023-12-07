@@ -1,11 +1,11 @@
 <template>
-    <div class="symbol-bar">
-        <div class="symbol-bar-title"> Symbole </div>
-        <SymbolComp v-for="(symbol, index) in symbols" :key="index" :symbolWidth=3 :symbol="symbol"
+    <div class="symbol-list">
+        <div class="symbol-list-title"> Symbole </div>
+        <SymbolComp v-for="(symbol, index) in symbols" :key="index" :symbolWidth=4 :symbol="symbol"
             @click="emit('symbolClicked', index)" />
-        <DeleteButton class="delete-symbol" v-if="symbols && symbols.length > 0" text="Letztes Symbol löschen"
+        <DeleteButton class="symbol-delete-button" v-if="symbols && symbols.length > 0" text="Letztes Symbol löschen"
             @click="deleteSymbol" />
-        <AddButton target="symbol" @click="showSymbolEditor = true" />
+        <AddButton class="symbol-add-button" target="symbol" @click="showSymbolEditor = true" />
     </div>
     <SymbolEditor v-if="showSymbolEditor" :editID="editID" @closeSymbolEditor="showSymbolEditor = false"
         @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" />
@@ -53,24 +53,25 @@ async function deleteSymbol(): Promise<void> {
 </script>
 
 <style>
-.symbol {
-    color: white;
-    width: 5vw;
-    height: 5vw;
-}
-
-.symbol-bar {
+.symbol-list {
     display: grid;
     place-items: center;
     background: white;
+    border: 0.5vw solid black;
+    border-radius: 2vw;
 }
 
-.symbol-bar-title {
+.symbol-list-title {
     font-size: 2vw;
     color: grey;
+    padding: 1vw;
 }
 
-.delete-symbol {
-    margin-top: 1vw;
+.symbol-delete-button {
+    margin-top: 2vw;
+}
+
+.symbol-add-button {
+    margin-bottom: 2vw;
 }
 </style>

@@ -32,7 +32,7 @@ const color: ComputedRef<string> = computed(() => {
     case 'level':
       return 'rgb(255, 157, 0)';
     case 'symbol':
-      return 'white'
+      return 'green'
     default:
       return "ERROR: faulty target";
   }

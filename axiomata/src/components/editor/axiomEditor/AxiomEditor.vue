@@ -12,7 +12,7 @@
                     :sequence="axiom?.lowerSequence" :symbols="symbols" :variables=[] @click="upperSeqSelected = false"
                     @symbolClicked="removeFromLowerSeq" />
             </div>
-            <SymbolBar :editID="editID" :symbols="symbols"
+            <SymbolList :editID="editID" :symbols="symbols"
                 @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" @symbolClicked="addSymbol" />
         </div>
         <div class="button-container">
@@ -25,7 +25,7 @@
 <script setup lang="ts">
 import { AxiomData, SeqSymbol, SymbolData } from '@/scripts/Interfaces';
 import { defineProps, defineEmits, Ref, ref, withDefaults } from 'vue';
-import SymbolBar from './SymbolBar.vue'
+import SymbolList from './SymbolList.vue'
 import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import { axiomValid } from '@/scripts/AxiomMethods';
 
@@ -72,6 +72,7 @@ function removeFromLowerSeq(index: number): void {
     height: 100vh;
     background-color: black;
     opacity: 70%;
+    z-index: 300;
 }
 
 .axiom-editor-screen {
@@ -82,6 +83,7 @@ function removeFromLowerSeq(index: number): void {
     top: 0;
     display: grid;
     place-items: center;
+    z-index: 301;
 }
 
 .axiom-editor {
