@@ -1,4 +1,5 @@
 <template>
+  <div class="home-button" @click="emit('openHomeScreen')"> Home </div>
   <TitleBar tag="Kurs" :title="course?.title" :height=10 @editTitle="showTextInput = true" />
   <EditChapterList v-if="course" :editID="editID" :course="course" @updateChapters="updateChapters"
     @updateSymbols="updateSymbols" />
@@ -10,7 +11,7 @@
 
 <script setup lang="ts">
 import axios from 'axios';
-import { Ref, ref, defineProps, onMounted, ComputedRef, computed } from 'vue';
+import { Ref, ref, defineProps, onMounted, ComputedRef, computed, defineEmits } from 'vue';
 import { CourseData, ChapterData, SymbolData, LevelData } from '@/scripts/Interfaces';
 import EditChapterList from './chapterEditor/EditChapterList.vue';
 import TextInput from './TextInput.vue';
@@ -21,6 +22,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const emit = defineEmits(['openHomeScreen']);
 
 const course: Ref<CourseData | null> = ref(null);
 const showTextInput: Ref<boolean> = ref(false);
@@ -111,6 +113,19 @@ async function submitCourse(): Promise<void> {
 </script>
 
 <style>
+.home-button {
+  width: 10vw;
+  font-size: 1vw;
+  color: black;
+  padding: 0.5vw;
+  background-color: white;
+  border: 0.2vw solid black;
+  border-radius: 1vw;
+  display: grid;
+  place-items: center;
+  user-select: none;
+}
+
 .submit-button {
   display: grid;
   place-items: center;

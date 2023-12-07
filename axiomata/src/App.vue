@@ -5,9 +5,9 @@
     @openNewCourseMenu="openNewCourseMenu" @openStartMenu="openStartMenu" />
   <NewCourseSelection v-if="showNewCourseSelection" :userName="userName" @openCourse="openCourse"
     @openStartMenu="openStartMenu" />
-  <CourseScreen v-if="showCourseScreen" :saveID="saveID" @openStartMenu="openStartMenu"/>
+  <CourseScreen v-if="showCourseScreen" :saveID="saveID" @openStartMenu="openStartMenu" />
   <EditSelection v-if="showEditSelection" :userName="userName" @openEditor="openEditor" />
-  <EditorScreen v-if="showEditorScreen" :editID="editID" />
+  <EditorScreen v-if="showEditorScreen" :editID="editID" @openHomeScreen="openStartMenu" />
 </template>
 
 <script setup lang="ts">

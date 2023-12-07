@@ -397,10 +397,12 @@ app.patch('/deleteSymbol', async (req, res) => {
     };
     result = await db.collection('Edits').updateOne(filter, deleteSymbol);
     if (result.modifiedCount === 0) {
+      console.log('1')
       return res.status(500).json({ error: 'Failed to update status' });
     }
     result = await db.collection('Edits').updateOne(filter, removeNull);
     if (result.modifiedCount === 0) {
+      console.log('2')
       return res.status(500).json({ error: 'Failed to update status' });
     }
 
@@ -439,6 +441,7 @@ app.patch('/deleteSymbol', async (req, res) => {
     result = await db.collection('Edits').updateOne(filter, updateChapters);
 
     if (result.modifiedCount === 0) {
+      console.log('3')
       return res.status(500).json({ error: 'Failed to update status' });
     }
 
