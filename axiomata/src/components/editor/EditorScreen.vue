@@ -135,5 +135,6 @@ async function submitCourse(): Promise<void> {
   background: lightgreen;
   border: 1vw solid black;
   border-radius: 2vw;
+  user-select: none;
 }
 </style>
