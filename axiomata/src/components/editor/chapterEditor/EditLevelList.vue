@@ -1,8 +1,8 @@
 <template>
   <div v-for="(level, index) in levels" :key="index">
     <AddButton target="level" @click="addNewLevel(index)" />
-    <EditLevel :level="level" :symbols="symbols" @editLevelTitle="editLevelTitle(index)" @deleteLevel="deleteLevel(index)"
-      @editGoalAxiom="editGoalAxiom(index)" />
+    <EditLevel :chapterIndex="chapterIndex" :levelIndex="index" :level="level" :symbols="symbols"
+      @editLevelTitle="editLevelTitle(index)" @deleteLevel="deleteLevel(index)" @editGoalAxiom="editGoalAxiom(index)" />
   </div>
   <AddButton target="level" @click="addNewLevel(levels.length)" />
   <AxiomEditor v-if="showAxiomEditor" :editID="editID" :axiom="editLevel?.goalAxiom" :symbols="symbols" upTitle="START"

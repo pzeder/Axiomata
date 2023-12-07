@@ -1,6 +1,6 @@
 <template>
   <div class="edit-chapter">
-    <TitleBar :title="chapter.title" :height=5 @editTitle="emit('editChapterTitle')" />
+    <TitleBar :tag="chapterTag" :title="chapter.title" :height=5 @editTitle="emit('editChapterTitle')" />
     <div :style="{ display: 'flex' }">
       <AxiomList title="Neue Tauschregeln in diesem Kapitel" :axioms="chapter.newAxioms" :symbols="symbols" :maxWidth="60"
         :containerWidth="20" @editNewAxiom="emit('editNewAxiom')" @deleteAxiom="deleteAxiom" />
@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, ComputedRef, computed } from 'vue';
 import TitleBar from '../TitleBar.vue';
 import EditLevelList from './EditLevelList.vue';
 import DeleteButton from '../DeleteButton.vue';
@@ -30,6 +30,8 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'updateChapters', 'updateSymbols', 'editNewAxiom']);
+
+const chapterTag: ComputedRef<string> = computed(() => 'Kapitel ' + (props.chapterIndex + 1));
 
 async function deleteAxiom(index: number) {
   try {

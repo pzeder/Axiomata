@@ -6,14 +6,14 @@
       </div>
       <AxiomContainer v-if="axiomValid(level.goalAxiom)" :width="20" :height="20" :axiom="level.goalAxiom"
         :symbols="symbols" :variables="[]" :varColors="[]" @click="emit('editGoalAxiom')" />
-      <TitleBar :title="level.title" :height=5 @editTitle="emit('editLevelTitle')" />
+      <TitleBar :tag="levelTag" :title="level.title" :height=5 @editTitle="emit('editLevelTitle')" />
     </div>
     <DeleteButton text="Level löschen" @click="emit('deleteLevel')" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, ComputedRef, computed } from 'vue';
 import TitleBar from '../TitleBar.vue'
 import AxiomContainer from '@/components/axiom/AxiomContainer.vue';
 import DeleteButton from '@/components/editor/DeleteButton.vue';
@@ -21,12 +21,17 @@ import { LevelData, SymbolData } from '@/scripts/Interfaces';
 import { axiomValid } from '@/scripts/AxiomMethods';
 
 interface Props {
+  chapterIndex: number;
+  levelIndex: number;
   level: LevelData;
   symbols: SymbolData[];
 }
 
 const props = defineProps<Props>();
 const emit = defineEmits(['editLevelTitle', 'deleteLevel', 'editGoalAxiom']);
+
+const levelTag: ComputedRef<string> = computed(() =>
+  'Level ' + (props.chapterIndex + 1) + '-' + (props.levelIndex + 1));
 </script>
 
 <style>

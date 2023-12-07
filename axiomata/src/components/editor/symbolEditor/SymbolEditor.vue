@@ -157,6 +157,7 @@ async function addNewSymbol(): Promise<void> {
   display: grid;
   place-items: center;
   user-select: none;
+  font-size: 1.5vw;
 }
 
 .ok-symbol-button {
@@ -166,5 +167,6 @@ async function addNewSymbol(): Promise<void> {
   display: grid;
   place-items: center;
   user-select: none;
+  font-size: 1.5vw;
 }
 </style>
