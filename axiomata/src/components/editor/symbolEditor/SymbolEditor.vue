@@ -8,7 +8,7 @@
       <div class="flex-container">
         <ColorEditor title="Hintergrundfarbe" :defaultValue=255 @changeColor="setBackgroundColor" />
         <div class="middle">
-          <SymbolComp :symbolWidth=20 :symbol="editSymbol" @click="emit('editSymbolText')" />
+          <SymbolComp :symbolWidth=20 :symbol="editSymbol" @click="showTextInput = true" />
           <div class="font-size-title"> Schriftgrösse </div>
           <ValueSlider :minValue=1 :defaultValue=35 :maxValue=100 @changeValue="setFontSize" />
         </div>
@@ -31,6 +31,7 @@ import ColorEditor from './ColorEditor.vue';
 import axios from 'axios';
 import SymbolComp from '@/components/axiom/SymbolComp.vue';
 import ValueSlider from './ValueSlider.vue';
+import TextInput from '../TextInput.vue';
 
 interface Props {
   editID: any
@@ -53,6 +54,7 @@ function setBackgroundColor(color: string) {
 }
 
 function setText(text: string): void {
+  showTextInput.value = false;
   editSymbol.value.text = text;
 }
 

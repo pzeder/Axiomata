@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, Ref, ref, defineEmits, ComputedRef, computed } from 'vue';
+import { defineProps, Ref, ref, defineEmits } from 'vue';
 
 interface Props {
   title: string;
