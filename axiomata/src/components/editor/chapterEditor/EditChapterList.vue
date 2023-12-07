@@ -7,7 +7,7 @@
       @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" @editNewAxiom="editNewAxiom(index)" />
   </div>
   <AddButton target="chapter" @click="addNewChapter(course.chapters.length)" />
-  <AxiomEditor v-if="showAxiomEditor" :editID="editID" :symbols="course?.symbols"
+  <AxiomEditor v-if="showAxiomEditor" :editID="editID" :symbols="course?.symbols" upTitle="OBEN" lowTitle="UNTEN"
     @updateChapters="(updatedChapters) => emit('updateChapters', updatedChapters)"
     @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" @closeAxiomEditor="showAxiomEditor = false"
     @saveAxiom="addNewAxiom" />

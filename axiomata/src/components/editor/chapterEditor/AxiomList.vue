@@ -46,6 +46,7 @@ const containerWidth: ComputedRef<number> = computed(() => Math.min(props.contai
   color: gray;
   display: grid;
   place-items: center;
+  padding: 1vw;
 }
 
 .axiom-package {

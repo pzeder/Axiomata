@@ -5,8 +5,8 @@
       @editGoalAxiom="editGoalAxiom(index)" />
   </div>
   <AddButton target="level" @click="addNewLevel(levels.length)" />
-  <AxiomEditor v-if="showAxiomEditor" :editID="editID" :axiom="editLevel?.goalAxiom" :symbols="symbols"
-    @updateChapters="(updatedChapters) => emit('updateChapters', updatedChapters)"
+  <AxiomEditor v-if="showAxiomEditor" :editID="editID" :axiom="editLevel?.goalAxiom" :symbols="symbols" upTitle="START"
+    lowTitle="ZIEL" @updateChapters="(updatedChapters) => emit('updateChapters', updatedChapters)"
     @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" @closeAxiomEditor="showAxiomEditor = false"
     @saveAxiom="updateGoalAxiom" />
   <TextInput v-if="showTextInput" title="Titel des Levels ändern" :placeholder="editLevel?.title"
