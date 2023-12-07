@@ -2,9 +2,8 @@
   <div class="edit-chapter">
     <TitleBar :title="chapter.title" :height=5 @editTitle="emit('editChapterTitle')" />
     <div :style="{ display: 'flex' }">
-      <AxiomBar title="Neue Tauschregeln in diesem Kapitel" background="white" :width="50" :height="20"
-        :axioms="chapter.newAxioms" :symbols="symbols" :variables="[]" :varColors="[]" />
-      <div class="add-axiom-button" @click="emit('editNewAxiom')"> Tauschregel hinzufügen </div>
+      <AxiomList title="Neue Tauschregeln in diesem Kapitel" :axioms="chapter.newAxioms" :symbols="symbols" :maxWidth="60"
+        :containerWidth="20" @editNewAxiom="emit('editNewAxiom')" />
     </div>
     <EditLevelList :editID="editID" :chapterIndex="chapterIndex" :levels="chapter.levels" :symbols="symbols"
       @updateChapters="(updatedChapters) => emit('updateChapters', updatedChapters)"
@@ -18,7 +17,7 @@ import { defineProps, defineEmits } from 'vue';
 import TitleBar from '../TitleBar.vue';
 import EditLevelList from './EditLevelList.vue';
 import DeleteButton from '../DeleteButton.vue';
-import AxiomBar from '@/components/play/AxiomBar.vue';
+import AxiomList from './AxiomList.vue';
 import { ChapterData, SymbolData } from '@/scripts/Interfaces';
 
 interface Props {
