@@ -289,6 +289,23 @@ app.post('/addNewAxiom', async (req, res) => {
   }
 });
 
+app.post('/submitCourse', async (req, res) => {
+  try {
+    const { editID } = req.body;
+    const filter = ({ _id: new ObjectId(editID) });
+    const course = await db.collection('Edits').findOne(filter);
+    const result = await db.collection('Courses').insertOne(course);
+
+    if (!result.acknowledged || result.insertedCount === 0) {
+      res.status(500).json({ error: 'Failed to submit course' });
+    } else {
+      res.json({ message: 'Course submitted sucessfully' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.patch('/deleteChapter', async (req, res) => {
   try {
     const { editID, chapterIndex } = req.body;

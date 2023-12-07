@@ -2,7 +2,8 @@
   <TitleBar tag="Kurs" :title="course?.title" :height=10 @editTitle="showTextInput = true" />
   <EditChapterList v-if="course" :editID="editID" :course="course" @updateChapters="updateChapters"
     @updateSymbols="updateSymbols" />
-  <div class="submit-button" :style="{ background: courseValid ? 'lightgreen' : 'gray' }"> Kurs hochladen </div>
+  <div class="submit-button" :style="{ background: courseValid ? 'lightgreen' : 'gray' }" @click="submitCourse"> Kurs
+    hochladen </div>
   <TextInput v-if="showTextInput" title="Titel des Kurses ändern" :placeholder="course?.title"
     @updateText="updateCourseTitle" @click="showTextInput = false" />
 </template>
@@ -31,7 +32,7 @@ const invalidChapter = (chapter: ChapterData): boolean =>
   chapter.levels.length === 0 || chapter.levels.some(invalidLevel);
 
 const courseValid: ComputedRef<boolean> = computed(() => {
-  if (!course.value) {
+  if (!course.value || course.value.chapters.length === 0) {
     return false;
   }
   return course.value.chapters.filter(invalidChapter).length === 0;
@@ -86,6 +87,25 @@ function updateChapters(updatedChapters: ChapterData[]): void {
 function updateSymbols(updatedSymbols: SymbolData[]): void {
   if (course.value) {
     course.value.symbols = updatedSymbols;
+  }
+}
+
+async function submitCourse(): Promise<void> {
+  if (!courseValid.value) {
+    return;
+  }
+  try {
+    const data = {
+      editID: props.editID,
+    };
+    const response = await axios.post('http://localhost:3000/submitCourse', data);
+    if (response.status === 200) {
+      console.log('Course submitted successfully');
+    } else {
+      console.error('Server responded with status', response.status);
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
   }
 }
 </script>
