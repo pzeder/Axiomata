@@ -14,7 +14,7 @@
             </div>
             <SymbolList :editID="editID" :symbols="symbols"
                 @updateChapters="(updatedChapters) => emit('updateChapters', updatedChapters)"
-                @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" @symbolClicked="addSymbol" />
+                @updateSymbols="updateSymbols" @symbolClicked="addSymbol" />
         </div>
         <div class="button-container">
             <div class="axiom-cancel-button" @click="emit('closeAxiomEditor')"> Abbrechen </div>
@@ -61,6 +61,13 @@ function removeFromUpperSeq(index: number): void {
 
 function removeFromLowerSeq(index: number): void {
     axiom.value.lowerSequence.splice(index, 1);
+}
+
+function updateSymbols(updatedSymbols: SymbolData[]): void {
+    axiom.value.upperSequence = [];
+    axiom.value.lowerSequence = [];
+    console.log('yey')
+    emit('updateSymbols', updatedSymbols);
 }
 </script>
 
