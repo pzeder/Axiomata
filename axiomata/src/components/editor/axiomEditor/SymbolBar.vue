@@ -62,12 +62,12 @@ async function deleteSymbol(): Promise<void> {
 .symbol-bar {
     display: grid;
     place-items: center;
-    background: black;
+    background: white;
 }
 
 .symbol-bar-title {
     font-size: 2vw;
-    color: white;
+    color: grey;
 }
 
 .delete-symbol {

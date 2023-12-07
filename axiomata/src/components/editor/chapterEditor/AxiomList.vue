@@ -2,10 +2,12 @@
   <div class="axiom-list">
     <div class="axiom-list-title"> {{ title }} </div>
     <div :style="{ display: 'flex' }">
-      <AxiomContainer v-for="(axiom, index) in axioms" :key="index" :width="containerWidth" :height="containerWidth"
-        :axiom="axiom" :symbols="symbols" :variables="[]" :varColors="[]"
-        @selectAxiom="(event) => console.log('click')" />
-      <div class="add-axiom-button" @click="emit('editNewAxiom')"> Tauschregel hinzufügen </div>
+      <div class="axiom-package" v-for="(axiom, index) in axioms" :key="index">
+        <AxiomContainer :width="containerWidth" :height="containerWidth" :axiom="axiom" :symbols="symbols" :variables="[]"
+          :varColors="[]" />
+        <div class="axiom-delete-button" @click="emit('deleteAxiom', index)"> löschen </div>
+      </div>
+      <div class="axiom-add-button" @click="emit('editNewAxiom')"> Tauschregel hinzufügen </div>
     </div>
   </div>
 </template>
@@ -24,7 +26,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['editNewAxiom']);
+const emit = defineEmits(['editNewAxiom', 'deleteAxiom']);
 
 const maxContainerWidth: ComputedRef<number> = computed(() => props.maxWidth / props.axioms.length);
 const containerWidth: ComputedRef<number> = computed(() => Math.min(props.containerWidth, maxContainerWidth.value));
@@ -44,5 +46,31 @@ const containerWidth: ComputedRef<number> = computed(() => Math.min(props.contai
   color: gray;
   display: grid;
   place-items: center;
+}
+
+.axiom-package {
+  display: grid;
+  place-items: center;
+}
+
+.axiom-add-button {
+  display: grid;
+  place-items: center;
+  border: 0.2vw solid black;
+  border-radius: 2vw;
+  font-size: 2vw;
+  padding: 2vw;
+  background: rgb(247, 247, 110);
+}
+
+.axiom-delete-button {
+  display: grid;
+  place-items: center;
+  background: red;
+  border: 0.3vw solid black;
+  border-radius: 0.5vw;
+  font-size: 2vw;
+  padding: 1vw;
+  margin-top: -2vw;
 }
 </style>

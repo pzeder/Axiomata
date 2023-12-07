@@ -3,7 +3,7 @@
     <TitleBar :title="chapter.title" :height=5 @editTitle="emit('editChapterTitle')" />
     <div :style="{ display: 'flex' }">
       <AxiomList title="Neue Tauschregeln in diesem Kapitel" :axioms="chapter.newAxioms" :symbols="symbols" :maxWidth="60"
-        :containerWidth="20" @editNewAxiom="emit('editNewAxiom')" />
+        :containerWidth="20" @editNewAxiom="emit('editNewAxiom')" @deleteAxiom="deleteAxiom" />
     </div>
     <EditLevelList :editID="editID" :chapterIndex="chapterIndex" :levels="chapter.levels" :symbols="symbols"
       @updateChapters="(updatedChapters) => emit('updateChapters', updatedChapters)"
@@ -19,6 +19,7 @@ import EditLevelList from './EditLevelList.vue';
 import DeleteButton from '../DeleteButton.vue';
 import AxiomList from './AxiomList.vue';
 import { ChapterData, SymbolData } from '@/scripts/Interfaces';
+import axios from 'axios';
 
 interface Props {
   editID: any;
@@ -29,6 +30,26 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'updateChapters', 'updateSymbols', 'editNewAxiom']);
+
+async function deleteAxiom(index: number) {
+  try {
+    const updateData = {
+      editID: props.editID,
+      chapterIndex: props.chapterIndex,
+      axiomIndex: index
+    }
+    const response = await axios.patch('http://localhost:3000/deleteAxiom', updateData);
+    if (response.status === 200) {
+      const updatedChapters: ChapterData[] = response.data.chapters;
+      emit('updateChapters', updatedChapters);
+      console.log('axiom deleted successfully:', response.data);
+    } else {
+      console.error('Server responded with status:', response.status);
+    }
+  } catch (error) {
+    console.error('Error adding new chapter:', error);
+  }
+}
 </script>
 
 <style>
@@ -40,15 +61,5 @@ const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'updateChapters',
   font-size: 20pt;
   user-select: none;
   background: rgb(89, 204, 245);
-}
-
-.add-axiom-button {
-  display: grid;
-  place-items: center;
-  border: 0.2vw solid black;
-  border-radius: 2vw;
-  font-size: 2vw;
-  padding: 2vw;
-  background: rgb(247, 247, 110);
 }
 </style>

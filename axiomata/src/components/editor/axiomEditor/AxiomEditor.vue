@@ -52,7 +52,6 @@ function addSymbol(symbol: SeqSymbol): void {
     } else {
         axiom.value?.lowerSequence.push(symbol);
     }
-    console.log(axiom.value);
 }
 
 function removeFromUpperSeq(index: number): void {
