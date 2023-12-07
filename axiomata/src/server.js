@@ -386,8 +386,46 @@ app.patch('/deleteSymbol', async (req, res) => {
     if (result.modifiedCount === 0) {
       return res.status(500).json({ error: 'Failed to update status' });
     }
+
     const edit = await db.collection('Edits').findOne(filter);
-    res.json({ symbols: edit.symbols });
+
+    const cleanIndex = (index) => (index < symbolIndex) ? index : index - 1;
+
+    const cleanAxiom = (axiom) => {
+      if (axiom.upperSequence.includes(symbolIndex) || axiom.lowerSequence.includes(symbolIndex)) {
+        return { upperSequence: [], lowerSequence: [] };
+      }
+      return {
+        upperSequence: axiom.upperSequence.map(cleanIndex),
+        lowerSequence: axiom.lowerSequence.map(cleanIndex)
+      }
+    };
+
+    const cleanLevel = (lvl) => ({
+      title: lvl.title,
+      goalAxiom: cleanAxiom(lvl.goalAxiom),
+      sequenceHistory: lvl.sequenceHistory,
+      solved: lvl.solved
+    });
+
+    const nonEmpty = (axiom) => (axiom.upperSequence.length > 0 && axiom.lowerSequence.length > 0);
+
+    const cleanChapter = (ch) => ({
+      title: ch.title,
+      newAxioms: ch.newAxioms.map(cleanAxiom).filter(nonEmpty),
+      levels: ch.levels.map(cleanLevel)
+    });
+
+    const cleanChapters = edit.chapters.map(cleanChapter)
+    const updateChapters = { $set: { chapters: cleanChapters } };
+
+    result = await db.collection('Edits').updateOne(filter, updateChapters);
+
+    if (result.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to update status' });
+    }
+
+    res.json({ chapters: cleanChapters, symbols: edit.symbols });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -13,6 +13,7 @@
                     @symbolClicked="removeFromLowerSeq" />
             </div>
             <SymbolList :editID="editID" :symbols="symbols"
+                @updateChapters="(updatedChapters) => emit('updateChapters', updatedChapters)"
                 @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" @symbolClicked="addSymbol" />
         </div>
         <div class="button-container">
@@ -38,7 +39,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     axiom: () => ({ upperSequence: [], lowerSequence: [] })
 });
-const emit = defineEmits(['updateSymbols', 'saveLevel', 'closeAxiomEditor', 'saveAxiom']);
+const emit = defineEmits(['updateChapters', 'updateSymbols', 'saveLevel', 'closeAxiomEditor', 'saveAxiom']);
 
 const upperSeqSelected: Ref<boolean> = ref(true);
 const axiom: Ref<AxiomData> = ref({

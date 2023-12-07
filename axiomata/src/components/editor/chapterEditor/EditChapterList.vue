@@ -8,6 +8,7 @@
   </div>
   <AddButton target="chapter" @click="addNewChapter(course.chapters.length)" />
   <AxiomEditor v-if="showAxiomEditor" :editID="editID" :symbols="course?.symbols"
+    @updateChapters="(updatedChapters) => emit('updateChapters', updatedChapters)"
     @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" @closeAxiomEditor="showAxiomEditor = false"
     @saveAxiom="addNewAxiom" />
   <TextInput v-if="showTextInput" title="Titel des Kapitels ändern" :placeholder="editChapter?.title"
@@ -22,7 +23,6 @@ import EditChapter from './EditChapter.vue';
 import AddButton from '@/components/editor/AddButton.vue';
 import AxiomEditor from '../axiomEditor/AxiomEditor.vue';
 import TextInput from '../TextInput.vue';
-import CourseScreen from '@/components/play/CourseScreen.vue';
 
 interface Props {
   editID: any;
