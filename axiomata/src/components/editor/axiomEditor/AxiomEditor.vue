@@ -12,8 +12,8 @@
                     :sequence="axiom?.lowerSequence" :symbols="symbols" :variables=[] @click="upperSeqSelected = false"
                     @symbolClicked="removeFromLowerSeq" />
             </div>
-            <SymbolList :symbols="symbols" @addSymbol="(symbol) => emit('addSymbol', symbol)"
-                @deleteSymbol="(index) => emit('deleteSymbol', index)" @symbolClicked="addSymbolToSelectedSequence" />
+            <SymbolList :symbols="symbols" @addSymbol="(symbol) => emit('addSymbol', symbol)" @deleteSymbol="deleteSymbol"
+                @symbolClicked="addSymbolToSelectedSequence" />
         </div>
         <div class="button-container">
             <div class="axiom-cancel-button" @click="emit('close')"> Abbrechen </div>
@@ -46,6 +46,12 @@ const axiom: Ref<AxiomData> = ref({
     upperSequence: props.axiom ? [...props.axiom.upperSequence] : [],
     lowerSequence: props.axiom ? [...props.axiom.lowerSequence] : []
 });
+
+function deleteSymbol(index: number) {
+    axiom.value.upperSequence = [];
+    axiom.value.lowerSequence = [];
+    emit('deleteSymbol', index);
+}
 
 function addSymbolToSelectedSequence(symbol: SeqSymbol): void {
     if (upperSeqSelected.value) {
