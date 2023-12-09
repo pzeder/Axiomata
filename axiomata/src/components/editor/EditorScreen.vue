@@ -2,7 +2,8 @@
   <div class="home-button" @click="emit('openHomeScreen')"> Home </div>
   <TitleBar tag="Kurs" :title="course?.title" :height=10 @editTitle="showTextInput = true" />
   <EditChapterList v-if="course" :editID="editID" :course="course" @addNewChapter="addNewChapter"
-    @setChapterTitle="setChapterTitle" @deleteChapter="deleteChapter" @addSymbol="addSymbol" />
+    @setChapterTitle="setChapterTitle" @deleteChapter="deleteChapter" @addSymbol="addSymbol"
+    @deleteSymbol="deleteSymbol" />
   <div class="submit-button" :style="{ background: courseValid ? 'lightgreen' : 'gray' }" @click="submitCourse"> Kurs
     hochladen </div>
   <TextInput v-if="showTextInput" title="Titel des Kurses ändern" :placeholder="course?.title"
@@ -12,7 +13,7 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { Ref, ref, defineProps, onMounted, ComputedRef, computed, defineEmits } from 'vue';
-import { CourseData, ChapterData, SymbolData, LevelData, AxiomData } from '@/scripts/Interfaces';
+import { CourseData, ChapterData, SymbolData, LevelData, AxiomData, SeqSymbol } from '@/scripts/Interfaces';
 import EditChapterList from './chapterEditor/EditChapterList.vue';
 import TextInput from './TextInput.vue';
 import TitleBar from './TitleBar.vue';
@@ -117,9 +118,50 @@ function addSymbol(symbol: SymbolData): void {
   if (!course.value) {
     return
   }
-  console.log(symbol);
   course.value.symbols.push(symbol);
   saveEdit();
+}
+
+function deleteSymbol(symbolIndex: number): void {
+  if (!course.value) {
+    return
+  }
+
+  course.value.symbols.splice(symbolIndex, 1);
+
+  const cleanIndex = (symbol: SeqSymbol): SeqSymbol => {
+    if (typeof symbol === 'number') {
+      return (symbol < symbolIndex) ? symbol : symbol - 1;
+    }
+    return 0; // TODO
+  };
+
+  const cleanAxiom = (axiom: AxiomData): AxiomData => {
+    if (axiom.upperSequence.includes(symbolIndex) || axiom.lowerSequence.includes(symbolIndex)) {
+      return { upperSequence: [], lowerSequence: [] };
+    }
+    return {
+      upperSequence: axiom.upperSequence.map(cleanIndex),
+      lowerSequence: axiom.lowerSequence.map(cleanIndex)
+    }
+  };
+
+  const cleanLevel = (lvl: LevelData): LevelData => ({
+    title: lvl.title,
+    goalAxiom: cleanAxiom(lvl.goalAxiom),
+    sequenceHistory: lvl.sequenceHistory,
+    solved: lvl.solved
+  });
+
+  const nonEmpty = (axiom: AxiomData): boolean => (axiom.upperSequence.length > 0 && axiom.lowerSequence.length > 0);
+
+  const cleanChapter = (ch: ChapterData): ChapterData => ({
+    title: ch.title,
+    newAxioms: ch.newAxioms.map(cleanAxiom).filter(nonEmpty),
+    levels: ch.levels.map(cleanLevel)
+  });
+
+  course.value.chapters.map(cleanChapter)
 }
 
 function addNewAxiom(chapterIndex: number, axiom: AxiomData) {

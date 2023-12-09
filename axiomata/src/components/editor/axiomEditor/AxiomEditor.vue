@@ -13,7 +13,7 @@
                     @symbolClicked="removeFromLowerSeq" />
             </div>
             <SymbolList :symbols="symbols" @addSymbol="(symbol) => emit('addSymbol', symbol)"
-                @symbolClicked="addSymbolToSelectedSequence" />
+                @deleteSymbol="(index) => emit('deleteSymbol', index)" @symbolClicked="addSymbolToSelectedSequence" />
         </div>
         <div class="button-container">
             <div class="axiom-cancel-button" @click="emit('close')"> Abbrechen </div>
@@ -39,7 +39,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     axiom: () => ({ upperSequence: [], lowerSequence: [] })
 });
-const emit = defineEmits(['addSymbol', 'saveAxiom', 'close']);
+const emit = defineEmits(['addSymbol', 'deleteSymbol', 'saveAxiom', 'close']);
 
 const upperSeqSelected: Ref<boolean> = ref(true);
 const axiom: Ref<AxiomData> = ref({

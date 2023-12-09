@@ -3,7 +3,8 @@
         <div class="symbol-list-title"> Symbole </div>
         <div class="symbol-package" v-for="(symbol, index) in symbols" :key="index">
             <SymbolComp :symbolWidth=4 :symbol="symbol" @click="emit('symbolClicked', index)" />
-            <div class="symbol-delete-button" text="Letztes Symbol löschen" @click="deleteSymbol(index)"> Löschen </div>
+            <div class="symbol-delete-button" @click="emit('deleteSymbol', index)"> Löschen
+            </div>
         </div>
         <AddButton class="symbol-add-button" target="symbol" @click="showSymbolEditor = true" />
     </div>
@@ -23,7 +24,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['openSymbolEditor', 'addSymbol', 'symbolClicked']);
+const emit = defineEmits(['openSymbolEditor', 'addSymbol', 'deleteSymbol', 'symbolClicked']);
 
 const showSymbolEditor: Ref<boolean> = ref(false);
 </script>
