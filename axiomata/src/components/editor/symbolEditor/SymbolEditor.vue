@@ -15,8 +15,8 @@
         <ColorEditor title="Schriftfarbe" :defaultValue=0 @changeColor="setTextColor" />
       </div>
       <div class="button-container">
-        <div class="cancel-button" @click="emit('closeSymbolEditor')"> abbrechen </div>
-        <div class="ok-symbol-button" @click="addNewSymbol"> ok </div>
+        <div class="cancel-button" @click="emit('close')"> abbrechen </div>
+        <div class="ok-symbol-button" @click="emit('addSymbol', editSymbol)"> ok {{ editSymbol }} </div>
       </div>
     </div>
   </div>
@@ -25,21 +25,14 @@
 </template>
 
 <script setup lang="ts">
-import { ChapterData, SymbolData } from '@/scripts/Interfaces';
-import { Ref, ref, defineEmits, defineProps } from 'vue';
+import { SymbolData } from '@/scripts/Interfaces';
+import { Ref, ref, defineEmits } from 'vue';
 import ColorEditor from './ColorEditor.vue';
-import axios from 'axios';
 import SymbolComp from '@/components/axiom/SymbolComp.vue';
 import ValueSlider from './ValueSlider.vue';
 import TextInput from '../TextInput.vue';
 
-interface Props {
-  editID: any
-}
-
-const props = defineProps<Props>();
-
-const emit = defineEmits(['editSymbolText', 'closeSymbolEditor', 'updateSymbols']);
+const emit = defineEmits(['addSymbol', 'close']);
 const showTextInput: Ref<boolean> = ref(false);
 
 const editSymbol: Ref<SymbolData> = ref({
@@ -64,26 +57,6 @@ function setTextColor(color: string) {
 
 function setFontSize(fontSize: number) {
   editSymbol.value.fontSize = fontSize;
-}
-
-async function addNewSymbol(): Promise<void> {
-  try {
-    const updateData = {
-      editID: props.editID,
-      newSymbol: editSymbol.value
-    }
-    const response = await axios.post('http://localhost:3000/addNewSymbol', updateData);
-    if (response.status === 200) {
-      const updatedSymbols: ChapterData[] = response.data.symbols;
-      emit('updateSymbols', updatedSymbols);
-      emit('closeSymbolEditor');
-      console.log('New symbol added successfully:', response.data);
-    } else {
-      console.error('Server responded with status:', response.status);
-    }
-  } catch (error) {
-    console.error('Error adding new chapter:', error);
-  }
 }
 </script>
 

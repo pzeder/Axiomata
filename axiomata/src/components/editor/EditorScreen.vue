@@ -1,18 +1,21 @@
 <template>
   <div class="home-button" @click="emit('openHomeScreen')"> Home </div>
   <TitleBar tag="Kurs" :title="course?.title" :height=10 @editTitle="showTextInput = true" />
-  <EditChapterList v-if="course" :editID="editID" :course="course" @updateChapters="updateChapters"
-    @updateSymbols="updateSymbols" />
+  <EditChapterList v-if="course" :editID="editID" :course="course" 
+    @addNewChapter="addNewChapter"
+    @setChapterTitle="setChapterTitle" 
+    @deleteChapter="deleteChapter"
+    @addSymbol="addSymbol"/>
   <div class="submit-button" :style="{ background: courseValid ? 'lightgreen' : 'gray' }" @click="submitCourse"> Kurs
     hochladen </div>
   <TextInput v-if="showTextInput" title="Titel des Kurses ändern" :placeholder="course?.title"
-    @updateText="updateCourseTitle" @click="showTextInput = false" />
+    @updateText="setCourseTitle" @close="showTextInput = false" />
 </template>
 
 <script setup lang="ts">
 import axios from 'axios';
 import { Ref, ref, defineProps, onMounted, ComputedRef, computed, defineEmits } from 'vue';
-import { CourseData, ChapterData, SymbolData, LevelData } from '@/scripts/Interfaces';
+import { CourseData, ChapterData, SymbolData, LevelData, AxiomData } from '@/scripts/Interfaces';
 import EditChapterList from './chapterEditor/EditChapterList.vue';
 import TextInput from './TextInput.vue';
 import TitleBar from './TitleBar.vue';
@@ -58,20 +61,15 @@ async function fetchEdit(): Promise<void> {
   }
 }
 
-async function updateCourseTitle(text: string): Promise<void> {
-  showTextInput.value = false;
-  if (text.length === 0 || !course.value) {
-    return;
-  }
+async function saveEdit(): Promise<void> {
   try {
     const updateData = {
       editID: props.editID,
-      text: text
+      course: course.value
     };
-    const response = await axios.patch('http://localhost:3000/courseTitle', updateData);
+    const response = await axios.patch('http://localhost:3000/saveEdit', updateData);
     if (response.status === 200) {
-      const updatedCourseTitle: string = response.data.courseTitle;
-      course.value.title = updatedCourseTitle;
+      console.log(response.data.message);
     } else {
       console.error('Server responded with status', response.status);
     }
@@ -80,16 +78,58 @@ async function updateCourseTitle(text: string): Promise<void> {
   }
 }
 
-function updateChapters(updatedChapters: ChapterData[]): void {
-  if (course.value) {
-    course.value.chapters = updatedChapters;
+function setCourseTitle(text: string): void {
+  showTextInput.value = false;
+  if (text.length === 0 || !course.value) {
+    return;
   }
+  course.value.title = text;
+  saveEdit();
 }
 
-function updateSymbols(updatedSymbols: SymbolData[]): void {
-  if (course.value) {
-    course.value.symbols = updatedSymbols;
+function addNewChapter(index: number): void {
+  if (!course.value) {
+    return
   }
+  const newChapter: ChapterData = {
+    title: 'Neues Kapitel',
+    newAxioms: [],
+    levels: []
+  }
+  course.value.chapters.splice(index, 0, newChapter);
+  saveEdit();
+}
+
+function setChapterTitle(chapterIndex: number, title: string): void {
+  if (!course.value) {
+    return
+  }
+  course.value.chapters[chapterIndex].title = title;
+  saveEdit();
+}
+
+function deleteChapter(chapterIndex: number) {
+  if (!course.value) {
+    return
+  }
+  course.value.chapters.splice(chapterIndex, 1);
+  saveEdit();
+}
+
+function addSymbol(symbol: SymbolData): void {
+  if (!course.value) {
+    return
+  }
+  console.log(symbol);
+  course.value.symbols.push();
+  saveEdit();
+}
+
+function addNewAxiom(chapterIndex: number, axiom: AxiomData) {
+  if (!course.value) {
+    return
+  }
+  // TODO
 }
 
 async function submitCourse(): Promise<void> {

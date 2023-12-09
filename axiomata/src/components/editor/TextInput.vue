@@ -1,12 +1,12 @@
 <template>
-  <div class="text-input-container">
+  <div class="text-input-container" @click="emit('close')">
     <div class="backdrop" />
     <div class="text-input-window" @click.stop="() => { }">
       <div class="ti-headbar"> {{ title }} </div>
       <div :style="{ display: 'flex' }">
         <input id="input-bar" type="text" maxLength=50 v-model="textInput" :placeholder="placeholder"
-          @keyup.enter="emit('updateText', textInput)">
-        <div class="ok-button" @click="emit('updateText', textInput)"> ok </div>
+          @keyup.enter="confirm">
+        <div class="ok-button" @click="confirm"> ok </div>
       </div>
     </div>
   </div>
@@ -21,9 +21,14 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['updateText']);
+const emit = defineEmits(['updateText', 'close']);
 
 const textInput: Ref<string> = ref('');
+
+function confirm(): void {
+  emit('updateText', textInput); 
+  emit('close')
+}
 </script>
 
 <style>

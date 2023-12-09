@@ -12,12 +12,11 @@
                     :sequence="axiom?.lowerSequence" :symbols="symbols" :variables=[] @click="upperSeqSelected = false"
                     @symbolClicked="removeFromLowerSeq" />
             </div>
-            <SymbolList :editID="editID" :symbols="symbols"
-                @updateChapters="(updatedChapters) => emit('updateChapters', updatedChapters)"
-                @updateSymbols="updateSymbols" @symbolClicked="addSymbol" />
+            <SymbolList :symbols="symbols"
+                @addSymbol="emit('addSymbol')" @symbolClicked="addSymbolToSelectedSequence" />
         </div>
         <div class="button-container">
-            <div class="axiom-cancel-button" @click="emit('closeAxiomEditor')"> Abbrechen </div>
+            <div class="axiom-cancel-button" @click="emit('close')"> Abbrechen </div>
             <div v-if="axiomValid(axiom)" class="axiom-save-button" @click="emit('saveAxiom', axiom)"> Speichern </div>
         </div>
     </div>
@@ -31,7 +30,6 @@ import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import { axiomValid } from '@/scripts/AxiomMethods';
 
 interface Props {
-    editID: any;
     axiom: AxiomData | undefined;
     symbols: SymbolData[] | undefined;
     upTitle: string;
@@ -41,7 +39,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     axiom: () => ({ upperSequence: [], lowerSequence: [] })
 });
-const emit = defineEmits(['updateChapters', 'updateSymbols', 'saveLevel', 'closeAxiomEditor', 'saveAxiom']);
+const emit = defineEmits(['addSymbol', 'saveAxiom', 'close']);
 
 const upperSeqSelected: Ref<boolean> = ref(true);
 const axiom: Ref<AxiomData> = ref({
@@ -49,7 +47,7 @@ const axiom: Ref<AxiomData> = ref({
     lowerSequence: props.axiom ? [...props.axiom.lowerSequence] : []
 });
 
-function addSymbol(symbol: SeqSymbol): void {
+function addSymbolToSelectedSequence(symbol: SeqSymbol): void {
     if (upperSeqSelected.value) {
         axiom.value?.upperSequence.push(symbol);
     } else {
@@ -63,12 +61,6 @@ function removeFromUpperSeq(index: number): void {
 
 function removeFromLowerSeq(index: number): void {
     axiom.value.lowerSequence.splice(index, 1);
-}
-
-function updateSymbols(updatedSymbols: SymbolData[]): void {
-    axiom.value.upperSequence = [];
-    axiom.value.lowerSequence = [];
-    emit('updateSymbols', updatedSymbols);
 }
 </script>
 

@@ -117,40 +117,6 @@ app.post('/newSaveState', async (req, res) => {
   }
 });
 
-app.post('/newEdit', async (req, res) => {
-  try {
-    const { userName } = req.body;
-    const newEdit = {
-      userName: userName,
-      title: 'Neuer Kurs',
-      chapters: [],
-      variables: [],
-      symbols: []
-    }
-    const result = await db.collection('Edits').insertOne(newEdit);
-    res.json({ editID: result.insertedId });
-  } catch (error) {
-    res.status(500).json({ error: error });
-  }
-});
-
-app.get('/edit', async (req, res) => {
-  try {
-    const { editID } = req.query;
-    const filter = ({ _id: new ObjectId(editID) });
-    const edit = await db.collection('Edits').findOne(filter);
-    const editData = ({
-      title: edit.title,
-      chapters: edit.chapters,
-      variables: edit.variables,
-      symbols: edit.symbols
-    });
-    res.json(editData);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-})
-
 app.patch('/sequenceHistory', async (req, res) => {
   try {
     const { saveID, chapterIndex, levelIndex, newHistory } = req.body;
@@ -192,6 +158,69 @@ app.patch('/levelSolved', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 })
+
+// EDITOR
+
+app.post('/newEdit', async (req, res) => {
+  try {
+    const { userName } = req.body;
+    const newEdit = {
+      userName: userName,
+      title: 'Neuer Kurs',
+      chapters: [],
+      variables: [],
+      symbols: []
+    }
+    const result = await db.collection('Edits').insertOne(newEdit);
+    res.json({ editID: result.insertedId });
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
+app.get('/edit', async (req, res) => {
+  try {
+    const { editID } = req.query;
+    const filter = ({ _id: new ObjectId(editID) });
+    const edit = await db.collection('Edits').findOne(filter);
+    const editData = ({
+      title: edit.title,
+      chapters: edit.chapters,
+      variables: edit.variables,
+      symbols: edit.symbols
+    });
+    res.json(editData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.patch('/saveEdit', async (req, res) => {
+  try {
+    const { editID, course } = req.body;
+    const filter = ({ _id: new ObjectId(editID) });
+    const updateCourse = ({
+      $set: { 
+        title: course.title,
+        chapters: course.chapters,
+        symbols: course.symbols,
+        variables: course.variables
+      }
+    });
+
+    result = await db.collection('Edits').updateOne(filter, updateCourse);
+
+    if (result.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to update status' });
+    } 
+
+    res.json({ message: 'course saved successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/* Müll
 
 app.post('/addNewChapter', async (req, res) => {
   try {
@@ -518,4 +547,4 @@ app.patch('/goalAxiom', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-});
+}); */

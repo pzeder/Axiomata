@@ -7,8 +7,8 @@
         </div>
         <AddButton class="symbol-add-button" target="symbol" @click="showSymbolEditor = true" />
     </div>
-    <SymbolEditor v-if="showSymbolEditor" :editID="editID" @closeSymbolEditor="showSymbolEditor = false"
-        @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" />
+    <SymbolEditor v-if="showSymbolEditor" @close="showSymbolEditor = false"
+        @addSymbol="emit('addSymbol')" />
 </template>
 
 <script setup lang="ts">
@@ -16,41 +16,16 @@ import { defineProps, defineEmits, Ref, ref } from 'vue';
 import SymbolComp from '@/components/axiom/SymbolComp.vue';
 import AddButton from '../AddButton.vue';
 import SymbolEditor from '../symbolEditor/SymbolEditor.vue';
-import { ChapterData, SymbolData } from '@/scripts/Interfaces';
-import axios from 'axios';
+import { SymbolData } from '@/scripts/Interfaces';
 
 interface Props {
-    editID: any
     symbols: SymbolData[] | undefined;
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['openSymbolEditor', 'updateChapters', 'updateSymbols', 'symbolClicked']);
+const emit = defineEmits(['openSymbolEditor', 'addSymbol', 'symbolClicked']);
 
 const showSymbolEditor: Ref<boolean> = ref(false);
-
-async function deleteSymbol(index: number): Promise<void> {
-    if (!props.symbols) {
-        return;
-    }
-    try {
-        const updateData = {
-            editID: props.editID,
-            symbolIndex: index
-        };
-        const response = await axios.patch('http://localhost:3000/deleteSymbol', updateData);
-        if (response.status === 200) {
-            const updatedSymbols: SymbolData[] = response.data.symbols;
-            const updatedChapters: ChapterData[] = response.data.chapters;
-            emit('updateChapters', updatedChapters);
-            emit('updateSymbols', updatedSymbols);
-        } else {
-            console.error('Server responded with status', response.status);
-        }
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-}
 </script>
 
 <style>

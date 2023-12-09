@@ -5,9 +5,7 @@
       <AxiomList title="Neue Tauschregeln in diesem Kapitel" :axioms="chapter.newAxioms" :symbols="symbols" :maxWidth="60"
         :containerWidth="20" @editNewAxiom="emit('editNewAxiom')" @deleteAxiom="deleteAxiom" />
     </div>
-    <EditLevelList :editID="editID" :chapterIndex="chapterIndex" :levels="chapter.levels" :symbols="symbols"
-      @updateChapters="(updatedChapters) => emit('updateChapters', updatedChapters)"
-      @updateSymbols="(updatedSymbols) => emit('updateSymbols', updatedSymbols)" />
+    <EditLevelList :chapterIndex="chapterIndex" :levels="chapter.levels" :symbols="symbols" />
     <DeleteButton text="Kapitel löschen" @click="emit('deleteChapter')" />
   </div>
 </template>
@@ -19,39 +17,17 @@ import EditLevelList from './EditLevelList.vue';
 import DeleteButton from '../DeleteButton.vue';
 import AxiomList from './AxiomList.vue';
 import { ChapterData, SymbolData } from '@/scripts/Interfaces';
-import axios from 'axios';
 
 interface Props {
-  editID: any;
   chapterIndex: number;
   chapter: ChapterData;
   symbols: SymbolData[];
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'updateChapters', 'updateSymbols', 'editNewAxiom']);
+const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'editNewAxiom']);
 
 const chapterTag: ComputedRef<string> = computed(() => 'Kapitel ' + (props.chapterIndex + 1));
-
-async function deleteAxiom(index: number) {
-  try {
-    const updateData = {
-      editID: props.editID,
-      chapterIndex: props.chapterIndex,
-      axiomIndex: index
-    }
-    const response = await axios.patch('http://localhost:3000/deleteAxiom', updateData);
-    if (response.status === 200) {
-      const updatedChapters: ChapterData[] = response.data.chapters;
-      emit('updateChapters', updatedChapters);
-      console.log('axiom deleted successfully:', response.data);
-    } else {
-      console.error('Server responded with status:', response.status);
-    }
-  } catch (error) {
-    console.error('Error adding new chapter:', error);
-  }
-}
 </script>
 
 <style>
