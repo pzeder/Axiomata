@@ -1,11 +1,8 @@
 <template>
   <div class="home-button" @click="emit('openHomeScreen')"> Home </div>
   <TitleBar tag="Kurs" :title="course?.title" :height=10 @editTitle="showTextInput = true" />
-  <EditChapterList v-if="course" :editID="editID" :course="course" 
-    @addNewChapter="addNewChapter"
-    @setChapterTitle="setChapterTitle" 
-    @deleteChapter="deleteChapter"
-    @addSymbol="addSymbol"/>
+  <EditChapterList v-if="course" :editID="editID" :course="course" @addNewChapter="addNewChapter"
+    @setChapterTitle="setChapterTitle" @deleteChapter="deleteChapter" @addSymbol="addSymbol" />
   <div class="submit-button" :style="{ background: courseValid ? 'lightgreen' : 'gray' }" @click="submitCourse"> Kurs
     hochladen </div>
   <TextInput v-if="showTextInput" title="Titel des Kurses ändern" :placeholder="course?.title"
@@ -121,7 +118,7 @@ function addSymbol(symbol: SymbolData): void {
     return
   }
   console.log(symbol);
-  course.value.symbols.push();
+  course.value.symbols.push(symbol);
   saveEdit();
 }
 

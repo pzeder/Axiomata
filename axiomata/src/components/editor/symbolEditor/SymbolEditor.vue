@@ -16,7 +16,7 @@
       </div>
       <div class="button-container">
         <div class="cancel-button" @click="emit('close')"> abbrechen </div>
-        <div class="ok-symbol-button" @click="emit('addSymbol', editSymbol)"> ok {{ editSymbol }} </div>
+        <div class="ok-symbol-button" @click="confirm"> ok </div>
       </div>
     </div>
   </div>
@@ -57,6 +57,11 @@ function setTextColor(color: string) {
 
 function setFontSize(fontSize: number) {
   editSymbol.value.fontSize = fontSize;
+}
+
+function confirm(): void {
+  emit('addSymbol', editSymbol.value);
+  emit('close');
 }
 </script>
 

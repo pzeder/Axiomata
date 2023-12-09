@@ -8,7 +8,7 @@
         <AddButton class="symbol-add-button" target="symbol" @click="showSymbolEditor = true" />
     </div>
     <SymbolEditor v-if="showSymbolEditor" @close="showSymbolEditor = false"
-        @addSymbol="emit('addSymbol')" />
+        @addSymbol="(symbol) => emit('addSymbol', symbol)" />
 </template>
 
 <script setup lang="ts">

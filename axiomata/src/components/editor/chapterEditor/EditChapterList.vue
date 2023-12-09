@@ -7,16 +7,14 @@
   </div>
   <AddButton target="chapter" @click="emit('addNewChapter', course.chapters.length)" />
   <AxiomEditor v-if="showAxiomEditor" :symbols="course?.symbols" upTitle="OBEN" lowTitle="UNTEN"
-    @addSymbol="emit('addSymbol')"
-    @saveAxiom="addNewAxiom"
-    @close="showAxiomEditor = false" />
+    @addSymbol="(symbol) => emit('addSymbol', symbol)" @saveAxiom="addNewAxiom" @close="showAxiomEditor = false" />
   <TextInput v-if="showTextInput" title="Titel des Kapitels ändern" :placeholder="editChapter?.title"
     @updateText="setChapterTitle" @close="showTextInput = false" />
 </template>
 
 <script setup lang="ts">
 import { defineProps, defineEmits, Ref, ref, ComputedRef, computed } from 'vue';
-import { ChapterData, CourseData } from '@/scripts/Interfaces';;
+import { ChapterData, CourseData } from '@/scripts/Interfaces';
 import EditChapter from './EditChapter.vue';
 import AddButton from '@/components/editor/AddButton.vue';
 import AxiomEditor from '../axiomEditor/AxiomEditor.vue';

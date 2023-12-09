@@ -12,8 +12,8 @@
                     :sequence="axiom?.lowerSequence" :symbols="symbols" :variables=[] @click="upperSeqSelected = false"
                     @symbolClicked="removeFromLowerSeq" />
             </div>
-            <SymbolList :symbols="symbols"
-                @addSymbol="emit('addSymbol')" @symbolClicked="addSymbolToSelectedSequence" />
+            <SymbolList :symbols="symbols" @addSymbol="(symbol) => emit('addSymbol', symbol)"
+                @symbolClicked="addSymbolToSelectedSequence" />
         </div>
         <div class="button-container">
             <div class="axiom-cancel-button" @click="emit('close')"> Abbrechen </div>
