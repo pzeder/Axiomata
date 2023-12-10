@@ -5,7 +5,9 @@
       @editChapterTitle="editChapterTitle(index)" @deleteChapter="emit('deleteChapter', index)"
       @editNewAxiom="editNewAxiom(index)" @deleteAxiom="(axiomIndex) => emit('deleteAxiom', index, axiomIndex)"
       @addNewLevel="(levelIndex) => emit('addNewLevel', index, levelIndex)"
+      @deleteLevel="(levelIndex) => emit('deleteLevel', index, levelIndex)"
       @setLevelTitle="(levelIndex, title) => emit('setLevelTitle', index, levelIndex, title)"
+      @setGoalAxiom="(levelIndex, axiom) => emit('setGoalAxiom', index, levelIndex, axiom)"
       @addSymbol="(symbol) => emit('addSymbol', symbol)" />
   </div>
   <AddButton target="chapter" @click="emit('addNewChapter', course.chapters.length)" />
@@ -30,7 +32,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['addNewChapter', 'setChapterTitle', 'deleteChapter', 'addSymbol', 'deleteSymbol',
-  'addNewAxiom', 'deleteAxiom', 'addNewLevel', 'setLevelTitle']);
+  'addNewAxiom', 'deleteAxiom', 'addNewLevel', 'deleteLevel', 'setLevelTitle', 'setGoalAxiom']);
 
 const showAxiomEditor: Ref<boolean> = ref(false);
 const showTextInput: Ref<boolean> = ref(false);

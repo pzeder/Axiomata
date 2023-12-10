@@ -3,7 +3,8 @@
   <TitleBar tag="Kurs" :title="course?.title" :height=10 @editTitle="showTextInput = true" />
   <EditChapterList v-if="course" :editID="editID" :course="course" @addNewChapter="addNewChapter"
     @setChapterTitle="setChapterTitle" @deleteChapter="deleteChapter" @addSymbol="addSymbol" @deleteSymbol="deleteSymbol"
-    @addNewAxiom="addNewAxiom" @deleteAxiom="deleteAxiom" @addNewLevel="addNewLevel" @setLevelTitle="setLevelTitle" />
+    @addNewAxiom="addNewAxiom" @deleteAxiom="deleteAxiom" @addNewLevel="addNewLevel" @deleteLevel="deleteLevel"
+    @setLevelTitle="setLevelTitle" @setGoalAxiom="setGoalAxiom" />
   <div class="submit-button" :style="{ background: courseValid ? 'lightgreen' : 'gray' }" @click="submitCourse"> Kurs
     hochladen </div>
   <TextInput v-if="showTextInput" title="Titel des Kurses ändern" :placeholder="course?.title"
@@ -206,11 +207,27 @@ function addNewLevel(chapterIndex: number, levelIndex: number) {
   saveEdit();
 }
 
+function deleteLevel(chapterIndex: number, levelIndex: number) {
+  if (!course.value) {
+    return;
+  }
+  course.value.chapters[chapterIndex].levels.splice(levelIndex, 1);
+  saveEdit();
+}
+
 function setLevelTitle(chapterIndex: number, levelIndex: number, title: string) {
   if (!course.value) {
     return;
   }
   course.value.chapters[chapterIndex].levels[levelIndex].title = title;
+  saveEdit();
+}
+
+function setGoalAxiom(chapterIndex: number, levelIndex: number, axiom: AxiomData) {
+  if (!course.value) {
+    return;
+  }
+  course.value.chapters[chapterIndex].levels[levelIndex].goalAxiom = axiom;
   saveEdit();
 }
 

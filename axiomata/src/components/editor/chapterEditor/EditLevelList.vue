@@ -2,17 +2,18 @@
   <div v-for="(level, index) in levels" :key="index">
     <AddButton target="level" @click="emit('addNewLevel', index)" />
     <EditLevel :chapterIndex="chapterIndex" :levelIndex="index" :level="level" :symbols="symbols"
-      @editLevelTitle="editLevelTitle(index)" @deleteLevel="deleteLevel(index)" @editGoalAxiom="editGoalAxiom(index)" />
+      @editLevelTitle="editLevelTitle(index)" @deleteLevel="emit('deleteLevel', index)"
+      @editGoalAxiom="editGoalAxiom(index)" />
   </div>
   <AddButton target="level" @click="emit('addNewLevel', levels.length)" />
   <AxiomEditor v-if="showAxiomEditor" :axiom="editLevel?.goalAxiom" :symbols="symbols" upTitle="START" lowTitle="ZIEL"
-    @close="showAxiomEditor = false" @addSymbol="(symbol) => emit('addSymbol', symbol)" @saveAxiom="updateGoalAxiom" />
+    @close="showAxiomEditor = false" @addSymbol="(symbol) => emit('addSymbol', symbol)" @saveAxiom="setGoalAxiom" />
   <TextInput v-if="showTextInput" title="Titel des Levels ändern" :placeholder="editLevel?.title"
     @updateText="setLevelTitle" @close="showTextInput = false" />
 </template>
 
 <script setup lang="ts">
-import { LevelData, SymbolData } from '@/scripts/Interfaces';
+import { AxiomData, LevelData, SymbolData } from '@/scripts/Interfaces';
 import { defineProps, defineEmits, Ref, ref, ComputedRef, computed } from 'vue';
 import AddButton from '@/components/editor/AddButton.vue'
 import EditLevel from './EditLevel.vue'
@@ -26,7 +27,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['addNewLevel', 'setLevelTitle', 'addSymbol']);
+const emit = defineEmits(['addNewLevel', 'deleteLevel', 'setLevelTitle', 'addSymbol', 'setGoalAxiom']);
 
 const showAxiomEditor: Ref<boolean> = ref(false);
 const showTextInput: Ref<boolean> = ref(false);
@@ -50,5 +51,9 @@ function editGoalAxiom(levelIndex: number) {
 
 function setLevelTitle(title: string): void {
   emit('setLevelTitle', editLevelIndex.value, title);
+}
+
+function setGoalAxiom(axiom: AxiomData): void {
+  emit('setGoalAxiom', editLevelIndex.value, axiom)
 }
 </script>
