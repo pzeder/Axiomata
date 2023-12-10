@@ -13,7 +13,7 @@
                     @symbolClicked="removeFromLowerSeq" />
             </div>
             <SymbolList :symbols="symbols" @addSymbol="(symbol) => emit('addSymbol', symbol)" @deleteSymbol="deleteSymbol"
-                @symbolClicked="addSymbolToSelectedSequence" />
+                @symbolClicked="(index) => addSymbolToSequence({ type: 'terminal', index: index })" />
         </div>
         <div class="button-container">
             <div class="axiom-cancel-button" @click="emit('close')"> Abbrechen </div>
@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { AxiomData, SeqSymbol, SymbolData } from '@/scripts/Interfaces';
+import { AxiomData, SymbolPointer, SymbolData } from '@/scripts/Interfaces';
 import { defineProps, defineEmits, Ref, ref, withDefaults } from 'vue';
 import SymbolList from './SymbolList.vue'
 import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
@@ -53,11 +53,11 @@ function deleteSymbol(index: number) {
     emit('deleteSymbol', index);
 }
 
-function addSymbolToSelectedSequence(symbol: SeqSymbol): void {
+function addSymbolToSequence(symbolPointer: SymbolPointer): void {
     if (upperSeqSelected.value) {
-        axiom.value?.upperSequence.push(symbol);
+        axiom.value?.upperSequence.push(symbolPointer);
     } else {
-        axiom.value?.lowerSequence.push(symbol);
+        axiom.value?.lowerSequence.push(symbolPointer);
     }
 }
 

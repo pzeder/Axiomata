@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { Ref, ref, defineProps, onMounted, ComputedRef, computed, defineEmits } from 'vue';
-import { CourseData, ChapterData, SymbolData, LevelData, AxiomData, SeqSymbol } from '@/scripts/Interfaces';
+import { CourseData, ChapterData, SymbolData, LevelData, AxiomData, SymbolPointer } from '@/scripts/Interfaces';
 import EditChapterList from './chapterEditor/EditChapterList.vue';
 import TextInput from './TextInput.vue';
 import TitleBar from './TitleBar.vue';
@@ -122,27 +122,31 @@ function addSymbol(symbol: SymbolData): void {
   saveEdit();
 }
 
-function deleteSymbol(symbolIndex: number): void {
+function deleteSymbol(symbolPointer: SymbolPointer): void {
   if (!course.value) {
     return
   }
 
-  course.value.symbols.splice(symbolIndex, 1);
+  course.value.symbols.splice(symbolPointer.index, 1);
 
-  const cleanIndex = (symbol: SeqSymbol): SeqSymbol => {
-    if (typeof symbol === 'number') {
-      return (symbol < symbolIndex) ? symbol : symbol - 1;
+  const cleanSymbol = (sp: SymbolPointer): SymbolPointer => {
+    if (sp.type === symbolPointer.type) {
+      return ({
+        type: sp.type,
+        index: (sp.index < symbolPointer.index) ? sp.index : sp.index - 1
+      });
     }
-    return 0; // TODO
+    return sp;
   };
 
   const cleanAxiom = (axiom: AxiomData): AxiomData => {
-    if (axiom.upperSequence.includes(symbolIndex) || axiom.lowerSequence.includes(symbolIndex)) {
+    const poisonedSymbol = (sp: SymbolPointer): boolean => sp.type === symbolPointer.type && sp.index === symbolPointer.index;
+    if (axiom.upperSequence.some(poisonedSymbol) || axiom.lowerSequence.some(poisonedSymbol)) {
       return { upperSequence: [], lowerSequence: [] };
     }
     return {
-      upperSequence: axiom.upperSequence.map(cleanIndex),
-      lowerSequence: axiom.lowerSequence.map(cleanIndex)
+      upperSequence: axiom.upperSequence.map(cleanSymbol),
+      lowerSequence: axiom.lowerSequence.map(cleanSymbol)
     }
   };
 

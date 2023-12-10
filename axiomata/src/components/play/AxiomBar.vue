@@ -3,19 +3,19 @@
     <div class="axiom-bar-title" :style="{ position: (vertical ? 'static' : 'absolute') }"> {{ title }} </div>
     <div v-if="vertical">
       <AxiomContainer v-for="(axiom, index) in axioms" :key="index" :width="containerWidth" :height="containerHeight"
-        :axiom="axiom" :symbols="symbols" :variables="variables" :varColors="varColors"
+        :axiom="axiom" :symbols="symbols" :variables="variables"
         @selectAxiom="(event) => emit('selectAxiom', event, axiom)" />
     </div>
     <div v-if="!vertical" :style="{ display: 'flex' }">
       <AxiomContainer v-for="(axiom, index) in axioms" :key="index" :width="containerWidth" :height="containerHeight"
-        :axiom="axiom" :symbols="symbols" :variables="variables" :varColors="varColors"
+        :axiom="axiom" :symbols="symbols" :variables="variables"
         @selectAxiom="(event) => emit('selectAxiom', event, axiom)" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { AxiomData, SymbolData, VarData } from '@/scripts/Interfaces';
+import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import { computed, defineProps, defineEmits } from 'vue';
 import AxiomContainer from '@/components/axiom/AxiomContainer.vue'
 
@@ -26,8 +26,7 @@ interface Props {
   height: number;
   axioms: AxiomData[] | undefined;
   symbols: SymbolData[] | undefined;
-  variables: VarData[] | undefined;
-  varColors: string[];
+  variables: SymbolData[] | undefined;
 }
 const props = defineProps<Props>();
 const emit = defineEmits(['selectAxiom', 'mouseOver']);

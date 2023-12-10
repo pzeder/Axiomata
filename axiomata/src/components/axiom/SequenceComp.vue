@@ -9,44 +9,38 @@
 <script setup lang="ts">
 import { defineProps, withDefaults, defineEmits } from "vue";
 import SymbolComp from '@/components/axiom/SymbolComp.vue'
-import { SymbolData, VarData, SeqSymbol, SeqVar } from "@/scripts/Interfaces";
+import { SymbolData, SymbolPointer } from "@/scripts/Interfaces";
 
 interface Props {
   symbolWidth: number;
-  sequence: SeqSymbol[] | undefined;
+  sequence: SymbolPointer[] | undefined;
   highlights: boolean[];
   symbols: SymbolData[] | undefined;
-  variables: VarData[] | undefined;
-  varMap: Map<string, number>;
+  variables: SymbolData[] | undefined;
+  varMap: Map<number, SymbolPointer>;
 }
 const props = withDefaults(defineProps<Props>(), {
   highlights: () => [],
-  varMap: () => new Map<string, number>()
+  varMap: () => new Map<number, SymbolPointer>()
 });
 
 const emit = defineEmits(['symbolClicked']);
 
-function symbolData(symbol: SeqSymbol): SymbolData | null {
+function symbolData(symbolPointer: SymbolPointer): SymbolData | null {
   if (!props.symbols || !props.variables) {
     return null;
   }
-  if (typeof symbol === 'number') {
-    return props.symbols[symbol];
-  }
-  if ('varIndex' in symbol && 'colorIndex' in symbol) {
-    const variable = symbol as SeqVar;
-    let key = `${variable.varIndex},${variable.colorIndex}`;
-    if (props.varMap.get(key) || props.varMap.get(key) === 0) {
-      let symbolIndex: number = props.varMap.get(key) as number;
-      return props.symbols[symbolIndex];
+  if (symbolPointer.type === 'variable') {
+    const key: number = symbolPointer.index;
+    const sp: SymbolPointer | undefined = props.varMap.get(key);
+    if (sp !== undefined) {
+      symbolPointer = sp;
     }
-    return {
-      backgroundColor: 'white',
-      text: props.variables[variable.varIndex].varText,
-      textColor: 'grey'
-    };
   }
-  return null;
+  if (symbolPointer.type === 'terminal') {
+    return props.symbols[symbolPointer.index];
+  }
+  return props.variables[symbolPointer.index];
 }
 </script>
 

@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import { computed, defineProps, withDefaults, defineEmits } from 'vue';
-import { SeqSymbol, SymbolData, VarData } from '@/scripts/Interfaces';
+import { SymbolPointer, SymbolData } from '@/scripts/Interfaces';
 import SequenceComp from '@/components/axiom/SequenceComp.vue';
 
 interface Props {
@@ -17,17 +17,17 @@ interface Props {
   height: number;
   maxFill: number;
   maxSymbolWidthRatio: number;
-  sequence: SeqSymbol[] | undefined;
+  sequence: SymbolPointer[] | undefined;
   symbols: SymbolData[] | undefined;
   highlights: boolean[];
-  variables: VarData[] | undefined;
-  varMap: Map<string, number>;
+  variables: SymbolData[] | undefined;
+  varMap: Map<number, SymbolPointer>;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   title: () => '',
   highlights: () => [],
-  varMap: () => new Map<string, number>()
+  varMap: () => new Map<number, SymbolPointer>()
 });
 
 const emit = defineEmits(['symbolClicked']);

@@ -1,14 +1,13 @@
 <template>
-  <div class="axiom-container" @touchstart="handleTouchStart"
-    :style="{ width: width + 'vw', height: height + 'vw' }">
-    <AxiomComp :symbolWidth="symbolWidth" :axiomData="axiom" :symbols="symbols"
-      :variables="variables" :varColors="varColors" :varMap="varMap" @mousedown="(event) => selectAxiom(event, axiom)" />
+  <div class="axiom-container" @touchstart="handleTouchStart" :style="{ width: width + 'vw', height: height + 'vw' }">
+    <AxiomComp :symbolWidth="symbolWidth" :axiomData="axiom" :symbols="symbols" :variables="variables" :varMap="varMap"
+      @mousedown="(event) => selectAxiom(event, axiom)" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { defineProps, defineEmits, computed, withDefaults } from 'vue';
-import { AxiomData, SymbolData, VarData } from '@/scripts/Interfaces';
+import { AxiomData, SymbolData, SymbolPointer } from '@/scripts/Interfaces';
 import AxiomComp from '@/components/axiom/AxiomComp.vue';
 import { maxSequenceLength } from '@/scripts/AxiomMethods';
 
@@ -17,16 +16,15 @@ interface Props {
   height: number;
   axiom: AxiomData;
   symbols: SymbolData[] | undefined;
-  variables: VarData[] | undefined;
-  varColors: string[];
-  varMap: Map<string, number>;
+  variables: SymbolData[] | undefined;
+  varMap: Map<number, SymbolPointer>;
   upperHighlights: boolean[];
   lowerHighlights: boolean[];
 }
 const props = withDefaults(defineProps<Props>(), {
   upperHighlights: () => [],
   lowerHighlights: () => [],
-  varMap: () => new Map<string, number>()
+  varMap: () => new Map<number, SymbolPointer>()
 });
 
 const emit = defineEmits(['selectAxiom', 'mouseOver']);

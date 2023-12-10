@@ -3,34 +3,33 @@
     <HeadBar :levelTitle="level?.title" :height="headBarHeight" @openLevelMenu="emit('openChapterScreen')" />
     <div :style="{ display: 'flex' }">
       <AxiomBar :title="'Tausch-Regeln'" :background="'rgb(252, 223, 203)'" :width="axiomBarWidth"
-        :height="axiomBarHeight" :axioms="axioms" :symbols="symbols" :variables="variables" :varColors="varColors"
-        @selectAxiom="selectAxiom" />
+        :height="axiomBarHeight" :axioms="axioms" :symbols="symbols" :variables="variables" @selectAxiom="selectAxiom" />
       <div class="right-side">
         <div :style="{ display: 'flex' }">
           <div :style="{ marginTop: -1 + 'vw' }">
             <SequenceContainer :width="workbenchWidth" :height="workbenchHeight" :maxFill="workbenchMaxFill"
               :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio" :sequence="workSequence" :symbols="symbols"
-              :variables="variables" :varColors="varColors" :highlights="workHighlights" />
+              :variables="variables" :highlights="workHighlights" />
           </div>
           <div :style="{ display: 'grid', placeItems: 'center', width: goalContainerWidth + 'vw' }">
             <SequenceContainer class="goal-window" :title="'START'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
               :maxSymbolWidthRatio="0.33" :sequence="level?.goalAxiom.upperSequence" :variables="variables"
-              :varColors="varColors" :symbols="symbols" />
+              :symbols="symbols" />
             <SequenceContainer class="goal-window" :title="'ZIEL'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
               :maxSymbolWidthRatio="0.33" :sequence="level?.goalAxiom.lowerSequence" :variables="variables"
-              :varColors="varColors" :symbols="symbols" />
+              :symbols="symbols" />
           </div>
         </div>
         <AxiomBar :title="'Bonus-Regeln'" :background="'rgb(187, 231, 247)'" :width="derivateBarWidth"
-          :height="derivateBarHeight" :axioms="derivates" :variables="variables" :varColors="varColors" :symbols="symbols"
+          :height="derivateBarHeight" :axioms="derivates" :variables="variables" :symbols="symbols"
           @selectAxiom="selectAxiom" />
       </div>
     </div>
   </div>
   <Cursor :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="workSymbolWidth"
     :symbols="symbols" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
-    :aboveCenter="cursorAboveCenter" :workMatch="workMatch" :variables="variables" :varColors="varColors" :varMap="varMap"
-    @axiomDrop="axiomDrop" @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
+    :aboveCenter="cursorAboveCenter" :workMatch="workMatch" :variables="variables" :varMap="varMap" @axiomDrop="axiomDrop"
+    @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
   <div v-if="goalMatch" @click="emit('finishLevel')"
     :style="{ position: 'absolute', userSelect: 'none', color: 'red', left: 90 + 'vw', top: 58 + 'vh', width: (goalWidth) + 'vw', height: (goalWidth) + 'vw', fontSize: 1 + 'vw' }">
     Geschafft!
@@ -42,13 +41,13 @@ import AxiomBar from './AxiomBar.vue';
 import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import HeadBar from '@/components/play/HeadBar.vue'
 import Cursor from './Cursor.vue';
-import { AxiomData, LevelData, SeqVar, SeqSymbol, VarData, SymbolData } from '@/scripts/Interfaces';
+import { AxiomData, LevelData, SymbolPointer, SymbolData } from '@/scripts/Interfaces';
 import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount, computed, ComputedRef } from 'vue';
 import { axiomHeight, axiomWidth } from '@/scripts/AxiomMethods';
 
 interface Props {
   symbols: SymbolData[] | undefined;
-  variables: VarData[] | undefined;
+  variables: SymbolData[] | undefined;
   axioms: AxiomData[];
   derivates: AxiomData[];
   level: LevelData | null;
@@ -79,7 +78,6 @@ const workSymbolWidth: ComputedRef<number> = computed(() => {
   const maxWidth: number = workbenchMaxSymbolWidthRatio.value * workbenchWidth.value;
   return Math.min(w, maxWidth);
 });
-const varColors: Ref<string[]> = ref(['red', 'blue', 'green', 'purple', 'orange']);
 
 // Level variables
 const goalMatch: ComputedRef<boolean> = computed(() => {
@@ -106,12 +104,12 @@ const dragging: Ref<boolean> = ref(false);
 const upperHighlights: Ref<boolean[]> = ref([]);
 const lowerHighlights: Ref<boolean[]> = ref([]);
 const cursorAboveCenter: Ref<boolean> = ref(false);
-let nearSequence: SeqSymbol[];
-let farSequence: SeqSymbol[];
+let nearSequence: SymbolPointer[];
+let farSequence: SymbolPointer[];
 let nearHighlights: Ref<boolean[]>;
 const cursorAxiomDocked: Ref<boolean> = ref(false);
-const varMap: Ref<Map<string, number>> = ref(new Map<string, number>());
-const workSequence: ComputedRef<SeqSymbol[] | undefined> = computed(() =>
+const varMap: Ref<Map<number, SymbolPointer>> = ref(new Map<number, SymbolPointer>());
+const workSequence: ComputedRef<SymbolPointer[] | undefined> = computed(() =>
   props.level?.sequenceHistory[props.level.sequenceHistory.length - 1]);
 const workMatch: ComputedRef<boolean> = computed(() => {
   let docked: boolean = cursorAxiomDocked.value;
@@ -228,7 +226,7 @@ function dockCursorAxiom(): void {
 }
 
 function updateMatching(): void {
-  if (!props.level || !workSequence.value || !workSequence.value.length || !props.variables) {
+  if (!props.level || !workSequence.value || !workSequence.value.length || !props.symbols || !props.variables) {
     return;
   }
 
@@ -241,24 +239,22 @@ function updateMatching(): void {
   }
 
   // Reset map
-  varMap.value = new Map<string, number>();
+  varMap.value.clear();
 
   while (workIndex < workSequence.value.length && nearIndex < nearSequence.length) {
-    let workSymbol: SeqSymbol = workSequence.value[workIndex];
-    let nearSymbol: SeqSymbol = nearSequence[nearIndex];
-    let match = false;
-    if (typeof nearSymbol === 'number') {
-      match = (workSymbol === nearSymbol);
-    } else if ('varIndex' in nearSymbol && 'colorIndex' in nearSymbol) {
-      let variable = nearSymbol as SeqVar;
-      let varData: VarData = props.variables[variable.varIndex];
-      let workSymbolIndex: number = workSymbol as number;
-      let key = `${variable.varIndex},${variable.colorIndex}`;
-      if (!varMap.value.get(key) && varData.possibilities.includes(workSymbolIndex)) {
-        varMap.value.set(key, workSymbolIndex);
+    let workSymbol: SymbolPointer = workSequence.value[workIndex];
+    let nearSymbol: SymbolPointer = nearSequence[nearIndex];
+    if (nearSymbol.type === 'variable') {
+      let key: number = nearSymbol.index;
+      if (!varMap.value.get(key) && props.symbols[workSymbol.index].varDomain) {
+        varMap.value.set(key, workSymbol);
       }
-      match = (varMap.value.get(key) === workSymbolIndex);
+      const symbolPointer: SymbolPointer | undefined = varMap.value.get(key);
+      if (symbolPointer !== undefined) {
+        nearSymbol = symbolPointer;
+      }
     }
+    const match: boolean = (workSymbol.type === nearSymbol.type && workSymbol.index === nearSymbol.index);
     workHighlights.value[workIndex] = match;
     nearHighlights.value[nearIndex] = match;
     workIndex++;
@@ -305,7 +301,7 @@ function updateWorkSequence(): void {
     return;
   }
 
-  let newSequence: SeqSymbol[] = [];
+  let newSequence: SymbolPointer[] = [];
 
   // Keep all symbols left of the match
 
@@ -315,16 +311,18 @@ function updateWorkSequence(): void {
 
   // Replace the matching part with farSequence
 
-  newSequence.push(...farSequence.map(symbol => {
-    if (typeof symbol !== 'number' && 'varIndex' in symbol && 'colorIndex' in symbol) {
-      const variable = symbol as SeqVar;
-      let key = `${variable.varIndex},${variable.colorIndex}`;
-      if (varMap.value.get(key) || varMap.value.get(key) === 0) {
-        return varMap.value.get(key) as number;
+  const mapVariable = (sp: SymbolPointer): SymbolPointer => {
+    if (sp.type === 'variable') {
+      const key: number = sp.index;
+      const spMap: SymbolPointer | undefined = varMap.value.get(key);
+      if (spMap !== undefined) {
+        return spMap;
       }
     }
-    return symbol;
-  }));
+    return sp;
+  };
+
+  newSequence.push(...farSequence.map(mapVariable));
 
   // Keep all symbols left of the match
 

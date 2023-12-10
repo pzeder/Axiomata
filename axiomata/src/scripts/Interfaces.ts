@@ -1,6 +1,6 @@
 export interface AxiomData {
-    upperSequence: SeqSymbol[];
-    lowerSequence: SeqSymbol[];
+    upperSequence: SymbolPointer[];
+    lowerSequence: SymbolPointer[];
 }
 
 export interface SymbolData {
@@ -8,22 +8,13 @@ export interface SymbolData {
     text: string;
     textColor: string;
     fontSize: number;
-}
-
-export interface SeqVar {
-    varIndex: number;
-    colorIndex: number;
-}
-
-export interface VarData {
-    varText: string;
-    possibilities: number[];
+    varDomain: boolean;
 }
 
 export interface CourseData {
     title: string;
     chapters: ChapterData[];
-    variables: VarData[];
+    variables: SymbolData[];
     symbols: SymbolData[];
 }
 
@@ -36,7 +27,7 @@ export interface ChapterData {
 export interface LevelData {
     title: string;
     goalAxiom: AxiomData;
-    sequenceHistory: SeqSymbol[][];
+    sequenceHistory: SymbolPointer[][];
     solved: boolean;
 }
 
@@ -45,4 +36,7 @@ export interface LevelPointer {
     levelIndex: number
 }
 
-export type SeqSymbol = number | SeqVar;
+export interface SymbolPointer {
+    type: string;
+    index: number
+}

@@ -5,9 +5,9 @@
     top: posY + 'vw'
   }">
     <AxiomComp v-if="cursorAxiom.upperSequence.length !== 0" :symbolWidth="symbolWidth" :axiomData="cursorAxiom"
-      :symbols="symbols" :upperHighlights="upperHighlights" :variables="variables" :varColors="varColors"
-      :lowerHighlights="lowerHighlights" :varMap="varMap" @mouseup="emit('axiomDrop')" @touchend="emit('axiomDrop')"
-      @touchcancel="emit('axiomDrop')" @mousedown="emit('cursorAxiomClicked')" @touchstart="emit('cursorAxiomClicked')" />
+      :symbols="symbols" :upperHighlights="upperHighlights" :variables="variables" :lowerHighlights="lowerHighlights"
+      :varMap="varMap" @mouseup="emit('axiomDrop')" @touchend="emit('axiomDrop')" @touchcancel="emit('axiomDrop')"
+      @mousedown="emit('cursorAxiomClicked')" @touchstart="emit('cursorAxiomClicked')" />
     <div class="swap-button" v-if="workMatch" @click="emit('swap')" :style="{
       left: swapButtonX + 'vw',
       top: swapButtonY + 'vw',
@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { AxiomData, SymbolData, VarData } from '@/scripts/Interfaces';
+import { AxiomData, SymbolData, SymbolPointer } from '@/scripts/Interfaces';
 import { defineProps, defineEmits, withDefaults, ComputedRef, computed } from 'vue';
 import AxiomComp from '@/components/axiom/AxiomComp.vue';
 import { axiomHeight, maxSequenceLength } from '@/scripts/AxiomMethods';
@@ -34,14 +34,13 @@ interface Props {
   lowerHighlights: boolean[];
   aboveCenter: boolean;
   workMatch: boolean;
-  variables: VarData[] | undefined;
-  varColors: string[];
-  varMap: Map<string, number>;
+  variables: SymbolData[] | undefined;
+  varMap: Map<number, SymbolPointer>;
 }
 const props = withDefaults(defineProps<Props>(), {
   upperHighlights: () => [],
   lowerHighlights: () => [],
-  varMap: () => new Map<string, number>()
+  varMap: () => new Map<number, SymbolPointer>()
 });
 const emit = defineEmits(['axiomDrop', 'swap', 'cursorAxiomClicked']);
 
