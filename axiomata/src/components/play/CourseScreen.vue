@@ -1,14 +1,15 @@
 <template>
   <ChapterScreen v-if="showChapterScreen" :chapters="course?.chapters" :currentLevelPointer="currentLevelPointer"
     @openSaveStateMenu="emit('openSaveStateMenu')" @openLevel="openLevel" @openStartMenu="emit('openStartMenu')" />
-  <LevelScreen v-if="showLevelScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="currentAxioms" :derivates="currentDerivates" :level="currentLevel" :hasNextLevel="hasNextLevel" 
-    @updateSequenceHistory="updateSequenceHistory" @openChapterScreen="openChapterScreen" @finishLevel="finishLevel"/>
+  <LevelScreen v-if="showLevelScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="currentAxioms"
+    :derivates="currentDerivates" :level="currentLevel" :hasNextLevel="hasNextLevel" @addMove="addMove"
+    @openChapterScreen="openChapterScreen" @finishLevel="finishLevel" />
   <VictoryWindow v-if="showVictoryWindow" :hasNextLevel="currentLevelPointer !== null" @openLevelMenu="openChapterScreen"
     @nextLevel="openLevel" />
 </template>
 
 <script setup lang="ts">
-import { AxiomData, ChapterData, CourseData, LevelData, LevelPointer } from '@/scripts/Interfaces';
+import { AxiomData, ChapterData, CourseData, LevelData, LevelPointer, MoveData } from '@/scripts/Interfaces';
 import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef } from 'vue';
 import ChapterScreen from './ChapterScreen.vue';
@@ -16,7 +17,7 @@ import LevelScreen from './LevelScreen.vue';
 import VictoryWindow from './VictoryWindow.vue';
 
 interface Props {
-    saveID: any;
+  saveID: any;
 }
 
 const props = defineProps<Props>();
@@ -38,8 +39,8 @@ const currentLevelPointer: ComputedRef<LevelPointer | null> = computed(() => {
       let level: LevelData = chapter.levels[lvl];
       if (!level.solved) {
         return {
-        chapterIndex: ch,
-        levelIndex: lvl
+          chapterIndex: ch,
+          levelIndex: lvl
         };
       }
     }
@@ -48,12 +49,12 @@ const currentLevelPointer: ComputedRef<LevelPointer | null> = computed(() => {
 });
 
 const currentLevel: ComputedRef<LevelData | null> = computed(() => {
-    if (!currentLevelPointer.value || !course.value) {
-        return null;
-    }
-    let chapterIndex = currentLevelPointer.value.chapterIndex;
-    let levelIndex = currentLevelPointer.value.levelIndex;
-    return course.value.chapters[chapterIndex].levels[levelIndex];
+  if (!currentLevelPointer.value || !course.value) {
+    return null;
+  }
+  let chapterIndex = currentLevelPointer.value.chapterIndex;
+  let levelIndex = currentLevelPointer.value.levelIndex;
+  return course.value.chapters[chapterIndex].levels[levelIndex];
 });
 
 const currentAxioms: ComputedRef<AxiomData[]> = computed(() => {
@@ -67,7 +68,7 @@ const currentAxioms: ComputedRef<AxiomData[]> = computed(() => {
   }
   return axioms;
 }
-); 
+);
 
 const currentDerivates: ComputedRef<AxiomData[]> = computed(() => {
   if (!course.value || !currentLevelPointer.value) {
@@ -85,15 +86,15 @@ const currentDerivates: ComputedRef<AxiomData[]> = computed(() => {
     derivates.push(course.value.chapters[chapterIndex].levels[lvl].goalAxiom);
   }
   return derivates;
-}); 
+});
 
 onMounted(() => {
-    fetchCourse();
-    showChapterScreen.value = true;
+  fetchCourse();
+  showChapterScreen.value = true;
 });
 
 async function fetchCourse(): Promise<void> {
-    try {
+  try {
     const query: string = '?saveID=' + props.saveID;
     const response = await axios.get('http://localhost:3000/course' + query);
     if (response.status === 200) {
@@ -103,7 +104,7 @@ async function fetchCourse(): Promise<void> {
     }
   } catch (error) {
     console.error('Error fetching data:', error);
-  }    
+  }
 }
 
 function openLevel(): void {
@@ -127,24 +128,31 @@ function hideAll(): void {
   showVictoryWindow.value = false;
 }
 
-async function updateSequenceHistory(newSequence: number[]): Promise<void> {
-  currentLevel.value?.sequenceHistory.push(newSequence);
+async function saveGame(): Promise<void> {
   try {
     const updatedData = {
       saveID: props.saveID,
-      chapterIndex: currentLevelPointer.value?.chapterIndex,
-      levelIndex: currentLevelPointer.value?.levelIndex,
-      newHistory: currentLevel.value?.sequenceHistory
+      course: course.value
     };
-    const response = await axios.patch(`http://localhost:3000/sequenceHistory`, updatedData);
+    const response = await axios.patch(`http://localhost:3000/saveGame`, updatedData);
     if (response.status === 200) {
-      console.log('Course updated successfully:', response.data);
+      console.log('Game saved successfully:', response.data);
     } else {
       console.error('Server responded with status:', response.status);
     }
   } catch (error) {
     console.error('Error updating data:', error);
   }
+}
+
+function addMove(move: MoveData): void {
+  if (!currentLevelPointer.value || !course.value) {
+    return;
+  }
+  const chapterIndex: number = currentLevelPointer.value.chapterIndex;
+  const levelIndex: number = currentLevelPointer.value.levelIndex;
+  course.value.chapters[chapterIndex].levels[levelIndex].moveHistory.push(move);
+  saveGame();
 }
 
 function finishLevel(): void {

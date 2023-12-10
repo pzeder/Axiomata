@@ -54,7 +54,10 @@ app.post('/newSaveState', async (req, res) => {
     const getLevels = ch => ch.levels.map(lev => ({
       title: lev.title,
       goalAxiom: lev.goalAxiom,
-      sequenceHistory: [lev.goalAxiom.upperSequence],
+      moveHistory: [{
+        axiom: null,
+        sequence: lev.goalAxiom.upperSequence
+      }],
       solved: false
     }));
 
@@ -92,6 +95,28 @@ app.get('/course', async (req, res) => {
   }
 });
 
+app.patch('/saveGame', async (req, res) => {
+  try {
+    const { saveID, course } = req.body;
+    const filter = ({ _id: new ObjectId(saveID) });
+    const updateCourse = ({
+      $set: {
+        chapters: course.chapters
+      }
+    });
+
+    result = await db.collection('SaveStates').updateOne(filter, updateCourse);
+
+    if (result.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to update status' });
+    }
+    return res.json({ message: 'course saved successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/*
 app.patch('/sequenceHistory', async (req, res) => {
   try {
     const { saveID, chapterIndex, levelIndex, newHistory } = req.body;
@@ -132,7 +157,7 @@ app.patch('/levelSolved', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-})
+})*/
 
 ////////////
 // EDITOR //
@@ -204,8 +229,7 @@ app.patch('/saveEdit', async (req, res) => {
     if (result.modifiedCount === 0) {
       return res.status(500).json({ error: 'Failed to update status' });
     }
-
-    res.json({ message: 'course saved successfully' });
+    return res.json({ message: 'course saved successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

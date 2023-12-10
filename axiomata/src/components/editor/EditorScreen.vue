@@ -158,7 +158,7 @@ function deleteSymbol(symbolPointer: SymbolPointer): void {
   const cleanLevel = (lvl: LevelData): LevelData => ({
     title: lvl.title,
     goalAxiom: cleanAxiom(lvl.goalAxiom),
-    sequenceHistory: lvl.sequenceHistory,
+    moveHistory: lvl.moveHistory,
     solved: lvl.solved
   });
 
@@ -200,7 +200,7 @@ function addNewLevel(chapterIndex: number, levelIndex: number) {
       upperSequence: [],
       lowerSequence: []
     },
-    sequenceHistory: [],
+    moveHistory: [],
     solved: false
   })
   course.value.chapters[chapterIndex].levels.splice(levelIndex, 0, newLevel);

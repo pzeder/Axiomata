@@ -27,8 +27,13 @@ export interface ChapterData {
 export interface LevelData {
     title: string;
     goalAxiom: AxiomData;
-    sequenceHistory: SymbolPointer[][];
+    moveHistory: MoveData[];
     solved: boolean;
+}
+
+export interface MoveData {
+    axiom: AxiomData | null,
+    sequence: SymbolPointer[]
 }
 
 export interface LevelPointer {

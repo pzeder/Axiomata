@@ -41,7 +41,7 @@ import AxiomBar from './AxiomBar.vue';
 import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import HeadBar from '@/components/play/HeadBar.vue'
 import Cursor from './Cursor.vue';
-import { AxiomData, LevelData, SymbolPointer, SymbolData } from '@/scripts/Interfaces';
+import { AxiomData, LevelData, SymbolPointer, SymbolData, MoveData } from '@/scripts/Interfaces';
 import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount, computed, ComputedRef } from 'vue';
 import { axiomHeight, axiomWidth } from '@/scripts/AxiomMethods';
 
@@ -53,7 +53,9 @@ interface Props {
   level: LevelData | null;
   hasNextLevel: boolean;
 }
+
 const props = defineProps<Props>();
+const emit = defineEmits(['openChapterScreen', 'finishLevel', 'addMove', 'nextLevel']);
 
 // Layout variables
 const screenRatio: Ref<number> = ref(window.innerWidth / window.innerHeight);
@@ -111,8 +113,17 @@ let farSequence: SymbolPointer[];
 let nearHighlights: Ref<boolean[]>;
 const cursorAxiomDocked: Ref<boolean> = ref(false);
 const varMap: Ref<Map<number, SymbolPointer>> = ref(new Map<number, SymbolPointer>());
-const workSequence: ComputedRef<SymbolPointer[] | undefined> = computed(() =>
-  props.level?.sequenceHistory[props.level.sequenceHistory.length - 1]);
+
+const workSequence: ComputedRef<SymbolPointer[] | null> = computed(() => {
+  if (!props.level) {
+    return null;
+  }
+  const lastIndex: number = props.level.moveHistory.length - 1;
+  const lastMove: MoveData = props.level.moveHistory[lastIndex];
+  return lastMove.sequence;
+});
+
+
 const workMatch: ComputedRef<boolean> = computed(() => {
   let docked: boolean = cursorAxiomDocked.value;
   if (!nearHighlights || nearHighlights.value.length === 0 || !docked) {
@@ -128,8 +139,6 @@ onMounted(() => {
   window.addEventListener('touchmove', handleTouchMove, { passive: false });
   window.addEventListener('touchend', axiomDrop, { passive: false });
 });
-
-const emit = defineEmits(['openChapterScreen', 'finishLevel', 'updateSequenceHistory', 'nextLevel']);
 
 onBeforeUnmount(() => {
   document.body.classList.remove('no-scroll');
@@ -332,7 +341,14 @@ function updateWorkSequence(): void {
     newSequence.push(workSequence.value[i]);
   }
 
-  emit('updateSequenceHistory', newSequence);
+  // Create a new move and send it upwards to be added to the moveHistory
+
+  const newMove: MoveData = ({
+    axiom: cursorAxiom.value,
+    sequence: newSequence
+  });
+
+  emit('addMove', newMove);
 }
 </script>
 
