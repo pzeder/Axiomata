@@ -21,6 +21,10 @@ app.listen(3000, function () {
   console.log('listening on 3000');
 });
 
+//////////
+// MENU //
+//////////
+
 app.get('/saveStateHeaders', async (req, res) => {
   try {
     const filter = { userName: req.query.userName };
@@ -37,17 +41,6 @@ app.get('/courseHeaders', async (req, res) => {
     const courses = await db.collection('Courses').find().toArray();
     const courseHeaders = courses.map(c => ({ title: c.title }));
     res.json(courseHeaders)
-  } catch (error) {
-    res.status(500).json({ error: error });
-  }
-});
-
-app.get('/course', async (req, res) => {
-  try {
-    const { saveID } = req.query;
-    const filter = ({ _id: new ObjectId(saveID) });
-    const course = await db.collection('SaveStates').findOne(filter);
-    res.json(course);
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -79,6 +72,21 @@ app.post('/newSaveState', async (req, res) => {
 
     const result = await db.collection('SaveStates').insertOne(courseSave);
     res.json({ saveID: result.insertedId });
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
+//////////
+// GAME //
+//////////
+
+app.get('/course', async (req, res) => {
+  try {
+    const { saveID } = req.query;
+    const filter = ({ _id: new ObjectId(saveID) });
+    const course = await db.collection('SaveStates').findOne(filter);
+    res.json(course);
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -126,7 +134,9 @@ app.patch('/levelSolved', async (req, res) => {
   }
 })
 
-// EDITOR
+////////////
+// EDITOR //
+////////////
 
 app.post('/newEdit', async (req, res) => {
   try {
