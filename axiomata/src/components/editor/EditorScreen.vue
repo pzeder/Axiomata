@@ -3,7 +3,7 @@
   <TitleBar tag="Kurs" :title="course?.title" :height=10 @editTitle="showTextInput = true" />
   <EditChapterList v-if="course" :editID="editID" :course="course" @addNewChapter="addNewChapter"
     @setChapterTitle="setChapterTitle" @deleteChapter="deleteChapter" @addSymbol="addSymbol" @deleteSymbol="deleteSymbol"
-    @addNewAxiom="addNewAxiom" />
+    @addNewAxiom="addNewAxiom" @deleteAxiom="deleteAxiom" />
   <div class="submit-button" :style="{ background: courseValid ? 'lightgreen' : 'gray' }" @click="submitCourse"> Kurs
     hochladen </div>
   <TextInput v-if="showTextInput" title="Titel des Kurses ändern" :placeholder="course?.title"
@@ -173,6 +173,14 @@ function addNewAxiom(chapterIndex: number, axiom: AxiomData) {
     return;
   }
   course.value.chapters[chapterIndex].newAxioms.push(axiom);
+  saveEdit();
+}
+
+function deleteAxiom(chapterIndex: number, axiomIndex: number): void {
+  if (!course.value) {
+    return;
+  }
+  course.value.chapters[chapterIndex].newAxioms.splice(axiomIndex, 1);
   saveEdit();
 }
 

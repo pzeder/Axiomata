@@ -3,7 +3,7 @@
     <AddButton target="chapter" @click="emit('addNewChapter', index)" />
     <EditChapter :chapterIndex="index" :chapter="chapter" :symbols="course.symbols"
       @editChapterTitle="editChapterTitle(index)" @deleteChapter="emit('deleteChapter', index)"
-      @editNewAxiom="editNewAxiom(index)" />
+      @editNewAxiom="editNewAxiom(index)" @deleteAxiom="(axiomIndex) => emit('deleteAxiom', index, axiomIndex)" />
   </div>
   <AddButton target="chapter" @click="emit('addNewChapter', course.chapters.length)" />
   <AxiomEditor v-if="showAxiomEditor" :symbols="course?.symbols" upTitle="OBEN" lowTitle="UNTEN"
@@ -27,7 +27,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['addNewChapter', 'setChapterTitle', 'deleteChapter', 'addSymbol', 'deleteSymbol',
-  'addNewAxiom']);
+  'addNewAxiom', 'deleteAxiom']);
 
 const showAxiomEditor: Ref<boolean> = ref(false);
 const showTextInput: Ref<boolean> = ref(false);

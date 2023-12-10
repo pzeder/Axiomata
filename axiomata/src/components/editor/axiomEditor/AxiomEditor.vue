@@ -17,7 +17,7 @@
         </div>
         <div class="button-container">
             <div class="axiom-cancel-button" @click="emit('close')"> Abbrechen </div>
-            <div v-if="axiomValid(axiom)" class="axiom-save-button" @click="emit('saveAxiom', axiom)"> Speichern </div>
+            <div v-if="axiomValid(axiom)" class="axiom-save-button" @click="confirm"> Speichern </div>
         </div>
     </div>
 </template>
@@ -67,6 +67,11 @@ function removeFromUpperSeq(index: number): void {
 
 function removeFromLowerSeq(index: number): void {
     axiom.value.lowerSequence.splice(index, 1);
+}
+
+function confirm(): void {
+    emit('saveAxiom', axiom.value);
+    emit('close');
 }
 </script>
 
