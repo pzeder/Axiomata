@@ -2,8 +2,8 @@
   <div class="home-button" @click="emit('openHomeScreen')"> Home </div>
   <TitleBar tag="Kurs" :title="course?.title" :height=10 @editTitle="showTextInput = true" />
   <EditChapterList v-if="course" :editID="editID" :course="course" @addNewChapter="addNewChapter"
-    @setChapterTitle="setChapterTitle" @deleteChapter="deleteChapter" @addSymbol="addSymbol"
-    @deleteSymbol="deleteSymbol" />
+    @setChapterTitle="setChapterTitle" @deleteChapter="deleteChapter" @addSymbol="addSymbol" @deleteSymbol="deleteSymbol"
+    @addNewAxiom="addNewAxiom" />
   <div class="submit-button" :style="{ background: courseValid ? 'lightgreen' : 'gray' }" @click="submitCourse"> Kurs
     hochladen </div>
   <TextInput v-if="showTextInput" title="Titel des Kurses ändern" :placeholder="course?.title"
@@ -170,9 +170,10 @@ function deleteSymbol(symbolPointer: SymbolPointer): void {
 
 function addNewAxiom(chapterIndex: number, axiom: AxiomData) {
   if (!course.value) {
-    return
+    return;
   }
-  // TODO
+  course.value.chapters[chapterIndex].newAxioms.push(axiom);
+  saveEdit();
 }
 
 async function submitCourse(): Promise<void> {

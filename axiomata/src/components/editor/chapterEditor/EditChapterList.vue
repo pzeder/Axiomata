@@ -3,7 +3,7 @@
     <AddButton target="chapter" @click="emit('addNewChapter', index)" />
     <EditChapter :chapterIndex="index" :chapter="chapter" :symbols="course.symbols"
       @editChapterTitle="editChapterTitle(index)" @deleteChapter="emit('deleteChapter', index)"
-      @editNewAxiom="editNewAxiom" />
+      @editNewAxiom="editNewAxiom(index)" />
   </div>
   <AddButton target="chapter" @click="emit('addNewChapter', course.chapters.length)" />
   <AxiomEditor v-if="showAxiomEditor" :symbols="course?.symbols" upTitle="OBEN" lowTitle="UNTEN"
@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { defineProps, defineEmits, Ref, ref, ComputedRef, computed } from 'vue';
-import { ChapterData, CourseData } from '@/scripts/Interfaces';
+import { AxiomData, ChapterData, CourseData } from '@/scripts/Interfaces';
 import EditChapter from './EditChapter.vue';
 import AddButton from '@/components/editor/AddButton.vue';
 import AxiomEditor from '../axiomEditor/AxiomEditor.vue';
@@ -26,7 +26,8 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['addNewChapter', 'setChapterTitle', 'deleteChapter', 'addSymbol', 'deleteSymbol']);
+const emit = defineEmits(['addNewChapter', 'setChapterTitle', 'deleteChapter', 'addSymbol', 'deleteSymbol',
+  'addNewAxiom']);
 
 const showAxiomEditor: Ref<boolean> = ref(false);
 const showTextInput: Ref<boolean> = ref(false);
@@ -50,6 +51,10 @@ function editChapterTitle(index: number): void {
 function editNewAxiom(index: number): void {
   editChapterIndex.value = index;
   showAxiomEditor.value = true;
+}
+
+function addNewAxiom(axiom: AxiomData): void {
+  emit('addNewAxiom', editChapterIndex.value, axiom);
 }
 </script>
 
