@@ -37,7 +37,7 @@ const frontLevelPointer: ComputedRef<LevelPointer | null> = computed(() => {
     let chapter: ChapterData = course.value.chapters[ch];
     for (let lvl = 0; lvl < chapter.levels.length; lvl++) {
       let level: LevelData = chapter.levels[lvl];
-      if (!level.solved) {
+      if (!level.bestSolution) {
         return {
           chapterIndex: ch,
           levelIndex: lvl
@@ -169,7 +169,11 @@ function finishLevel(): void {
   openVictoryWindow();
   const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
   const levelIndex: number = selectedLevelPointer.value.levelIndex;
-  course.value.chapters[chapterIndex].levels[levelIndex].solved = true;
+  const level: LevelData = course.value.chapters[chapterIndex].levels[levelIndex];
+  if (!level.bestSolution || level.moveHistory.length < level.bestSolution.length) {
+    course.value.chapters[chapterIndex].levels[levelIndex].bestSolution = level.moveHistory;
+  }
+  course.value.chapters[chapterIndex].levels[levelIndex].moveHistory = [level.moveHistory[0]];
   saveGame();
 }
 

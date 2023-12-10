@@ -4,7 +4,7 @@
     {{ chapter.title }}
     <div class="level-container" v-for="(level, lvlIndex) in chapter.levels" :key="lvlIndex"
       @click="emit('openLevel', chIndex, lvlIndex)"
-      :style="{ backgroundColor: (isFrontLevel(chIndex, lvlIndex) ? '#F5AA27' : (level.solved ? '#3FB56E' : 'rgb(150,150,150)')) }">
+      :style="{ backgroundColor: (isFrontLevel(chIndex, lvlIndex) ? '#F5AA27' : (level.bestSolution ? '#3FB56E' : 'rgb(150,150,150)')) }">
       {{ level.title }}
     </div>
   </div>
@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
-import { ChapterData, LevelPointer } from '@/scripts/Interfaces';
+import { ChapterData, LevelData, LevelPointer } from '@/scripts/Interfaces';
 import HomeButton from '../menus/HomeButton.vue';
 
 interface Props {

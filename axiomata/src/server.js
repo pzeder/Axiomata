@@ -58,7 +58,7 @@ app.post('/newSaveState', async (req, res) => {
         axiom: null,
         sequence: lev.goalAxiom.upperSequence
       }],
-      solved: false
+      bestSolution: null
     }));
 
     const courseSave = {
@@ -239,23 +239,9 @@ app.post('/submitCourse', async (req, res) => {
   try {
     const { course } = req.body;
 
-    console.log(course);
-
-    const unsolvedLevel = (level) => ({
-      title: level.title,
-      goalAxiom: level.goalAxiom,
-      solved: false
-    });
-
-    const unsolvedChapter = (chapter) => ({
-      title: chapter.title,
-      newAxioms: chapter.newAxioms,
-      levels: chapter.levels.map(unsolvedLevel)
-    });
-
     const newCourse = ({
       title: course.title,
-      chapters: course.chapters.map(unsolvedChapter),
+      chapters: course.chapters,
       symbols: course.symbols,
       variables: course.variables
     });

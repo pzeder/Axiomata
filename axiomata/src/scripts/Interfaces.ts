@@ -28,7 +28,7 @@ export interface LevelData {
     title: string;
     goalAxiom: AxiomData;
     moveHistory: MoveData[];
-    solved: boolean;
+    bestSolution: MoveData[] | null;
 }
 
 export interface MoveData {

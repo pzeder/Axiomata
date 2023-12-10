@@ -159,7 +159,7 @@ function deleteSymbol(symbolPointer: SymbolPointer): void {
     title: lvl.title,
     goalAxiom: cleanAxiom(lvl.goalAxiom),
     moveHistory: lvl.moveHistory,
-    solved: lvl.solved
+    bestSolution: lvl.bestSolution
   });
 
   const nonEmpty = (axiom: AxiomData): boolean => (axiom.upperSequence.length > 0 && axiom.lowerSequence.length > 0);
@@ -201,7 +201,7 @@ function addNewLevel(chapterIndex: number, levelIndex: number) {
       lowerSequence: []
     },
     moveHistory: [],
-    solved: false
+    bestSolution: null
   })
   course.value.chapters[chapterIndex].levels.splice(levelIndex, 0, newLevel);
   saveEdit();
