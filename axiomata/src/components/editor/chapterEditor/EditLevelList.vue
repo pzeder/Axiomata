@@ -1,25 +1,23 @@
 <template>
   <div v-for="(level, index) in levels" :key="index">
-    <AddButton target="level" @click="addNewLevel(index)" />
+    <AddButton target="level" @click="emit('addNewLevel', index)" />
     <EditLevel :chapterIndex="chapterIndex" :levelIndex="index" :level="level" :symbols="symbols"
       @editLevelTitle="editLevelTitle(index)" @deleteLevel="deleteLevel(index)" @editGoalAxiom="editGoalAxiom(index)" />
   </div>
-  <AddButton target="level" @click="addNewLevel(levels.length)" />
-  <AxiomEditor v-if="showAxiomEditor" :axiom="editLevel?.goalAxiom" :symbols="symbols" upTitle="START"
-    lowTitle="ZIEL" @close="showAxiomEditor = false"
-    @saveAxiom="updateGoalAxiom" />
+  <AddButton target="level" @click="emit('addNewLevel', levels.length)" />
+  <AxiomEditor v-if="showAxiomEditor" :axiom="editLevel?.goalAxiom" :symbols="symbols" upTitle="START" lowTitle="ZIEL"
+    @close="showAxiomEditor = false" @saveAxiom="updateGoalAxiom" />
   <TextInput v-if="showTextInput" title="Titel des Levels ändern" :placeholder="editLevel?.title"
     @updateText="updateLevelTitle" @click="showTextInput = false" />
 </template>
 
 <script setup lang="ts">
-import { AxiomData, ChapterData, LevelData, SymbolData } from '@/scripts/Interfaces';
+import { LevelData, SymbolData } from '@/scripts/Interfaces';
 import { defineProps, defineEmits, Ref, ref, ComputedRef, computed } from 'vue';
 import AddButton from '@/components/editor/AddButton.vue'
 import EditLevel from './EditLevel.vue'
 import AxiomEditor from '../axiomEditor/AxiomEditor.vue';
 import TextInput from '../TextInput.vue';
-import axios from 'axios';
 
 interface Props {
   chapterIndex: number;
@@ -28,7 +26,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['updateSymbols', 'updateChapters']);
+const emit = defineEmits(['addNewLevel']);
 
 const showAxiomEditor: Ref<boolean> = ref(false);
 const showTextInput: Ref<boolean> = ref(false);

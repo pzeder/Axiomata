@@ -3,7 +3,7 @@
   <TitleBar tag="Kurs" :title="course?.title" :height=10 @editTitle="showTextInput = true" />
   <EditChapterList v-if="course" :editID="editID" :course="course" @addNewChapter="addNewChapter"
     @setChapterTitle="setChapterTitle" @deleteChapter="deleteChapter" @addSymbol="addSymbol" @deleteSymbol="deleteSymbol"
-    @addNewAxiom="addNewAxiom" @deleteAxiom="deleteAxiom" />
+    @addNewAxiom="addNewAxiom" @deleteAxiom="deleteAxiom" @addNewLevel="addNewLevel" />
   <div class="submit-button" :style="{ background: courseValid ? 'lightgreen' : 'gray' }" @click="submitCourse"> Kurs
     hochladen </div>
   <TextInput v-if="showTextInput" title="Titel des Kurses ändern" :placeholder="course?.title"
@@ -181,6 +181,23 @@ function deleteAxiom(chapterIndex: number, axiomIndex: number): void {
     return;
   }
   course.value.chapters[chapterIndex].newAxioms.splice(axiomIndex, 1);
+  saveEdit();
+}
+
+function addNewLevel(chapterIndex: number, levelIndex: number) {
+  if (!course.value) {
+    return;
+  }
+  const newLevel: LevelData = ({
+    title: 'Neues Level',
+    goalAxiom: {
+      upperSequence: [],
+      lowerSequence: []
+    },
+    sequenceHistory: [],
+    solved: false
+  })
+  course.value.chapters[chapterIndex].levels.splice(levelIndex, 0, newLevel);
   saveEdit();
 }
 

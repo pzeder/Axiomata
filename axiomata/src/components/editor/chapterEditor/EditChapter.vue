@@ -5,7 +5,8 @@
       <AxiomList title="Neue Tauschregeln in diesem Kapitel" :axioms="chapter.newAxioms" :symbols="symbols" :maxWidth="60"
         :containerWidth="20" @editNewAxiom="emit('editNewAxiom')" @deleteAxiom="(index) => emit('deleteAxiom', index)" />
     </div>
-    <EditLevelList :chapterIndex="chapterIndex" :levels="chapter.levels" :symbols="symbols" />
+    <EditLevelList :chapterIndex="chapterIndex" :levels="chapter.levels" :symbols="symbols"
+      @addNewLevel="(index) => emit('addNewLevel', index)" />
     <DeleteButton text="Kapitel löschen" @click="emit('deleteChapter')" />
   </div>
 </template>
@@ -25,7 +26,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'editNewAxiom', 'deleteAxiom']);
+const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'editNewAxiom', 'deleteAxiom', 'addNewLevel']);
 
 const chapterTag: ComputedRef<string> = computed(() => 'Kapitel ' + (props.chapterIndex + 1));
 </script>
