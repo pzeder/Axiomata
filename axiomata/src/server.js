@@ -172,7 +172,11 @@ app.post('/newEdit', async (req, res) => {
       symbols: []
     }
     const result = await db.collection('Edits').insertOne(newEdit);
-    res.json({ editID: result.insertedId });
+    if (result.acknowledged === true && result.insertedId) {
+      res.json({ editID: result.insertedId });
+    } else {
+      res.status(500).json({ error: 'Insert failed' });
+    }
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -200,7 +204,7 @@ app.patch('/saveEdit', async (req, res) => {
     const { editID, course } = req.body;
     const filter = ({ _id: new ObjectId(editID) });
     const updateCourse = ({
-      $set: { 
+      $set: {
         title: course.title,
         chapters: course.chapters,
         symbols: course.symbols,
@@ -212,9 +216,47 @@ app.patch('/saveEdit', async (req, res) => {
 
     if (result.modifiedCount === 0) {
       return res.status(500).json({ error: 'Failed to update status' });
-    } 
+    }
 
     res.json({ message: 'course saved successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/submitCourse', async (req, res) => {
+  try {
+    const { course } = req.body;
+
+    console.log(course);
+
+    const unsolvedLevel = (level) => ({
+      title: level.title,
+      goalAxiom: level.goalAxiom,
+      solved: false
+    });
+
+    const unsolvedChapter = (chapter) => ({
+      title: chapter.title,
+      newAxioms: chapter.newAxioms,
+      levels: chapter.levels.map(unsolvedLevel)
+    });
+
+    const newCourse = ({
+      title: course.title,
+      chapters: course.chapters.map(unsolvedChapter),
+      symbols: course.symbols,
+      variables: course.variables
+    });
+
+    const result = await db.collection('Courses').insertOne(newCourse);
+
+    if (result.acknowledged === true) {
+      res.json({ message: 'new course submitted successfully' });
+    } else {
+      res.status(500).json({ error: 'Insert failed' });
+    }
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

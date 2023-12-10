@@ -237,7 +237,7 @@ async function submitCourse(): Promise<void> {
   }
   try {
     const data = {
-      editID: props.editID,
+      course: course.value
     };
     const response = await axios.post('http://localhost:3000/submitCourse', data);
     if (response.status === 200) {
