@@ -26,7 +26,7 @@ const emit = defineEmits(['updateText', 'close']);
 const textInput: Ref<string> = ref('');
 
 function confirm(): void {
-  emit('updateText', textInput); 
+  emit('updateText', textInput.value);
   emit('close')
 }
 </script>

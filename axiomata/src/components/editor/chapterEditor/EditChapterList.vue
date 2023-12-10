@@ -4,7 +4,8 @@
     <EditChapter :chapterIndex="index" :chapter="chapter" :symbols="course.symbols"
       @editChapterTitle="editChapterTitle(index)" @deleteChapter="emit('deleteChapter', index)"
       @editNewAxiom="editNewAxiom(index)" @deleteAxiom="(axiomIndex) => emit('deleteAxiom', index, axiomIndex)"
-      @addNewLevel="(levelIndex) => emit('addNewLevel', index, levelIndex)" />
+      @addNewLevel="(levelIndex) => emit('addNewLevel', index, levelIndex)"
+      @setLevelTitle="(levelIndex, title) => emit('setLevelTitle', index, levelIndex, title)" />
   </div>
   <AddButton target="chapter" @click="emit('addNewChapter', course.chapters.length)" />
   <AxiomEditor v-if="showAxiomEditor" :symbols="course?.symbols" upTitle="OBEN" lowTitle="UNTEN"
@@ -28,7 +29,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['addNewChapter', 'setChapterTitle', 'deleteChapter', 'addSymbol', 'deleteSymbol',
-  'addNewAxiom', 'deleteAxiom', 'addNewLevel']);
+  'addNewAxiom', 'deleteAxiom', 'addNewLevel', 'setLevelTitle']);
 
 const showAxiomEditor: Ref<boolean> = ref(false);
 const showTextInput: Ref<boolean> = ref(false);
@@ -40,7 +41,7 @@ const editChapter: ComputedRef<ChapterData | null> = computed(() => {
   return props.course.chapters[editChapterIndex.value];
 });
 
-async function setChapterTitle(title: string): Promise<void> {
+function setChapterTitle(title: string): void {
   emit('setChapterTitle', editChapterIndex.value, title);
 }
 

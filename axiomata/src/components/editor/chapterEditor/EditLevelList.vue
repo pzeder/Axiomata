@@ -8,7 +8,7 @@
   <AxiomEditor v-if="showAxiomEditor" :axiom="editLevel?.goalAxiom" :symbols="symbols" upTitle="START" lowTitle="ZIEL"
     @close="showAxiomEditor = false" @saveAxiom="updateGoalAxiom" />
   <TextInput v-if="showTextInput" title="Titel des Levels ändern" :placeholder="editLevel?.title"
-    @updateText="updateLevelTitle" @click="showTextInput = false" />
+    @updateText="setLevelTitle" @close="showTextInput = false" />
 </template>
 
 <script setup lang="ts">
@@ -26,7 +26,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['addNewLevel']);
+const emit = defineEmits(['addNewLevel', 'setLevelTitle']);
 
 const showAxiomEditor: Ref<boolean> = ref(false);
 const showTextInput: Ref<boolean> = ref(false);
@@ -46,5 +46,9 @@ function editLevelTitle(levelIndex: number) {
 function editGoalAxiom(levelIndex: number) {
   editLevelIndex.value = levelIndex;
   showAxiomEditor.value = true;
+}
+
+function setLevelTitle(title: string): void {
+  emit('setLevelTitle', editLevelIndex.value, title);
 }
 </script>
