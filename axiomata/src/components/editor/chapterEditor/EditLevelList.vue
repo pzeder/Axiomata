@@ -6,7 +6,7 @@
   </div>
   <AddButton target="level" @click="emit('addNewLevel', levels.length)" />
   <AxiomEditor v-if="showAxiomEditor" :axiom="editLevel?.goalAxiom" :symbols="symbols" upTitle="START" lowTitle="ZIEL"
-    @close="showAxiomEditor = false" @saveAxiom="updateGoalAxiom" />
+    @close="showAxiomEditor = false" @addSymbol="(symbol) => emit('addSymbol', symbol)" @saveAxiom="updateGoalAxiom" />
   <TextInput v-if="showTextInput" title="Titel des Levels ändern" :placeholder="editLevel?.title"
     @updateText="setLevelTitle" @close="showTextInput = false" />
 </template>
@@ -26,7 +26,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['addNewLevel', 'setLevelTitle']);
+const emit = defineEmits(['addNewLevel', 'setLevelTitle', 'addSymbol']);
 
 const showAxiomEditor: Ref<boolean> = ref(false);
 const showTextInput: Ref<boolean> = ref(false);

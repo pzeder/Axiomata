@@ -7,7 +7,8 @@
     </div>
     <EditLevelList :chapterIndex="chapterIndex" :levels="chapter.levels" :symbols="symbols"
       @addNewLevel="(index) => emit('addNewLevel', index)"
-      @setLevelTitle="(index, title) => emit('setLevelTitle', index, title)" />
+      @setLevelTitle="(index, title) => emit('setLevelTitle', index, title)"
+      @addSymbol="(symbol) => emit('addSymbol', symbol)" />
     <DeleteButton text="Kapitel löschen" @click="emit('deleteChapter')" />
   </div>
 </template>
@@ -28,7 +29,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'editNewAxiom', 'deleteAxiom', 'addNewLevel',
-  'setLevelTitle']);
+  'setLevelTitle', 'addSymbol']);
 
 const chapterTag: ComputedRef<string> = computed(() => 'Kapitel ' + (props.chapterIndex + 1));
 </script>

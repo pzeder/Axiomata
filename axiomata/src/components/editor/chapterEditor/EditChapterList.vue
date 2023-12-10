@@ -5,11 +5,12 @@
       @editChapterTitle="editChapterTitle(index)" @deleteChapter="emit('deleteChapter', index)"
       @editNewAxiom="editNewAxiom(index)" @deleteAxiom="(axiomIndex) => emit('deleteAxiom', index, axiomIndex)"
       @addNewLevel="(levelIndex) => emit('addNewLevel', index, levelIndex)"
-      @setLevelTitle="(levelIndex, title) => emit('setLevelTitle', index, levelIndex, title)" />
+      @setLevelTitle="(levelIndex, title) => emit('setLevelTitle', index, levelIndex, title)"
+      @addSymbol="(symbol) => emit('addSymbol', symbol)" />
   </div>
   <AddButton target="chapter" @click="emit('addNewChapter', course.chapters.length)" />
   <AxiomEditor v-if="showAxiomEditor" :symbols="course?.symbols" upTitle="OBEN" lowTitle="UNTEN"
-    @addSymbol="(symbol) => emit('addSymbol', symbol)" @deleteSymbol="(index) => emit('deleteSymbol', index)"
+    @addSymbol="(symbol) => emit('addSymbol', symbol)" @deleteSymbol="(symbol) => emit('deleteSymbol', symbol)"
     @saveAxiom="addNewAxiom" @close="showAxiomEditor = false" />
   <TextInput v-if="showTextInput" title="Titel des Kapitels ändern" :placeholder="editChapter?.title"
     @updateText="setChapterTitle" @close="showTextInput = false" />

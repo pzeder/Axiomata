@@ -127,7 +127,12 @@ function deleteSymbol(symbolPointer: SymbolPointer): void {
     return
   }
 
-  course.value.symbols.splice(symbolPointer.index, 1);
+  if (symbolPointer.type === 'terminal') {
+    course.value.symbols.splice(symbolPointer.index, 1);
+    console.log(course.value.symbols)
+  } else {
+    course.value.variables.splice(symbolPointer.index, 1);
+  }
 
   const cleanSymbol = (sp: SymbolPointer): SymbolPointer => {
     if (sp.type === symbolPointer.type) {
@@ -142,12 +147,13 @@ function deleteSymbol(symbolPointer: SymbolPointer): void {
   const cleanAxiom = (axiom: AxiomData): AxiomData => {
     const poisonedSymbol = (sp: SymbolPointer): boolean => sp.type === symbolPointer.type && sp.index === symbolPointer.index;
     if (axiom.upperSequence.some(poisonedSymbol) || axiom.lowerSequence.some(poisonedSymbol)) {
-      return { upperSequence: [], lowerSequence: [] };
+      console.log(axiom)
+      return ({ upperSequence: [], lowerSequence: [] });
     }
-    return {
+    return ({
       upperSequence: axiom.upperSequence.map(cleanSymbol),
       lowerSequence: axiom.lowerSequence.map(cleanSymbol)
-    }
+    });
   };
 
   const cleanLevel = (lvl: LevelData): LevelData => ({
@@ -166,6 +172,8 @@ function deleteSymbol(symbolPointer: SymbolPointer): void {
   });
 
   course.value.chapters.map(cleanChapter)
+
+  saveEdit();
 }
 
 function addNewAxiom(chapterIndex: number, axiom: AxiomData) {
