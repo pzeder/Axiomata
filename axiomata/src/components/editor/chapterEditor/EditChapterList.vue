@@ -8,7 +8,7 @@
       @deleteLevel="(levelIndex) => emit('deleteLevel', index, levelIndex)"
       @setLevelTitle="(levelIndex, title) => emit('setLevelTitle', index, levelIndex, title)"
       @setGoalAxiom="(levelIndex, axiom) => emit('setGoalAxiom', index, levelIndex, axiom)"
-      @addSymbol="(symbol) => emit('addSymbol', symbol)" />
+      @addSymbol="(symbol) => emit('addSymbol', symbol)" @deleteSymbol="(symbol) => emit('deleteSymbol', symbol)" />
   </div>
   <AddButton target="chapter" @click="emit('addNewChapter', course.chapters.length)" />
   <AxiomEditor v-if="showAxiomEditor" :symbols="course?.symbols" upTitle="OBEN" lowTitle="UNTEN"
