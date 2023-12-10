@@ -13,7 +13,7 @@ import { SymbolData, SymbolPointer } from "@/scripts/Interfaces";
 
 interface Props {
   symbolWidth: number;
-  sequence: SymbolPointer[] | undefined;
+  sequence: SymbolPointer[] | null;
   highlights: boolean[];
   symbols: SymbolData[] | undefined;
   variables: SymbolData[] | undefined;

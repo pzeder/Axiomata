@@ -3,8 +3,8 @@
   <div class="chapter-container" v-for="(chapter, chIndex) in chapters" :key="chIndex">
     {{ chapter.title }}
     <div class="level-container" v-for="(level, lvlIndex) in chapter.levels" :key="lvlIndex"
-      @click="trySelectingLevel(chIndex, lvlIndex)"
-      :style="{ backgroundColor: (isCurrentLevel(chIndex, lvlIndex) ? '#F5AA27' : (level.solved ? '#3FB56E'  : 'rgb(150,150,150)')) }">
+      @click="emit('openLevel', chIndex, lvlIndex)"
+      :style="{ backgroundColor: (isFrontLevel(chIndex, lvlIndex) ? '#F5AA27' : (level.solved ? '#3FB56E' : 'rgb(150,150,150)')) }">
       {{ level.title }}
     </div>
   </div>
@@ -17,21 +17,15 @@ import HomeButton from '../menus/HomeButton.vue';
 
 interface Props {
   chapters: ChapterData[] | undefined;
-  currentLevelPointer: LevelPointer | null;
+  frontLevelPointer: LevelPointer | null;
 }
 
 const props = defineProps<Props>();
 const emit = defineEmits(['openLevel', 'openStartMenu']);
 
 
-function trySelectingLevel(chapterIndex: number, levelIndex: number) {
-  if (isCurrentLevel(chapterIndex, levelIndex)) {
-    emit('openLevel');
-  }
-}
-
-function isCurrentLevel(chapterIndex: number, levelIndex: number): boolean {
-  return props.currentLevelPointer?.chapterIndex === chapterIndex && props.currentLevelPointer?.levelIndex === levelIndex;
+function isFrontLevel(chapterIndex: number, levelIndex: number): boolean {
+  return props.frontLevelPointer?.chapterIndex === chapterIndex && props.frontLevelPointer?.levelIndex === levelIndex;
 }
 </script>
 

@@ -13,10 +13,10 @@
           </div>
           <div :style="{ display: 'grid', placeItems: 'center', width: goalContainerWidth + 'vw' }">
             <SequenceContainer class="goal-window" :title="'START'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
-              :maxSymbolWidthRatio="0.33" :sequence="level?.goalAxiom.upperSequence" :variables="variables"
+              :maxSymbolWidthRatio="0.33" :sequence="level ? level.goalAxiom.upperSequence : null" :variables="variables"
               :symbols="symbols" />
             <SequenceContainer class="goal-window" :title="'ZIEL'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
-              :maxSymbolWidthRatio="0.33" :sequence="level?.goalAxiom.lowerSequence" :variables="variables"
+              :maxSymbolWidthRatio="0.33" :sequence="level ? level.goalAxiom.lowerSequence : null" :variables="variables"
               :symbols="symbols" />
           </div>
         </div>
@@ -51,7 +51,6 @@ interface Props {
   axioms: AxiomData[];
   derivates: AxiomData[];
   level: LevelData | null;
-  hasNextLevel: boolean;
 }
 
 const props = defineProps<Props>();

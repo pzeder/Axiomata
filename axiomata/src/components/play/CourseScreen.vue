@@ -1,11 +1,11 @@
 <template>
-  <ChapterScreen v-if="showChapterScreen" :chapters="course?.chapters" :currentLevelPointer="currentLevelPointer"
+  <ChapterScreen v-if="showChapterScreen" :chapters="course?.chapters" :frontLevelPointer="frontLevelPointer"
     @openSaveStateMenu="emit('openSaveStateMenu')" @openLevel="openLevel" @openStartMenu="emit('openStartMenu')" />
-  <LevelScreen v-if="showLevelScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="currentAxioms"
-    :derivates="currentDerivates" :level="currentLevel" :hasNextLevel="hasNextLevel" @addMove="addMove"
-    @openChapterScreen="openChapterScreen" @finishLevel="finishLevel" />
-  <VictoryWindow v-if="showVictoryWindow" :hasNextLevel="currentLevelPointer !== null" @openLevelMenu="openChapterScreen"
-    @nextLevel="openLevel" />
+  <LevelScreen v-if="showLevelScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
+    :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openChapterScreen="openChapterScreen"
+    @finishLevel="finishLevel" />
+  <VictoryWindow v-if="showVictoryWindow" :hasNextLevel="frontLevelPointer !== null" @openLevelMenu="openChapterScreen"
+    @nextLevel="nextLevel" />
 </template>
 
 <script setup lang="ts">
@@ -29,8 +29,8 @@ const showVictoryWindow: Ref<boolean> = ref(false);
 
 const course: Ref<CourseData | null> = ref(null);
 
-const currentLevelPointer: ComputedRef<LevelPointer | null> = computed(() => {
-  if (!course.value || !course.value.chapters) {
+const frontLevelPointer: ComputedRef<LevelPointer | null> = computed(() => {
+  if (!course.value) {
     return null;
   }
   for (let ch = 0; ch < course.value.chapters.length; ch++) {
@@ -48,21 +48,23 @@ const currentLevelPointer: ComputedRef<LevelPointer | null> = computed(() => {
   return null;
 });
 
-const currentLevel: ComputedRef<LevelData | null> = computed(() => {
-  if (!currentLevelPointer.value || !course.value) {
+const selectedLevelPointer: Ref<LevelPointer | null> = ref(null);
+
+const selectedLevel: ComputedRef<LevelData | null> = computed(() => {
+  if (!selectedLevelPointer.value || !course.value) {
     return null;
   }
-  let chapterIndex = currentLevelPointer.value.chapterIndex;
-  let levelIndex = currentLevelPointer.value.levelIndex;
+  let chapterIndex = selectedLevelPointer.value.chapterIndex;
+  let levelIndex = selectedLevelPointer.value.levelIndex;
   return course.value.chapters[chapterIndex].levels[levelIndex];
 });
 
-const currentAxioms: ComputedRef<AxiomData[]> = computed(() => {
-  if (!course.value || !currentLevelPointer.value) {
+const selectedAxioms: ComputedRef<AxiomData[]> = computed(() => {
+  if (!course.value || !selectedLevelPointer.value) {
     return [];
   }
   let axioms: AxiomData[] = []
-  const chapterIndex: number = currentLevelPointer.value.chapterIndex;
+  const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
   for (let i = 0; i <= chapterIndex; i++) {
     axioms.push(...course.value.chapters[i].newAxioms);
   }
@@ -70,13 +72,13 @@ const currentAxioms: ComputedRef<AxiomData[]> = computed(() => {
 }
 );
 
-const currentDerivates: ComputedRef<AxiomData[]> = computed(() => {
-  if (!course.value || !currentLevelPointer.value) {
+const selectedDerivates: ComputedRef<AxiomData[]> = computed(() => {
+  if (!course.value || !selectedLevelPointer.value) {
     return [];
   }
   let derivates: AxiomData[] = [];
-  const chapterIndex: number = currentLevelPointer.value.chapterIndex;
-  const levelIndex: number = currentLevelPointer.value.levelIndex;
+  const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
+  const levelIndex: number = selectedLevelPointer.value.levelIndex;
   for (let ch = 0; ch < chapterIndex; ch++) {
     for (let lvl = 0; lvl < course.value.chapters[ch].levels.length; lvl++) {
       derivates.push(course.value.chapters[ch].levels[lvl].goalAxiom);
@@ -107,7 +109,12 @@ async function fetchCourse(): Promise<void> {
   }
 }
 
-function openLevel(): void {
+function openLevel(chapterIndex: number, levelIndex: number) {
+  selectedLevelPointer.value = { chapterIndex: chapterIndex, levelIndex: levelIndex };
+  openLevelScreen();
+}
+
+function openLevelScreen(): void {
   hideAll();
   showLevelScreen.value = true;
 }
@@ -146,42 +153,45 @@ async function saveGame(): Promise<void> {
 }
 
 function addMove(move: MoveData): void {
-  if (!currentLevelPointer.value || !course.value) {
+  if (!selectedLevelPointer.value || !course.value) {
     return;
   }
-  const chapterIndex: number = currentLevelPointer.value.chapterIndex;
-  const levelIndex: number = currentLevelPointer.value.levelIndex;
+  const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
+  const levelIndex: number = selectedLevelPointer.value.levelIndex;
   course.value.chapters[chapterIndex].levels[levelIndex].moveHistory.push(move);
   saveGame();
 }
 
 function finishLevel(): void {
-  openVictoryWindow();
-  updateLevelSolved();
-  console.log(currentLevel.value);
-}
-
-async function updateLevelSolved(): Promise<void> {
-  if (!course.value) {
+  if (!selectedLevelPointer.value || !course.value) {
     return;
   }
-  try {
-    const updatedData = {
-      saveID: props.saveID,
-      chapterIndex: currentLevelPointer.value?.chapterIndex,
-      levelIndex: currentLevelPointer.value?.levelIndex,
-    };
-    const response = await axios.patch(`http://localhost:3000/levelSolved`, updatedData);
-    if (response.status === 200) {
-      course.value.chapters = response.data.chapters;
-      console.log('Course updated successfully:', response.data);
-    } else if (response.status === 400) {
-      console.error(response.data.message);
-    } else {
-      console.error('Server responded with status:', response.status);
-    }
-  } catch (error) {
-    console.error('Error updating data:', error);
+  openVictoryWindow();
+  const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
+  const levelIndex: number = selectedLevelPointer.value.levelIndex;
+  course.value.chapters[chapterIndex].levels[levelIndex].solved = true;
+  saveGame();
+}
+
+function nextLevel(): void {
+  updateSelectedLevelPointer();
+  if (selectedLevelPointer.value) {
+    openLevelScreen();
+  }
+}
+
+function updateSelectedLevelPointer(): void {
+  if (!selectedLevelPointer.value || !course.value) {
+    return;
+  }
+  const maxLevel: number = course.value.chapters[selectedLevelPointer.value.chapterIndex].levels.length;
+  selectedLevelPointer.value.levelIndex += 1;
+  if (selectedLevelPointer.value.levelIndex >= maxLevel) {
+    selectedLevelPointer.value.chapterIndex += 1;
+    selectedLevelPointer.value.levelIndex = 0;
+  }
+  if (selectedLevelPointer.value.chapterIndex >= course.value.chapters.length) {
+    selectedLevelPointer.value = null;
   }
 }
 </script>

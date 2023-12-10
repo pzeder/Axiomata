@@ -17,7 +17,7 @@ interface Props {
   height: number;
   maxFill: number;
   maxSymbolWidthRatio: number;
-  sequence: SymbolPointer[] | undefined;
+  sequence: SymbolPointer[] | null;
   symbols: SymbolData[] | undefined;
   highlights: boolean[];
   variables: SymbolData[] | undefined;
