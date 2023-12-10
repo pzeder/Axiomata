@@ -81,11 +81,13 @@ const workSymbolWidth: ComputedRef<number> = computed(() => {
 
 // Level variables
 const goalMatch: ComputedRef<boolean> = computed(() => {
-  if (!workSequence.value || workSequence.value?.length !== props.level?.goalAxiom.lowerSequence.length) {
+  if (!workSequence.value || !props.level || workSequence.value?.length !== props.level?.goalAxiom.lowerSequence.length) {
     return false;
   }
   for (let i = 0; i < workSequence.value.length; i++) {
-    if (workSequence.value[i] !== props.level?.goalAxiom.lowerSequence[i]) {
+    const workSymbol: SymbolPointer = workSequence.value[i];
+    const goalSymbol: SymbolPointer = props.level.goalAxiom.lowerSequence[i]
+    if (workSymbol.type !== goalSymbol.type || workSymbol.index !== goalSymbol.index) {
       return false;
     }
   }
