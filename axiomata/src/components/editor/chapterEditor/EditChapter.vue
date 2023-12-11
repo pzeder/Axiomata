@@ -2,8 +2,9 @@
   <div class="edit-chapter">
     <TitleBar :tag="chapterTag" :title="chapter.title" :height=5 @editTitle="emit('editChapterTitle')" />
     <div :style="{ display: 'flex' }">
-      <AxiomList title="Neue Tauschregeln in diesem Kapitel" :axioms="chapter.newAxioms" :symbols="symbols" :maxWidth="60"
-        :containerWidth="20" @editNewAxiom="emit('editNewAxiom')" @deleteAxiom="(index) => emit('deleteAxiom', index)" />
+      <AxiomList title="Neue Tauschregeln in diesem Kapitel" :axioms="chapter.newAxioms" :symbols="symbols"
+        :variables="variables" :maxWidth="60" :containerWidth="20" @editNewAxiom="emit('editNewAxiom')"
+        @deleteAxiom="(index) => emit('deleteAxiom', index)" />
     </div>
     <EditLevelList :chapterIndex="chapterIndex" :levels="chapter.levels" :symbols="symbols"
       @addNewLevel="(index) => emit('addNewLevel', index)" @deleteLevel="(index) => emit('deleteLevel', index)"
@@ -26,6 +27,7 @@ interface Props {
   chapterIndex: number;
   chapter: ChapterData;
   symbols: SymbolData[];
+  variables: SymbolData[];
 }
 
 const props = defineProps<Props>();

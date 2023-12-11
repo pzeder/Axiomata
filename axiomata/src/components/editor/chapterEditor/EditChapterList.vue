@@ -1,7 +1,7 @@
 <template>
   <div v-for="(chapter, index) in course.chapters" :key="index">
     <AddButton target="chapter" @click="emit('addNewChapter', index)" />
-    <EditChapter :chapterIndex="index" :chapter="chapter" :symbols="course.symbols"
+    <EditChapter :chapterIndex="index" :chapter="chapter" :symbols="course.symbols" :variables="course.variables"
       @editChapterTitle="editChapterTitle(index)" @deleteChapter="emit('deleteChapter', index)"
       @editNewAxiom="editNewAxiom(index)" @deleteAxiom="(axiomIndex) => emit('deleteAxiom', index, axiomIndex)"
       @addNewLevel="(levelIndex) => emit('addNewLevel', index, levelIndex)"

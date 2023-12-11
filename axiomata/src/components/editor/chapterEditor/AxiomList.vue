@@ -3,8 +3,8 @@
     <div class="axiom-list-title"> {{ title }} </div>
     <div :style="{ display: 'flex' }">
       <div class="axiom-package" v-for="(axiom, index) in axioms" :key="index">
-        <AxiomContainer :width="containerWidth" :height="containerWidth" :axiom="axiom" :symbols="symbols" :variables="[]"
-          :varColors="[]" />
+        <AxiomContainer :width="containerWidth" :height="containerWidth" :axiom="axiom" :symbols="symbols"
+          :variables="variables" />
         <div class="axiom-delete-button" @click="emit('deleteAxiom', index)"> löschen </div>
       </div>
       <div class="axiom-add-button" @click="emit('editNewAxiom')"> Tauschregel hinzufügen </div>
@@ -21,6 +21,7 @@ interface Props {
   title: string;
   axioms: AxiomData[];
   symbols: SymbolData[];
+  variables: SymbolData[];
   maxWidth: number;
   containerWidth: number;
 }

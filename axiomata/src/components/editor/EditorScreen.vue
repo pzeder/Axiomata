@@ -1,10 +1,10 @@
 <template>
   <div class="home-button" @click="emit('openHomeScreen')"> Home </div>
   <TitleBar tag="Kurs" :title="course?.title" :height=10 @editTitle="showTextInput = true" />
-  <EditChapterList v-if="course" :editID="editID" :course="course" @addNewChapter="addNewChapter"
-    @setChapterTitle="setChapterTitle" @deleteChapter="deleteChapter" @addSymbol="addSymbol" @deleteSymbol="deleteSymbol"
-    @addNewAxiom="addNewAxiom" @deleteAxiom="deleteAxiom" @addNewLevel="addNewLevel" @deleteLevel="deleteLevel"
-    @setLevelTitle="setLevelTitle" @setGoalAxiom="setGoalAxiom" />
+  <EditChapterList v-if="course" :course="course" @addNewChapter="addNewChapter" @setChapterTitle="setChapterTitle"
+    @deleteChapter="deleteChapter" @addSymbol="addSymbol" @deleteSymbol="deleteSymbol" @addNewAxiom="addNewAxiom"
+    @deleteAxiom="deleteAxiom" @addNewLevel="addNewLevel" @deleteLevel="deleteLevel" @setLevelTitle="setLevelTitle"
+    @setGoalAxiom="setGoalAxiom" />
   <div class="submit-button" :style="{ background: courseValid ? 'lightgreen' : 'gray' }" @click="submitCourse"> Kurs
     hochladen </div>
   <TextInput v-if="showTextInput" title="Titel des Kurses ändern" :placeholder="course?.title"
@@ -132,7 +132,7 @@ function deleteSymbol(symbolPointer: SymbolPointer): void {
     return
   }
 
-  if (symbolPointer.type === 'terminal') {
+  if (symbolPointer.type === SymbolType.TERMINAL) {
     course.value.symbols.splice(symbolPointer.index, 1);
   } else {
     course.value.variables.splice(symbolPointer.index, 1);

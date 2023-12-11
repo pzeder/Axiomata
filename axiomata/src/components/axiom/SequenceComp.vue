@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { defineProps, withDefaults, defineEmits } from "vue";
 import SymbolComp from '@/components/axiom/SymbolComp.vue'
-import { SymbolData, SymbolPointer } from "@/scripts/Interfaces";
+import { SymbolData, SymbolPointer, SymbolType } from "@/scripts/Interfaces";
 
 interface Props {
   symbolWidth: number;
@@ -30,14 +30,14 @@ function symbolData(symbolPointer: SymbolPointer): SymbolData | null {
   if (!props.symbols || !props.variables) {
     return null;
   }
-  if (symbolPointer.type === 'variable') {
+  if (symbolPointer.type === SymbolType.VARIABLE) {
     const key: number = symbolPointer.index;
     const sp: SymbolPointer | undefined = props.varMap.get(key);
     if (sp !== undefined) {
       symbolPointer = sp;
     }
   }
-  if (symbolPointer.type === 'terminal') {
+  if (symbolPointer.type === SymbolType.TERMINAL) {
     return props.symbols[symbolPointer.index];
   }
   return props.variables[symbolPointer.index];

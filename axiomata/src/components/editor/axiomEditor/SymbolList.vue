@@ -2,8 +2,8 @@
     <div class="symbol-list">
         <div class="symbol-list-title"> {{ title }} </div>
         <div class="symbol-package" v-for="(symbol, index) in symbols" :key="index">
-            <SymbolComp :symbolWidth=4 :symbol="symbol" @click="emit('symbolClicked', index)" />
-            <div class="symbol-delete-button" @click="emit('deleteSymbol', index)"> Löschen
+            <SymbolComp :symbolWidth=4 :symbol="symbol" @click="emit('symbolClicked', { type: type, index: index })" />
+            <div class="symbol-delete-button" @click="emit('deleteSymbol', { type: type, index: index })"> Löschen
             </div>
         </div>
         <div class="symbol-add-button" @click="showSymbolEditor = true"> {{ addButtonText }} </div>

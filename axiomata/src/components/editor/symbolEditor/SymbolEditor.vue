@@ -45,7 +45,8 @@ const editSymbol: Ref<SymbolData> = ref({
   text: 'text',
   textColor: '',
   fontSize: 35,
-  type: props.type
+  type: props.type,
+  varTarget: false
 });
 
 function setBackgroundColor(color: string) {

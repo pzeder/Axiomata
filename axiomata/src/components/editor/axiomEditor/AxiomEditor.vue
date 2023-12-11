@@ -6,18 +6,16 @@
                 >>> </div>
             <div class="sequence-editors">
                 <SequenceContainer :title="upTitle" :width=30 :height=15 :maxFill="0.6" :maxSymbolWidthRatio="0.2"
-                    :sequence="axiom?.upperSequence" :symbols="symbols" :variables=[] @click="upperSeqSelected = true"
-                    @symbolClicked="removeFromUpperSeq" />
+                    :sequence="axiom?.upperSequence" :symbols="symbols" :variables="variables"
+                    @click="upperSeqSelected = true" @symbolClicked="removeFromUpperSeq" />
                 <SequenceContainer :title="lowTitle" :width=30 :height=15 :maxFill="0.6" :maxSymbolWidthRatio="0.2"
-                    :sequence="axiom?.lowerSequence" :symbols="symbols" :variables=[] @click="upperSeqSelected = false"
-                    @symbolClicked="removeFromLowerSeq" />
+                    :sequence="axiom?.lowerSequence" :symbols="symbols" :variables="variables"
+                    @click="upperSeqSelected = false" @symbolClicked="removeFromLowerSeq" />
             </div>
-            <SymbolList :symbols="symbols" :type="SymbolType.CONSTANT" @addSymbol="(symbol) => emit('addSymbol', symbol)"
-                @deleteSymbol="(index) => deleteSymbol({ type: 'terminal', index: index })"
-                @symbolClicked="(index) => addSymbolToSequence({ type: 'terminal', index: index })" />
+            <SymbolList :symbols="symbols" :type="SymbolType.TERMINAL" @addSymbol="(symbol) => emit('addSymbol', symbol)"
+                @deleteSymbol="(symbol) => deleteSymbol(symbol)" @symbolClicked="(symbol) => addSymbolToSequence(symbol)" />
             <SymbolList :symbols="variables" :type="SymbolType.VARIABLE" @addSymbol="(symbol) => emit('addSymbol', symbol)"
-                @deleteSymbol="(index) => deleteSymbol({ type: 'terminal', index: index })"
-                @symbolClicked="(index) => addSymbolToSequence({ type: 'terminal', index: index })" />
+                @deleteSymbol="(symbol) => deleteSymbol(symbol)" @symbolClicked="(symbol) => addSymbolToSequence(symbol)" />
         </div>
         <div class="button-container">
             <div class="axiom-cancel-button" @click="emit('close')"> Abbrechen </div>

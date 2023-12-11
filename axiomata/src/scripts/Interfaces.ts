@@ -4,7 +4,7 @@ export interface AxiomData {
 }
 
 export enum SymbolType {
-    VARIABLE, TERMINAL, CONSTANT
+    VARIABLE, TERMINAL
 }
 
 export interface SymbolData {
@@ -13,6 +13,7 @@ export interface SymbolData {
     textColor: string;
     fontSize: number;
     type: SymbolType;
+    varTarget: boolean;
 }
 
 export interface CourseData {
@@ -46,6 +47,6 @@ export interface LevelPointer {
 }
 
 export interface SymbolPointer {
-    type: string;
+    type: SymbolType;
     index: number
 }
