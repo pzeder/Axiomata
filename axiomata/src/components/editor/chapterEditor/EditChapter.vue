@@ -6,11 +6,12 @@
         :variables="variables" :maxWidth="60" :containerWidth="20" @editNewAxiom="emit('editNewAxiom')"
         @deleteAxiom="(index) => emit('deleteAxiom', index)" />
     </div>
-    <EditLevelList :chapterIndex="chapterIndex" :levels="chapter.levels" :symbols="symbols"
+    <EditLevelList :chapterIndex="chapterIndex" :levels="chapter.levels" :symbols="symbols" :variables="variables"
       @addNewLevel="(index) => emit('addNewLevel', index)" @deleteLevel="(index) => emit('deleteLevel', index)"
       @setLevelTitle="(index, title) => emit('setLevelTitle', index, title)"
       @setGoalAxiom="(index, axiom) => emit('setGoalAxiom', index, axiom)"
-      @addSymbol="(symbol) => emit('addSymbol', symbol)" @deleteSymbol="(symbol) => emit('deleteSymbol', symbol)" />
+      @addSymbol="(symbol) => emit('addSymbol', symbol)" @deleteSymbol="(symbol) => emit('deleteSymbol', symbol)"
+      @toggleVarTarget="(symbol) => emit('toggleVarTarget', symbol)" />
     <DeleteButton text="Kapitel löschen" @click="emit('deleteChapter')" />
   </div>
 </template>
@@ -32,7 +33,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'editNewAxiom', 'deleteAxiom', 'addNewLevel', 'deleteLevel',
-  'setLevelTitle', 'setGoalAxiom', 'addSymbol', 'deleteSymbol']);
+  'setLevelTitle', 'setGoalAxiom', 'addSymbol', 'deleteSymbol', 'toggleVarTarget']);
 
 const chapterTag: ComputedRef<string> = computed(() => 'Kapitel ' + (props.chapterIndex + 1));
 </script>

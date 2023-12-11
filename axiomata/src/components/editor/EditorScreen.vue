@@ -4,7 +4,7 @@
   <EditChapterList v-if="course" :course="course" @addNewChapter="addNewChapter" @setChapterTitle="setChapterTitle"
     @deleteChapter="deleteChapter" @addSymbol="addSymbol" @deleteSymbol="deleteSymbol" @addNewAxiom="addNewAxiom"
     @deleteAxiom="deleteAxiom" @addNewLevel="addNewLevel" @deleteLevel="deleteLevel" @setLevelTitle="setLevelTitle"
-    @setGoalAxiom="setGoalAxiom" />
+    @setGoalAxiom="setGoalAxiom" @toggleVarTarget="toggleVarTarget" />
   <div class="submit-button" :style="{ background: courseValid ? 'lightgreen' : 'gray' }" @click="submitCourse"> Kurs
     hochladen </div>
   <TextInput v-if="showTextInput" title="Titel des Kurses ändern" :placeholder="course?.title"
@@ -232,6 +232,18 @@ function setGoalAxiom(chapterIndex: number, levelIndex: number, axiom: AxiomData
     return;
   }
   course.value.chapters[chapterIndex].levels[levelIndex].goalAxiom = axiom;
+  saveEdit();
+}
+
+function toggleVarTarget(symbol: SymbolPointer): void {
+  if (!course.value) {
+    return;
+  }
+  if (symbol.type === SymbolType.VARIABLE) {
+    course.value.variables[symbol.index].varTarget = !course.value.variables[symbol.index].varTarget;
+  } else {
+    course.value.symbols[symbol.index].varTarget = !course.value.symbols[symbol.index].varTarget;
+  }
   saveEdit();
 }
 

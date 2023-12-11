@@ -3,7 +3,8 @@
         <div class="symbol-list-title"> {{ title }} </div>
         <div class="symbol-package" v-for="(symbol, index) in symbols" :key="index">
             <SymbolComp :symbolWidth=4 :symbol="symbol" @click="emit('symbolClicked', { type: type, index: index })" />
-            <div class="var-target-tag" v-if="showVarTags" :style="{ color: varTagColor(symbol) }"> V </div>
+            <div class="var-target-tag" v-if="showVarTags" :style="{ color: varTagColor(symbol) }"
+                @click="emit('toggleVarTarget', { type: type, index: index })"> V </div>
             <div class="symbol-delete-button" @click="emit('deleteSymbol', { type: type, index: index })"> Löschen
             </div>
         </div>
@@ -17,7 +18,7 @@
 import { defineProps, defineEmits, Ref, ref, ComputedRef, computed } from 'vue';
 import SymbolComp from '@/components/axiom/SymbolComp.vue';
 import SymbolEditor from '../symbolEditor/SymbolEditor.vue';
-import { SymbolData, SymbolPointer, SymbolType } from '@/scripts/Interfaces';
+import { SymbolData, SymbolType } from '@/scripts/Interfaces';
 
 interface Props {
     symbols: SymbolData[] | undefined;
@@ -26,7 +27,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['openSymbolEditor', 'addSymbol', 'deleteSymbol', 'symbolClicked']);
+const emit = defineEmits(['openSymbolEditor', 'addSymbol', 'deleteSymbol', 'symbolClicked', 'toggleVarTarget']);
 
 const showSymbolEditor: Ref<boolean> = ref(false);
 const title: ComputedRef<string> = computed(() => props.type === SymbolType.VARIABLE ? "Variablen" : "Symbole");
