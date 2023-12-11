@@ -3,6 +3,7 @@
         <div class="symbol-list-title"> {{ title }} </div>
         <div class="symbol-package" v-for="(symbol, index) in symbols" :key="index">
             <SymbolComp :symbolWidth=4 :symbol="symbol" @click="emit('symbolClicked', { type: type, index: index })" />
+            <div class="var-target-tag" v-if="showVarTags" :style="{ color: varTagColor(symbol) }"> V </div>
             <div class="symbol-delete-button" @click="emit('deleteSymbol', { type: type, index: index })"> Löschen
             </div>
         </div>
@@ -16,11 +17,12 @@
 import { defineProps, defineEmits, Ref, ref, ComputedRef, computed } from 'vue';
 import SymbolComp from '@/components/axiom/SymbolComp.vue';
 import SymbolEditor from '../symbolEditor/SymbolEditor.vue';
-import { SymbolData, SymbolType } from '@/scripts/Interfaces';
+import { SymbolData, SymbolPointer, SymbolType } from '@/scripts/Interfaces';
 
 interface Props {
     symbols: SymbolData[] | undefined;
     type: SymbolType;
+    showVarTags: boolean;
 }
 
 const props = defineProps<Props>();
@@ -30,6 +32,11 @@ const showSymbolEditor: Ref<boolean> = ref(false);
 const title: ComputedRef<string> = computed(() => props.type === SymbolType.VARIABLE ? "Variablen" : "Symbole");
 const addButtonText: ComputedRef<string> = computed(() =>
     props.type === SymbolType.VARIABLE ? "Neue Variable erstellen" : "Neues Symbol erstellen");
+
+
+function varTagColor(symbol: SymbolData): string {
+    return symbol.varTarget ? 'orange' : 'gray';
+}
 </script>
 
 <style>
@@ -57,6 +64,15 @@ const addButtonText: ComputedRef<string> = computed(() =>
     border-radius: 3vw;
     font-size: 1vw;
     color: black;
+    padding: 1vw;
+    margin-left: 2vw;
+    display: grid;
+    place-items: center;
+    user-select: none;
+}
+
+.var-target-tag {
+    font-size: 2vw;
     padding: 1vw;
     margin-left: 2vw;
     display: grid;

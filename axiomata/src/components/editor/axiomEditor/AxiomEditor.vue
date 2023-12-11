@@ -12,10 +12,13 @@
                     :sequence="axiom?.lowerSequence" :symbols="symbols" :variables="variables"
                     @click="upperSeqSelected = false" @symbolClicked="removeFromLowerSeq" />
             </div>
-            <SymbolList :symbols="symbols" :type="SymbolType.TERMINAL" @addSymbol="(symbol) => emit('addSymbol', symbol)"
-                @deleteSymbol="(symbol) => deleteSymbol(symbol)" @symbolClicked="(symbol) => addSymbolToSequence(symbol)" />
-            <SymbolList :symbols="variables" :type="SymbolType.VARIABLE" @addSymbol="(symbol) => emit('addSymbol', symbol)"
-                @deleteSymbol="(symbol) => deleteSymbol(symbol)" @symbolClicked="(symbol) => addSymbolToSequence(symbol)" />
+            <SymbolList :symbols="symbols" :type="SymbolType.TERMINAL"
+                :showVarTags="variables !== undefined && variables.length > 0"
+                @addSymbol="(symbol) => emit('addSymbol', symbol)" @deleteSymbol="(symbol) => deleteSymbol(symbol)"
+                @symbolClicked="(symbol) => addSymbolToSequence(symbol)" />
+            <SymbolList :symbols="variables" :type="SymbolType.VARIABLE" :showVarTags="false"
+                @addSymbol="(symbol) => emit('addSymbol', symbol)" @deleteSymbol="(symbol) => deleteSymbol(symbol)"
+                @symbolClicked="(symbol) => addSymbolToSequence(symbol)" />
         </div>
         <div class="button-container">
             <div class="axiom-cancel-button" @click="emit('close')"> Abbrechen </div>
