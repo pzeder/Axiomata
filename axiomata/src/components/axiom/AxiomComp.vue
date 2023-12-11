@@ -55,6 +55,6 @@ const props = withDefaults(defineProps<Props>(), {
   bottom: 0;
   margin: auto;
   z-index: 0;
-  background-color: rgb(160, 160, 160);
+  background: linear-gradient(to right, darkgray, lightgray);
 }
 </style>
