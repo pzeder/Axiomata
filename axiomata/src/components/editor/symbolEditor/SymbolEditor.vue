@@ -25,13 +25,18 @@
 </template>
 
 <script setup lang="ts">
-import { SymbolData } from '@/scripts/Interfaces';
-import { Ref, ref, defineEmits } from 'vue';
+import { SymbolData, SymbolType } from '@/scripts/Interfaces';
+import { Ref, ref, defineEmits, defineProps } from 'vue';
 import ColorEditor from './ColorEditor.vue';
 import SymbolComp from '@/components/axiom/SymbolComp.vue';
 import ValueSlider from './ValueSlider.vue';
 import TextInput from '../TextInput.vue';
 
+interface Props {
+  type: SymbolType;
+}
+
+const props = defineProps<Props>();
 const emit = defineEmits(['addSymbol', 'close']);
 const showTextInput: Ref<boolean> = ref(false);
 
@@ -40,7 +45,7 @@ const editSymbol: Ref<SymbolData> = ref({
   text: 'text',
   textColor: '',
   fontSize: 35,
-  varDomain: false
+  type: props.type
 });
 
 function setBackgroundColor(color: string) {

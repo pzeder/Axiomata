@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { Ref, ref, defineProps, onMounted, ComputedRef, computed, defineEmits } from 'vue';
-import { CourseData, ChapterData, SymbolData, LevelData, AxiomData, SymbolPointer } from '@/scripts/Interfaces';
+import { CourseData, ChapterData, SymbolData, LevelData, AxiomData, SymbolPointer, SymbolType } from '@/scripts/Interfaces';
 import EditChapterList from './chapterEditor/EditChapterList.vue';
 import TextInput from './TextInput.vue';
 import TitleBar from './TitleBar.vue';
@@ -119,7 +119,11 @@ function addSymbol(symbol: SymbolData): void {
   if (!course.value) {
     return
   }
-  course.value.symbols.push(symbol);
+  if (symbol.type === SymbolType.VARIABLE) {
+    course.value.variables.push(symbol);
+  } else {
+    course.value.symbols.push(symbol);
+  }
   saveEdit();
 }
 

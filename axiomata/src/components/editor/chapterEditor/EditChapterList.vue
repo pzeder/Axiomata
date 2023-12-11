@@ -11,9 +11,9 @@
       @addSymbol="(symbol) => emit('addSymbol', symbol)" @deleteSymbol="(symbol) => emit('deleteSymbol', symbol)" />
   </div>
   <AddButton target="chapter" @click="emit('addNewChapter', course.chapters.length)" />
-  <AxiomEditor v-if="showAxiomEditor" :symbols="course?.symbols" upTitle="OBEN" lowTitle="UNTEN"
-    @addSymbol="(symbol) => emit('addSymbol', symbol)" @deleteSymbol="(symbol) => emit('deleteSymbol', symbol)"
-    @saveAxiom="addNewAxiom" @close="showAxiomEditor = false" />
+  <AxiomEditor v-if="showAxiomEditor" :symbols="course?.symbols" :variables="course?.variables" upTitle="OBEN"
+    lowTitle="UNTEN" @addSymbol="(symbol) => emit('addSymbol', symbol)"
+    @deleteSymbol="(symbol) => emit('deleteSymbol', symbol)" @saveAxiom="addNewAxiom" @close="showAxiomEditor = false" />
   <TextInput v-if="showTextInput" title="Titel des Kapitels ändern" :placeholder="editChapter?.title"
     @updateText="setChapterTitle" @close="showTextInput = false" />
 </template>

@@ -1,32 +1,35 @@
 <template>
     <div class="symbol-list">
-        <div class="symbol-list-title"> Symbole </div>
+        <div class="symbol-list-title"> {{ title }} </div>
         <div class="symbol-package" v-for="(symbol, index) in symbols" :key="index">
             <SymbolComp :symbolWidth=4 :symbol="symbol" @click="emit('symbolClicked', index)" />
             <div class="symbol-delete-button" @click="emit('deleteSymbol', index)"> Löschen
             </div>
         </div>
-        <AddButton class="symbol-add-button" target="symbol" @click="showSymbolEditor = true" />
+        <div class="symbol-add-button" @click="showSymbolEditor = true"> {{ addButtonText }} </div>
     </div>
-    <SymbolEditor v-if="showSymbolEditor" @close="showSymbolEditor = false"
+    <SymbolEditor v-if="showSymbolEditor" :type="type" @close="showSymbolEditor = false"
         @addSymbol="(symbol) => emit('addSymbol', symbol)" />
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, Ref, ref } from 'vue';
+import { defineProps, defineEmits, Ref, ref, ComputedRef, computed } from 'vue';
 import SymbolComp from '@/components/axiom/SymbolComp.vue';
-import AddButton from '../AddButton.vue';
 import SymbolEditor from '../symbolEditor/SymbolEditor.vue';
-import { SymbolData } from '@/scripts/Interfaces';
+import { SymbolData, SymbolType } from '@/scripts/Interfaces';
 
 interface Props {
     symbols: SymbolData[] | undefined;
+    type: SymbolType;
 }
 
 const props = defineProps<Props>();
 const emit = defineEmits(['openSymbolEditor', 'addSymbol', 'deleteSymbol', 'symbolClicked']);
 
 const showSymbolEditor: Ref<boolean> = ref(false);
+const title: ComputedRef<string> = computed(() => props.type === SymbolType.VARIABLE ? "Variablen" : "Symbole");
+const addButtonText: ComputedRef<string> = computed(() =>
+    props.type === SymbolType.VARIABLE ? "Neue Variable erstellen" : "Neues Symbol erstellen");
 </script>
 
 <style>
@@ -62,6 +65,17 @@ const showSymbolEditor: Ref<boolean> = ref(false);
 }
 
 .symbol-add-button {
+    width: 20vw;
+    height: 5vh;
+    border: 2px solid black;
+    border-radius: 5vw;
+    margin-top: 2vw;
     margin-bottom: 2vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10pt;
+    user-select: none;
+    background: rgb(104, 206, 104);
 }
 </style>

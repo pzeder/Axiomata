@@ -41,7 +41,7 @@ import AxiomBar from './AxiomBar.vue';
 import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import HeadBar from '@/components/play/HeadBar.vue'
 import Cursor from './Cursor.vue';
-import { AxiomData, LevelData, SymbolPointer, SymbolData, MoveData } from '@/scripts/Interfaces';
+import { AxiomData, LevelData, SymbolPointer, SymbolData, MoveData, SymbolType } from '@/scripts/Interfaces';
 import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount, computed, ComputedRef } from 'vue';
 import { axiomHeight, axiomWidth } from '@/scripts/AxiomMethods';
 
@@ -256,7 +256,7 @@ function updateMatching(): void {
     let nearSymbol: SymbolPointer = nearSequence[nearIndex];
     if (nearSymbol.type === 'variable') {
       let key: number = nearSymbol.index;
-      if (!varMap.value.get(key) && props.symbols[workSymbol.index].varDomain) {
+      if (!varMap.value.get(key) && props.symbols[workSymbol.index].type !== SymbolType.CONSTANT) {
         varMap.value.set(key, workSymbol);
       }
       const symbolPointer: SymbolPointer | undefined = varMap.value.get(key);

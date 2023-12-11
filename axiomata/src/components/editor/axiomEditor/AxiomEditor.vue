@@ -3,7 +3,7 @@
     <div class="axiom-editor-screen">
         <div class="axiom-editor">
             <div :style="{ marginTop: (upperSeqSelected ? -15 : 15) + 'vw', color: 'orange', fontSize: 2 + 'vw' }">
-                Ausgewählt >>> </div>
+                >>> </div>
             <div class="sequence-editors">
                 <SequenceContainer :title="upTitle" :width=30 :height=15 :maxFill="0.6" :maxSymbolWidthRatio="0.2"
                     :sequence="axiom?.upperSequence" :symbols="symbols" :variables=[] @click="upperSeqSelected = true"
@@ -12,7 +12,10 @@
                     :sequence="axiom?.lowerSequence" :symbols="symbols" :variables=[] @click="upperSeqSelected = false"
                     @symbolClicked="removeFromLowerSeq" />
             </div>
-            <SymbolList :symbols="symbols" @addSymbol="(symbol) => emit('addSymbol', symbol)"
+            <SymbolList :symbols="symbols" :type="SymbolType.CONSTANT" @addSymbol="(symbol) => emit('addSymbol', symbol)"
+                @deleteSymbol="(index) => deleteSymbol({ type: 'terminal', index: index })"
+                @symbolClicked="(index) => addSymbolToSequence({ type: 'terminal', index: index })" />
+            <SymbolList :symbols="variables" :type="SymbolType.VARIABLE" @addSymbol="(symbol) => emit('addSymbol', symbol)"
                 @deleteSymbol="(index) => deleteSymbol({ type: 'terminal', index: index })"
                 @symbolClicked="(index) => addSymbolToSequence({ type: 'terminal', index: index })" />
         </div>
@@ -24,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { AxiomData, SymbolPointer, SymbolData } from '@/scripts/Interfaces';
+import { AxiomData, SymbolPointer, SymbolData, SymbolType } from '@/scripts/Interfaces';
 import { defineProps, defineEmits, Ref, ref, withDefaults } from 'vue';
 import SymbolList from './SymbolList.vue'
 import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
@@ -33,6 +36,7 @@ import { axiomValid } from '@/scripts/AxiomMethods';
 interface Props {
     axiom: AxiomData | undefined;
     symbols: SymbolData[] | undefined;
+    variables: SymbolData[] | undefined;
     upTitle: string;
     lowTitle: string;
 }

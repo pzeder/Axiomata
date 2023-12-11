@@ -6,14 +6,14 @@
     color: symbol.textColor,
     borderColor: borderColor,
     borderWidth: (symbolWidth * 0.077) + 'vw',
-    borderRadius: (symbolWidth * 0.2) + 'vw',
+    borderRadius: borderRadius + 'vw',
     marginLeft: (shiftLeft ? -symbolWidth * 0.077 : 0) + 'vw',
     fontSize: (symbol.fontSize / 100 * symbolWidth) + 'vw'
   }"> {{ symbol.text }} </div>
 </template>
 
 <script setup lang="ts">
-import { SymbolData } from "@/scripts/Interfaces";
+import { SymbolData, SymbolType } from "@/scripts/Interfaces";
 import { ComputedRef, computed, defineProps, withDefaults } from "vue";
 
 interface Props {
@@ -27,7 +27,11 @@ const props = withDefaults(defineProps<Props>(), {
   shiftLeft: () => false
 });
 
-const borderColor: ComputedRef<string> = computed(() => props.highlight ? 'rgb(180, 180, 180)' : 'rgb(100, 100, 100)');
+const borderRadius: ComputedRef<number> = computed(() =>
+  (props.symbol?.type === SymbolType.VARIABLE ? 0.6 : 0.2) * props.symbolWidth);
+
+const borderColor: ComputedRef<string> = computed(() =>
+  props.highlight ? 'rgb(180, 180, 180)' : 'rgb(100, 100, 100)');
 </script>
 
 <style scoped>

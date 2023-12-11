@@ -3,12 +3,16 @@ export interface AxiomData {
     lowerSequence: SymbolPointer[];
 }
 
+export enum SymbolType {
+    VARIABLE, TERMINAL, CONSTANT
+}
+
 export interface SymbolData {
     backgroundColor: string;
     text: string;
     textColor: string;
     fontSize: number;
-    varDomain: boolean;
+    type: SymbolType;
 }
 
 export interface CourseData {
