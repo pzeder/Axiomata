@@ -254,9 +254,9 @@ function updateMatching(): void {
   while (workIndex < workSequence.value.length && nearIndex < nearSequence.length) {
     let workSymbol: SymbolPointer = workSequence.value[workIndex];
     let nearSymbol: SymbolPointer = nearSequence[nearIndex];
-    if (nearSymbol.type === 'variable') {
+    if (nearSymbol.type === SymbolType.VARIABLE) {
       let key: number = nearSymbol.index;
-      if (!varMap.value.get(key) && props.symbols[workSymbol.index].type !== SymbolType.CONSTANT) {
+      if (!varMap.value.get(key) && props.symbols[workSymbol.index].varTarget) {
         varMap.value.set(key, workSymbol);
       }
       const symbolPointer: SymbolPointer | undefined = varMap.value.get(key);
@@ -322,7 +322,7 @@ function updateWorkSequence(): void {
   // Replace the matching part with farSequence
 
   const mapVariable = (sp: SymbolPointer): SymbolPointer => {
-    if (sp.type === 'variable') {
+    if (sp.type === SymbolType.VARIABLE) {
       const key: number = sp.index;
       const spMap: SymbolPointer | undefined = varMap.value.get(key);
       if (spMap !== undefined) {
