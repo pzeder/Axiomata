@@ -2,7 +2,7 @@
   <div v-if="symbol" class="symbol" :style="{
     width: symbolWidth + 'vw',
     height: symbolWidth + 'vw',
-    backgroundColor: symbol.backgroundColor,
+    background: backgroundColor,
     color: symbol.textColor,
     borderColor: borderColor,
     borderWidth: (symbolWidth * 0.077) + 'vw',
@@ -28,13 +28,16 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const borderRadius: ComputedRef<number> = computed(() =>
-  (props.symbol?.type === SymbolType.VARIABLE ? 0.6 : 0.2) * props.symbolWidth);
+  (props.symbol?.type === SymbolType.TERMINAL ? 0.2 : 0.6) * props.symbolWidth);
 
 const borderColor: ComputedRef<string> = computed(() =>
   props.highlight ? 'rgb(180, 180, 180)' : 'rgb(100, 100, 100)');
+
+const backgroundColor: ComputedRef<string> = computed(() =>
+  props.symbol?.type === SymbolType.TERMINAL ? props.symbol.backgroundColor : 'linear-gradient(45deg, red, orange, yellow, lightgreen, lightblue, violet)');
 </script>
 
-<style scoped>
+<style>
 .symbol {
   box-sizing: border-box;
   display: flex;
