@@ -1,6 +1,6 @@
 <template>
   <div class="cursor-container" :style="{ left: posX + 'vw', top: posY + 'vw' }">
-    <AxiomComp v-if="cursorAxiom.upperSequence.length !== 0" :symbolWidth="symbolWidth" :axiomData="cursorAxiom"
+    <AxiomComp :symbolWidth="symbolWidth" :axiomData="cursorAxiom"
       :symbols="symbols" :upperHighlights="upperHighlights" :variables="variables" :lowerHighlights="lowerHighlights"
       :varMap="varMap" @mouseup="emit('axiomDrop')" @touchend="emit('axiomDrop')" @touchcancel="emit('axiomDrop')"
       @mousedown="emit('cursorAxiomClicked')" @touchstart="emit('cursorAxiomClicked')" />

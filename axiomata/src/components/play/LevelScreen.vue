@@ -26,7 +26,7 @@
       </div>
     </div>
   </div>
-  <Cursor :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="workSymbolWidth"
+  <Cursor v-if="showCursorAxiom" :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="workSymbolWidth"
     :symbols="symbols" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
     :aboveCenter="cursorAboveCenter" :workMatch="workMatch" :variables="variables" :varMap="varMap" @axiomDrop="axiomDrop"
     @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
@@ -58,6 +58,7 @@ interface Props {
 const props = defineProps<Props>();
 const emit = defineEmits(['openChapterScreen', 'finishLevel', 'addMove', 'nextLevel']);
 
+const showCursorAxiom: Ref<boolean> = ref(false);
 const showBonusAxiom: Ref<boolean> = ref(false);
 
 // Layout variables
@@ -188,7 +189,7 @@ function axiomDrop(): void {
 
   if (!(centerX > workbenchX.value && centerX < workbenchX.value + workbenchWidth.value
     && centerY > workbenchY.value && centerY < workbenchY.value + workbenchHeight.value)) {
-    cursorAxiom.value.upperSequence = [];
+    showBonusAxiom.value = false;
     return;
   }
 
@@ -281,6 +282,7 @@ function selectAxiom(event: MouseEvent, axiom: AxiomData): void {
     lowerSequence: [...axiom.lowerSequence]
   });
   handleMouseDown(event);
+  showCursorAxiom.value = true;
 }
 
 function updateCursorAxiomPos(event: MouseEvent | Touch): void {
@@ -304,7 +306,7 @@ function cursorAxiomClicked(): void {
 
 function swap(): void {
   updateWorkSequence();
-  cursorAxiom.value.upperSequence = [];
+  showCursorAxiom.value = false;
   resetHighlights();
   cursorAxiomDocked.value = false;
 }
@@ -361,6 +363,7 @@ function handleGoalClicked(): void {
     emit('finishLevel');
     return;
   }
+  showCursorAxiom.value = false;
   showBonusAxiom.value = true;
 }
 </script>
