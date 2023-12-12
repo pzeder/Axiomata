@@ -1,10 +1,10 @@
 <template>
     <div class="screen-container">
-    <div class="bonus-axiom-container" > 
-      <div class="bonus-axiom-title"> Bravo! Du hast es geschafft! <br> Hier eine neue Bonusregel für dich. </div>
-      <AxiomContainer :width=20 :height=20 :axiom="level.goalAxiom" :symbols="symbols" :variables="variables"/>
-  </div>
-  </div>
+        <div class="bonus-axiom-container" > 
+            <div class="bonus-axiom-title"> Neue Bonus-Regel! </div>
+            <AxiomContainer :width=20 :height=20 :axiom="level.goalAxiom" :symbols="symbols" :variables="variables"/>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -28,18 +28,24 @@ const props = defineProps<Props>();
   top: 0;
   width: 100vw;
   height: 100vh;
+  display: grid;
+  place-items: center;
 }
 
 .bonus-axiom-container {
   position: fixed;
-  left: 35vw;
-  top: 30vh;
+  margin-top: -10vw;
   width: 30vw;
-  height: 30vh;
   border: 0.5vw solid black;
   border-radius: 1vw;
   background: orange;
   display: grid;
   place-items: center;
+}
+
+.bonus-axiom-title {
+    font-size: 2vw;
+    color: white;
+    padding: 2vw;
 }
 </style>

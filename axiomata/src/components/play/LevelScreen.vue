@@ -189,7 +189,7 @@ function axiomDrop(): void {
 
   if (!(centerX > workbenchX.value && centerX < workbenchX.value + workbenchWidth.value
     && centerY > workbenchY.value && centerY < workbenchY.value + workbenchHeight.value)) {
-    showBonusAxiom.value = false;
+    showCursorAxiom.value = false;
     return;
   }
 
