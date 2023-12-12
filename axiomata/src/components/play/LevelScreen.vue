@@ -2,22 +2,22 @@
   <div class="screen-container">
     <HeadBar :levelTitle="level?.title" :bonusLevel="level?.bonus" :height="headBarHeight" @openLevelMenu="emit('openChapterScreen')" />
     <div :style="{ display: 'flex' }">
-      <AxiomBar :title="'Tausch-Regeln'" :background="'rgb(252, 223, 203)'" :width="axiomBarWidth"
+      <AxiomBar :title="'Tausch-Regeln'" background="rgb(252, 223, 203)" :width="axiomBarWidth"
         :height="axiomBarHeight" :axioms="axioms" :symbols="symbols" :variables="variables" @selectAxiom="selectAxiom" />
       <div class="right-side">
         <div :style="{ display: 'flex' }">
           <div :style="{ marginTop: -1 + 'vw' }">
             <SequenceContainer :width="workbenchWidth" :height="workbenchHeight" :maxFill="workbenchMaxFill"
               :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio" :sequence="workSequence" :symbols="symbols"
-              :variables="variables" :highlights="workHighlights" />
+              :variables="variables" :highlights="workHighlights" borderColor="rgb(89, 204, 245)"/>
           </div>
           <div :style="{ display: 'grid', placeItems: 'center', width: goalContainerWidth + 'vw' }">
             <SequenceContainer class="goal-window" :title="'START'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
               :maxSymbolWidthRatio="0.33" :sequence="level ? level.goalAxiom.upperSequence : null" :variables="variables"
-              :symbols="symbols" />
+              :symbols="symbols" borderColor="rgb(252, 127, 40)" />
             <SequenceContainer class="goal-window" :title="'ZIEL'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
               :maxSymbolWidthRatio="0.33" :sequence="level ? level.goalAxiom.lowerSequence : null" :variables="variables"
-              :symbols="symbols" />
+              :symbols="symbols" borderColor="rgb(252, 127, 40)" />
           </div>
         </div>
         <AxiomBar :title="'Bonus-Regeln'" :background="'rgb(187, 231, 247)'" :width="derivateBarWidth"

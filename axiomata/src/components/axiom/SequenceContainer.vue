@@ -1,5 +1,5 @@
 <template>
-  <div class="sequence-container" :style="{ width: width + 'vw', height: height + 'vw' }">
+  <div class="sequence-container" :style="{ width: width + 'vw', height: height + 'vw', borderColor: borderColor }">
     <div class="sequence-title" :style="{ width: width + 2 + 'vw', fontSize: (height * 0.15) + 'vw' }"> {{ title }} </div>
     <SequenceComp :symbolWidth="symbolWidth" :sequence="sequence" :symbols="symbols" :highlights="highlights"
       :variables="variables" :varMap="varMap" @symbolClicked="(index) => emit('symbolClicked', index)" />
@@ -22,12 +22,14 @@ interface Props {
   highlights: boolean[];
   variables: SymbolData[] | undefined;
   varMap: Map<number, SymbolPointer>;
+  borderColor: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   title: () => '',
   highlights: () => [],
-  varMap: () => new Map<number, SymbolPointer>()
+  varMap: () => new Map<number, SymbolPointer>(),
+  borderColor: () => 'transparent'
 });
 
 const emit = defineEmits(['symbolClicked']);
@@ -49,7 +51,7 @@ const symbolWidth = computed(() => {
   box-sizing: border-box;
   position: relative;
   background-color: #ffffff;
-  border: 1vw solid rgb(89, 204, 245);
+  border: 1vw solid;
 }
 
 .sequence-title {
