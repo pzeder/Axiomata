@@ -79,13 +79,18 @@ const selectedDerivates: ComputedRef<AxiomData[]> = computed(() => {
   let derivates: AxiomData[] = [];
   const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
   const levelIndex: number = selectedLevelPointer.value.levelIndex;
-  for (let ch = 0; ch < chapterIndex; ch++) {
-    for (let lvl = 0; lvl < course.value.chapters[ch].levels.length; lvl++) {
+  const addGoalAxiom = (ch: number, lvl: number) => {
+    if (course.value?.chapters[ch].levels[lvl].bonus) {
       derivates.push(course.value.chapters[ch].levels[lvl].goalAxiom);
     }
   }
+  for (let ch = 0; ch < chapterIndex; ch++) {
+    for (let lvl = 0; lvl < course.value.chapters[ch].levels.length; lvl++) {
+      addGoalAxiom(ch, lvl);
+    }
+  }
   for (let lvl = 0; lvl < levelIndex; lvl++) {
-    derivates.push(course.value.chapters[chapterIndex].levels[lvl].goalAxiom);
+    addGoalAxiom(chapterIndex, lvl);
   }
   return derivates;
 });

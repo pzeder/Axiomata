@@ -34,6 +34,7 @@ export interface LevelData {
     goalAxiom: AxiomData;
     moveHistory: MoveData[];
     bestSolution: MoveData[] | null;
+    bonus: boolean;
 }
 
 export interface MoveData {

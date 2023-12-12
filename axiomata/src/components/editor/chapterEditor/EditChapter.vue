@@ -11,7 +11,8 @@
       @setLevelTitle="(index, title) => emit('setLevelTitle', index, title)"
       @setGoalAxiom="(index, axiom) => emit('setGoalAxiom', index, axiom)"
       @addSymbol="(symbol) => emit('addSymbol', symbol)" @deleteSymbol="(symbol) => emit('deleteSymbol', symbol)"
-      @toggleVarTarget="(symbol) => emit('toggleVarTarget', symbol)" />
+      @toggleVarTarget="(symbol) => emit('toggleVarTarget', symbol)"
+      @toggleBonus="(index) => emit('toggleBonus', index)" />
     <DeleteButton text="Kapitel löschen" @click="emit('deleteChapter')" />
   </div>
 </template>
@@ -33,7 +34,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['editChapterTitle', 'deleteChapter', 'editNewAxiom', 'deleteAxiom', 'addNewLevel', 'deleteLevel',
-  'setLevelTitle', 'setGoalAxiom', 'addSymbol', 'deleteSymbol', 'toggleVarTarget']);
+  'setLevelTitle', 'setGoalAxiom', 'addSymbol', 'deleteSymbol', 'toggleVarTarget', 'toggleBonus']);
 
 const chapterTag: ComputedRef<string> = computed(() => 'Kapitel ' + (props.chapterIndex + 1));
 </script>

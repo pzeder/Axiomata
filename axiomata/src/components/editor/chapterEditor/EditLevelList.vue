@@ -3,7 +3,7 @@
     <AddButton target="level" @click="emit('addNewLevel', index)" />
     <EditLevel :chapterIndex="chapterIndex" :levelIndex="index" :level="level" :symbols="symbols"
       @editLevelTitle="editLevelTitle(index)" @deleteLevel="emit('deleteLevel', index)"
-      @editGoalAxiom="editGoalAxiom(index)" />
+      @editGoalAxiom="editGoalAxiom(index)" @toggleBonus="emit('toggleBonus', index)"/>
   </div>
   <AddButton target="level" @click="emit('addNewLevel', levels.length)" />
   <AxiomEditor v-if="showAxiomEditor" :axiom="editLevel?.goalAxiom" :symbols="symbols" :variables="variables"
@@ -31,7 +31,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['addNewLevel', 'deleteLevel', 'setLevelTitle', 'addSymbol',
-  'deleteSymbol', 'setGoalAxiom', 'toggleVarTarget']);
+  'deleteSymbol', 'setGoalAxiom', 'toggleVarTarget', 'toggleBonus']);
 
 const showAxiomEditor: Ref<boolean> = ref(false);
 const showTextInput: Ref<boolean> = ref(false);

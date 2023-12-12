@@ -212,7 +212,6 @@ function dockCursorAxiom(): void {
   if (cursorCenterY < workbenchCenterY) {
     // Upper Half
     axiomOffset = (upperLength <= lowerLength) ? 0 : ((upperLength - lowerLength) * 0.5 * workSymbolWidth.value);
-    console.log(workSymbolWidth.value);
     cursorAxiomY.value = workbenchCenterY - workSymbolWidth.value * 0.5 - axiomHeight(workSymbolWidth.value);
     nearSequence = cursorAxiom.value.lowerSequence;
     farSequence = cursorAxiom.value.upperSequence;

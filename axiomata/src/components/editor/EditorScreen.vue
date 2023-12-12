@@ -4,7 +4,7 @@
   <EditChapterList v-if="course" :course="course" @addNewChapter="addNewChapter" @setChapterTitle="setChapterTitle"
     @deleteChapter="deleteChapter" @addSymbol="addSymbol" @deleteSymbol="deleteSymbol" @addNewAxiom="addNewAxiom"
     @deleteAxiom="deleteAxiom" @addNewLevel="addNewLevel" @deleteLevel="deleteLevel" @setLevelTitle="setLevelTitle"
-    @setGoalAxiom="setGoalAxiom" @toggleVarTarget="toggleVarTarget" />
+    @setGoalAxiom="setGoalAxiom" @toggleVarTarget="toggleVarTarget" @toggleBonus="toggleBonus" />
   <div class="submit-button" :style="{ background: courseValid ? 'lightgreen' : 'gray' }" @click="submitCourse"> Kurs
     hochladen </div>
   <TextInput v-if="showTextInput" title="Titel des Kurses ändern" :placeholder="course?.title"
@@ -163,7 +163,8 @@ function deleteSymbol(symbolPointer: SymbolPointer): void {
     title: lvl.title,
     goalAxiom: cleanAxiom(lvl.goalAxiom),
     moveHistory: lvl.moveHistory,
-    bestSolution: lvl.bestSolution
+    bestSolution: lvl.bestSolution,
+    bonus: lvl.bonus
   });
 
   const nonEmpty = (axiom: AxiomData): boolean => (axiom.upperSequence.length > 0 && axiom.lowerSequence.length > 0);
@@ -205,7 +206,8 @@ function addNewLevel(chapterIndex: number, levelIndex: number) {
       lowerSequence: []
     },
     moveHistory: [],
-    bestSolution: null
+    bestSolution: null,
+    bonus: false
   })
   course.value.chapters[chapterIndex].levels.splice(levelIndex, 0, newLevel);
   saveEdit();
@@ -244,6 +246,14 @@ function toggleVarTarget(symbol: SymbolPointer): void {
   } else {
     course.value.symbols[symbol.index].varTarget = !course.value.symbols[symbol.index].varTarget;
   }
+  saveEdit();
+}
+
+function toggleBonus(chapterIndex: number, levelIndex: number): void {
+  if (!course.value) {
+    return;
+  }
+  course.value.chapters[chapterIndex].levels[levelIndex].bonus = !course.value.chapters[chapterIndex].levels[levelIndex].bonus;
   saveEdit();
 }
 

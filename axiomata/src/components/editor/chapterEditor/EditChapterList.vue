@@ -8,7 +8,9 @@
       @deleteLevel="(levelIndex) => emit('deleteLevel', index, levelIndex)"
       @setLevelTitle="(levelIndex, title) => emit('setLevelTitle', index, levelIndex, title)"
       @setGoalAxiom="(levelIndex, axiom) => emit('setGoalAxiom', index, levelIndex, axiom)"
-      @addSymbol="(symbol) => emit('addSymbol', symbol)" @deleteSymbol="(symbol) => emit('deleteSymbol', symbol)" />
+      @addSymbol="(symbol) => emit('addSymbol', symbol)" @deleteSymbol="(symbol) => emit('deleteSymbol', symbol)"
+      @toggleVarTarget="(symbol) => emit('toggleVarTarget', symbol)"
+      @toggleBonus="(levelIndex) => emit('toggleBonus', index, levelIndex)" />
   </div>
   <AddButton target="chapter" @click="emit('addNewChapter', course.chapters.length)" />
   <AxiomEditor v-if="showAxiomEditor" :symbols="course?.symbols" :variables="course?.variables" upTitle="OBEN"
@@ -33,7 +35,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['addNewChapter', 'setChapterTitle', 'deleteChapter', 'addSymbol', 'deleteSymbol',
-  'addNewAxiom', 'deleteAxiom', 'addNewLevel', 'deleteLevel', 'setLevelTitle', 'setGoalAxiom', 'toggleVarTarget']);
+  'addNewAxiom', 'deleteAxiom', 'addNewLevel', 'deleteLevel', 'setLevelTitle', 'setGoalAxiom', 'toggleVarTarget', 'toggleBonus']);
 
 const showAxiomEditor: Ref<boolean> = ref(false);
 const showTextInput: Ref<boolean> = ref(false);
