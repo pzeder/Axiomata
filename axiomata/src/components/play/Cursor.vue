@@ -1,9 +1,5 @@
 <template>
-  <div :style="{
-    position: 'absolute',
-    left: posX + 'vw',
-    top: posY + 'vw'
-  }">
+  <div class="cursor-container" :style="{ left: posX + 'vw', top: posY + 'vw' }">
     <AxiomComp v-if="cursorAxiom.upperSequence.length !== 0" :symbolWidth="symbolWidth" :axiomData="cursorAxiom"
       :symbols="symbols" :upperHighlights="upperHighlights" :variables="variables" :lowerHighlights="lowerHighlights"
       :varMap="varMap" @mouseup="emit('axiomDrop')" @touchend="emit('axiomDrop')" @touchcancel="emit('axiomDrop')"
@@ -49,6 +45,11 @@ const swapButtonY: ComputedRef<number> = computed(() => props.aboveCenter ? -pro
 </script>
 
 <style>
+.cursor-container {
+  position: absolute;
+  z-index: 500;
+}
+
 .swap-button {
   display: grid;
   place-items: center;
