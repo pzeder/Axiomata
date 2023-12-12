@@ -28,13 +28,14 @@
   </div>
   <Cursor v-if="showCursorAxiom" :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="workSymbolWidth"
     :symbols="symbols" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
-    :aboveCenter="cursorAboveCenter" :workMatch="workMatch" :variables="variables" :varMap="varMap" @axiomDrop="axiomDrop"
+    :aboveCenter="cursorAboveCenter" :workMatch="workMatch" :variables="variables" :varMap="varMap" @dropAxiom="dropAxiom"
     @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
   <div v-if="goalMatch" @click="handleGoalClicked"
     :style="{ position: 'absolute', userSelect: 'none', color: 'red', left: 90 + 'vw', top: 58 + 'vh', width: (goalWidth) + 'vw', height: (goalWidth) + 'vw', fontSize: 1 + 'vw' }">
     Geschafft!
   </div>
-  <BonusAxiomWindow v-if="showBonusAxiom && level && symbols && variables" :level="level" :symbols="symbols" :variables="variables" />
+  <BonusAxiomWindow v-if="showBonusAxiom && level && symbols && variables" :level="level" :symbols="symbols" :variables="variables" 
+    :bonusAxiomGrabed="bonusAxiomGrabed" :levelFinished="levelFinished" @grabBonusAxiom="grabBonusAxiom" @finishLevel="emit('finishLevel')"/>
 </template>
 
 <script setup lang=ts>
@@ -60,6 +61,9 @@ const emit = defineEmits(['openChapterScreen', 'finishLevel', 'addMove', 'nextLe
 
 const showCursorAxiom: Ref<boolean> = ref(false);
 const showBonusAxiom: Ref<boolean> = ref(false);
+const bonusAxiomGrabed: Ref<boolean> = ref(false);
+const levelFinished: Ref<boolean> = ref(false);
+const derivates: Ref<AxiomData[]> = ref(props.derivates);
 
 // Layout variables
 const screenRatio: Ref<number> = ref(window.innerWidth / window.innerHeight);
@@ -141,7 +145,7 @@ onMounted(() => {
   window.addEventListener('resize', handleResize);
   window.addEventListener('mousemove', updateCursorAxiomPos);
   window.addEventListener('touchmove', handleTouchMove, { passive: false });
-  window.addEventListener('touchend', axiomDrop, { passive: false });
+  window.addEventListener('touchend', dropAxiom, { passive: false });
 });
 
 onBeforeUnmount(() => {
@@ -149,7 +153,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize);
   window.removeEventListener('mousemove', updateCursorAxiomPos);
   window.removeEventListener('touchmove', handleTouchMove);
-  window.addEventListener('touchend', axiomDrop);
+  window.addEventListener('touchend', dropAxiom);
 });
 
 function handleMouseDown(event: MouseEvent) {
@@ -162,7 +166,7 @@ function handleMouseDown(event: MouseEvent) {
 
 function handleResize() {
   screenRatio.value = window.innerWidth / window.innerHeight;
-  axiomDrop();
+  dropAxiom();
 }
 
 function handleTouchMove(event: TouchEvent) {
@@ -177,7 +181,15 @@ function resetHighlights() {
   lowerHighlights.value = new Array(cursorAxiom.value.lowerSequence.length).fill(false);
 }
 
-function axiomDrop(): void {
+function dropAxiom(): void {
+  if (bonusAxiomGrabed.value) {
+    dropBonusAxiom();
+  } else {
+    dropNormalAxiom();
+  }
+}
+
+function dropNormalAxiom(): void {
   if (!workSymbolWidth.value || cursorAxiom.value.upperSequence.length === 0) {
     return;
   }
@@ -195,6 +207,20 @@ function axiomDrop(): void {
 
   dockCursorAxiom();
   updateMatching();
+}
+
+function dropBonusAxiom(): void {
+  if (!props.level) {
+    return;
+  }
+
+  showCursorAxiom.value = false;
+  bonusAxiomGrabed.value = false;
+
+  if (cursorAxiomY.value >  workbenchY.value + workbenchHeight.value) {
+    derivates.value.push(props.level.goalAxiom);
+    levelFinished.value = true;
+  }
 }
 
 function dockCursorAxiom(): void {
@@ -274,6 +300,11 @@ function updateMatching(): void {
     workIndex++;
     nearIndex++;
   }
+}
+
+function grabBonusAxiom(event: MouseEvent, axiom: AxiomData) {
+  bonusAxiomGrabed.value = true;
+  selectAxiom(event, axiom);
 }
 
 function selectAxiom(event: MouseEvent, axiom: AxiomData): void {

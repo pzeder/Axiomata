@@ -33,6 +33,7 @@ const emit = defineEmits(['openLevelMenu', 'nextLevel']);
 
 .victory-container {
   background-color: rgb(255, 157, 0);
+  border: 2vw solid black;
   border-radius: 5vw;
   display: grid;
   place-items: center;

@@ -2,7 +2,7 @@
   <div class="cursor-container" :style="{ left: posX + 'vw', top: posY + 'vw' }">
     <AxiomComp :symbolWidth="symbolWidth" :axiomData="cursorAxiom"
       :symbols="symbols" :upperHighlights="upperHighlights" :variables="variables" :lowerHighlights="lowerHighlights"
-      :varMap="varMap" @mouseup="emit('axiomDrop')" @touchend="emit('axiomDrop')" @touchcancel="emit('axiomDrop')"
+      :varMap="varMap" @mouseup="emit('dropAxiom')" @touchend="emit('dropAxiom')" @touchcancel="emit('dropAxiom')"
       @mousedown="emit('cursorAxiomClicked')" @touchstart="emit('cursorAxiomClicked')" />
     <div class="swap-button" v-if="workMatch" @click="emit('swap')" :style="{
       left: swapButtonX + 'vw',
@@ -38,7 +38,7 @@ const props = withDefaults(defineProps<Props>(), {
   lowerHighlights: () => [],
   varMap: () => new Map<number, SymbolPointer>()
 });
-const emit = defineEmits(['axiomDrop', 'swap', 'cursorAxiomClicked']);
+const emit = defineEmits(['dropAxiom', 'swap', 'cursorAxiomClicked']);
 
 const swapButtonX: ComputedRef<number> = computed(() => (maxSequenceLength(props.cursorAxiom) - 1) * props.symbolWidth / 2);
 const swapButtonY: ComputedRef<number> = computed(() => props.aboveCenter ? -props.symbolWidth * 1.2 : axiomHeight(props.symbolWidth) + props.symbolWidth * 0.2);
