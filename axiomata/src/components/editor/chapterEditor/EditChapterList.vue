@@ -14,7 +14,7 @@
   </div>
   <AddButton target="chapter" @click="emit('addNewChapter', course.chapters.length)" />
   <AxiomEditor v-if="showAxiomEditor" :symbols="course?.symbols" :variables="course?.variables" upTitle="OBEN"
-    lowTitle="UNTEN" @addSymbol="(symbol) => emit('addSymbol', symbol)"
+    lowTitle="UNTEN" borderColor="gray" @addSymbol="(symbol) => emit('addSymbol', symbol)"
     @deleteSymbol="(symbol) => emit('deleteSymbol', symbol)" @saveAxiom="addNewAxiom"
     @toggleVarTarget="(symbol) => emit('toggleVarTarget', symbol)" @close="showAxiomEditor = false" />
   <TextInput v-if="showTextInput" title="Titel des Kapitels ändern" :placeholder="editChapter?.title"

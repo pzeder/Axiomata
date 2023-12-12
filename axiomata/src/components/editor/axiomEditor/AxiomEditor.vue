@@ -6,10 +6,10 @@
                 >>> </div>
             <div class="sequence-editors">
                 <SequenceContainer :title="upTitle" :width=30 :height=15 :maxFill="0.6" :maxSymbolWidthRatio="0.2"
-                    :sequence="axiom?.upperSequence" :symbols="symbols" :variables="variables"
+                    :sequence="axiom?.upperSequence" :symbols="symbols" :variables="variables" :borderColor="borderColor"
                     @click="upperSeqSelected = true" @symbolClicked="removeFromUpperSeq" />
                 <SequenceContainer :title="lowTitle" :width=30 :height=15 :maxFill="0.6" :maxSymbolWidthRatio="0.2"
-                    :sequence="axiom?.lowerSequence" :symbols="symbols" :variables="variables"
+                    :sequence="axiom?.lowerSequence" :symbols="symbols" :variables="variables" :borderColor="borderColor"
                     @click="upperSeqSelected = false" @symbolClicked="removeFromLowerSeq" />
             </div>
             <SymbolList :symbols="symbols" :type="SymbolType.TERMINAL"
@@ -41,6 +41,7 @@ interface Props {
     variables: SymbolData[] | undefined;
     upTitle: string;
     lowTitle: string;
+    borderColor: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {

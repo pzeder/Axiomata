@@ -7,7 +7,7 @@
   </div>
   <AddButton target="level" @click="emit('addNewLevel', levels.length)" />
   <AxiomEditor v-if="showAxiomEditor" :axiom="editLevel?.goalAxiom" :symbols="symbols" :variables="variables"
-    upTitle="START" lowTitle="ZIEL" @close="showAxiomEditor = false" @addSymbol="(symbol) => emit('addSymbol', symbol)"
+    upTitle="START" lowTitle="ZIEL" borderColor="rgb(89, 204, 245)" @close="showAxiomEditor = false" @addSymbol="(symbol) => emit('addSymbol', symbol)"
     @deleteSymbol="(symbol) => emit('deleteSymbol', symbol)" @saveAxiom="setGoalAxiom"
     @toggleVarTarget="(symbol) => emit('toggleVarTarget', symbol)" />
   <TextInput v-if="showTextInput" title="Titel des Levels ändern" :placeholder="editLevel?.title"
