@@ -1,6 +1,6 @@
 <template>
   <div class="screen-container">
-    <HeadBar :levelTitle="level?.title" :height="headBarHeight" @openLevelMenu="emit('openChapterScreen')" />
+    <HeadBar :levelTitle="level?.title" :bonusLevel="level?.bonus" :height="headBarHeight" @openLevelMenu="emit('openChapterScreen')" />
     <div :style="{ display: 'flex' }">
       <AxiomBar :title="'Tausch-Regeln'" :background="'rgb(252, 223, 203)'" :width="axiomBarWidth"
         :height="axiomBarHeight" :axioms="axioms" :symbols="symbols" :variables="variables" @selectAxiom="selectAxiom" />
