@@ -14,10 +14,10 @@
           <div :style="{ display: 'grid', placeItems: 'center', width: goalContainerWidth + 'vw' }">
             <SequenceContainer class="goal-window" :title="'START'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
               :maxSymbolWidthRatio="0.33" :sequence="level ? level.goalAxiom.upperSequence : null" :variables="variables"
-              :symbols="symbols" borderColor="rgb(252, 127, 40)" />
+              :symbols="symbols" borderColor="orange" />
             <SequenceContainer class="goal-window" :title="'ZIEL'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
               :maxSymbolWidthRatio="0.33" :sequence="level ? level.goalAxiom.lowerSequence : null" :variables="variables"
-              :symbols="symbols" borderColor="rgb(252, 127, 40)" />
+              :symbols="symbols" borderColor="orange" />
           </div>
         </div>
         <AxiomBar :title="'Bonus-Regeln'" :background="'rgb(187, 231, 247)'" :width="derivateBarWidth"
@@ -30,10 +30,11 @@
     :symbols="symbols" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
     :aboveCenter="cursorAboveCenter" :workMatch="workMatch" :variables="variables" :varMap="varMap" @axiomDrop="axiomDrop"
     @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
-  <div v-if="goalMatch" @click="emit('finishLevel')"
+  <div v-if="goalMatch" @click="handleGoalClicked"
     :style="{ position: 'absolute', userSelect: 'none', color: 'red', left: 90 + 'vw', top: 58 + 'vh', width: (goalWidth) + 'vw', height: (goalWidth) + 'vw', fontSize: 1 + 'vw' }">
     Geschafft!
   </div>
+  <BonusAxiomWindow v-if="showBonusAxiom && level && symbols && variables" :level="level" :symbols="symbols" :variables="variables" />
 </template>
 
 <script setup lang=ts>
@@ -44,6 +45,7 @@ import Cursor from './Cursor.vue';
 import { AxiomData, LevelData, SymbolPointer, SymbolData, MoveData, SymbolType } from '@/scripts/Interfaces';
 import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount, computed, ComputedRef } from 'vue';
 import { axiomHeight, axiomWidth } from '@/scripts/AxiomMethods';
+import BonusAxiomWindow from './BonusAxiomWindow.vue';
 
 interface Props {
   symbols: SymbolData[] | undefined;
@@ -55,6 +57,8 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['openChapterScreen', 'finishLevel', 'addMove', 'nextLevel']);
+
+const showBonusAxiom: Ref<boolean> = ref(false);
 
 // Layout variables
 const screenRatio: Ref<number> = ref(window.innerWidth / window.innerHeight);
@@ -348,11 +352,22 @@ function updateWorkSequence(): void {
 
   emit('addMove', newMove);
 }
+
+function handleGoalClicked(): void {
+  if (!props.level) {
+    return;
+  }
+  if (!props.level?.bonus) {
+    emit('finishLevel');
+    return;
+  }
+  showBonusAxiom.value = true;
+}
 </script>
 
 <style>
 .screen-container {
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   width: 100vw;
