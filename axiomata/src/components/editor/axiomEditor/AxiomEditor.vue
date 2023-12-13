@@ -92,7 +92,7 @@ function confirm(): void {
     height: 100vh;
     background-color: black;
     opacity: 70%;
-    z-index: 300;
+    z-index: 250;
 }
 
 .axiom-editor-screen {

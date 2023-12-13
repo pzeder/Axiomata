@@ -31,7 +31,7 @@ const borderRadius: ComputedRef<number> = computed(() =>
   (props.symbol?.type === SymbolType.TERMINAL ? 0.2 : 0.6) * props.symbolWidth);
 
 const borderColor: ComputedRef<string> = computed(() =>
-  props.highlight ? 'rgb(180, 180, 180)' : 'rgb(100, 100, 100)');
+  props.highlight ? 'rgb(144, 144, 144)' : 'rgb(42, 42, 42)');
 
 const backgroundColor: ComputedRef<string> = computed(() =>
   props.symbol?.type === SymbolType.TERMINAL ? props.symbol.backgroundColor : 'linear-gradient(45deg, red, orange, yellow, lightgreen, lightblue, violet)');

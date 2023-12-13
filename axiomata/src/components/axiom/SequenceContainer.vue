@@ -16,7 +16,6 @@ import SequenceComp from '@/components/axiom/SequenceComp.vue';
 interface Props {
   header: string;
   footer: string;
-  footerColor: string;
   width: number;
   height: number;
   maxFill: number;
@@ -32,7 +31,6 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   header: () => '',
   footer: () => '',
-  footerColor: () => 'transparent',
   highlights: () => [],
   varMap: () => new Map<number, SymbolPointer>(),
   borderColor: () => 'transparent'
@@ -62,7 +60,7 @@ const symbolWidth = computed(() => {
 
 .sequence-header {
   position: absolute;
-  color: black;
+  color: rgb(44, 44, 44);
   top: 0;
   user-select: none;
   display: grid;

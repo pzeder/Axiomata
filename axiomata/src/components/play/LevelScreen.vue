@@ -18,8 +18,7 @@
               :symbols="symbols" borderColor="orange" />
             <SequenceContainer class="goal-window" :header="'ZIEL'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
               :maxSymbolWidthRatio="0.33" :sequence="level ? level.goalAxiom.lowerSequence : null" :variables="variables"
-              :symbols="symbols" borderColor="orange" :footer="goalMatch ? 'Geschafft!' : ''" footerColor="red"
-              @click="handleGoalClick" />
+              :symbols="symbols" borderColor="orange" :footer="goalMatch ? 'Geschafft!' : ''" @click="handleGoalClick" />
           </div>
         </div>
         <AxiomBar :title="'Bonus-Regeln'" :background="'rgb(187, 231, 247)'" :width="derivateBarWidth"
@@ -32,8 +31,6 @@
     :symbolWidth="workSymbolWidth" :symbols="symbols" :upperHighlights="upperHighlights"
     :lowerHighlights="lowerHighlights" :aboveCenter="cursorAboveCenter" :workMatch="workMatch" :variables="variables"
     :varMap="varMap" @dropAxiom="dropAxiom" @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
-  <div :style="{ left: 50 + 'vw', top: 50 + 'hw', zIndex: 1000, color: 'orange', position: 'absolute' }"> {{ goalMatch }}
-  </div>
   <BonusAxiomWindow v-if="showBonusAxiom && level && symbols && variables" :level="level" :symbols="symbols"
     :variables="variables" :bonusAxiomGrabed="bonusAxiomGrabed" :levelFinished="levelFinished"
     @grabBonusAxiom="grabBonusAxiom" @finishLevel="emit('finishLevel')" />

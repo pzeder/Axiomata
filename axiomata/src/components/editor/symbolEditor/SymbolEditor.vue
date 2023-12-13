@@ -9,10 +9,10 @@
         <ColorEditor title="Hintergrundfarbe" :defaultValue=255 @changeColor="setBackgroundColor" />
         <div class="middle">
           <SymbolComp :symbolWidth=20 :symbol="editSymbol" @click="showTextInput = true" />
-          <div class="font-size-title"> Schriftgrösse </div>
+          <div class="font-size-title"> Schriftgrösse {{ showTextInput }}</div>
           <ValueSlider :minValue=1 :defaultValue=35 :maxValue=100 @changeValue="setFontSize" />
         </div>
-        <ColorEditor title="Schriftfarbe" :defaultValue=0 @changeColor="setTextColor" />
+        <ColorEditor title="Schriftfarbe" :defaultValue=42 @changeColor="setTextColor" />
       </div>
       <div class="button-container">
         <div class="cancel-button" @click="emit('close')"> abbrechen </div>
