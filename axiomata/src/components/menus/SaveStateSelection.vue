@@ -1,9 +1,11 @@
 <template>
   <HomeButton @click="emit('openStartMenu')" />
   <div class="savestate-list">
-    <div class="savestate-container" v-for="ssh in saveStateHeaders" :key="ssh.saveID"
-      @click="emit('openCourse', ssh.saveID)">
-      <div class="savestate-title"> {{ ssh.title }} </div>
+    <div class="flex-box" v-for="(header, index) in saveStateHeaders" :key="index">
+      <div class="savestate-container" @click="emit('openCourse', header.saveID)">
+        <div class="savestate-title"> {{ header.title }} </div>
+      </div>
+      <div class="savestate-delete-button" @click.stop="deleteSaveState(header)"> Löschen </div>
     </div>
   </div>
   <button @click="emit('openNewCourseMenu')"> Neuer Kurs </button>
@@ -47,6 +49,21 @@ async function fetchCourseSaves(): Promise<void> {
     console.error('Error fetching data:', error);
   }
 }
+
+async function deleteSaveState(header: SaveStateHeader): Promise<void> {
+  try {
+    const data = { saveID: header.saveID, userName: props.userName }
+    const response = await axios.patch('http://localhost:3000/deleteSaveState', data);
+    if (response.status === 200) {
+      saveStateHeaders.value = response.data.saveStateHeaders;
+      console.log('saveState deleted successfully');
+    } else {
+      console.error('Server responded with status', response.status);
+    }
+  } catch (error) {
+    console.error('Error patching data:', error);
+  }
+}
 </script>
 
 <style>
@@ -57,18 +74,35 @@ async function fetchCourseSaves(): Promise<void> {
   margin-left: -4vw;
 }
 
+.flex-box {
+  display: flex;
+  align-items: center;
+}
+
 .savestate-container {
   width: 60vw;
-  border: 1vw solid black;
+  border: 1vw solid rgb(44, 44, 44);
   border-radius: 2vw;
-  display: grid;
-  place-items: center;
+  display: flex;
+  justify-content: center;
   font-size: 4vw;
+  color: rgb(44, 44, 44);
   padding: 3vw;
   background: lightblue;
 }
 
 .savestate-title {
+  user-select: none;
+}
+
+.savestate-delete-button {
+  display: grid;
+  place-items: center;
+  font-size: 2vw;
+  padding: 2vw;
+  background: red;
+  border: 0.3vw solid rgb(44, 44, 44);
+  border-radius: 1vw;
   user-select: none;
 }
 </style>

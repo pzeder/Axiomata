@@ -36,6 +36,27 @@ app.get('/saveStateHeaders', async (req, res) => {
   }
 });
 
+app.patch('/deleteSaveState', async (req, res) => {
+  try {
+    const { saveID, userName } = req.body;
+    const saveFilter = ({ _id: new ObjectId(saveID) });
+    const userFilter = ({ userName: userName });
+
+    const result = await db.collection('SaveStates').deleteOne(saveFilter);
+
+    if (result.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to update status' });
+    }
+
+    const saveStates = await db.collection('SaveStates').find(userFilter).toArray();
+    const saveStateHeaders = saveStates.map(s => ({ saveID: s._id, title: s.title }));
+    res.json({ saveStateHeaders: saveStateHeaders })
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
+
 app.get('/courseHeaders', async (req, res) => {
   try {
     const courses = await db.collection('Courses').find().toArray();
