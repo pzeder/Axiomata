@@ -272,11 +272,10 @@ async function submitCourse(): Promise<void> {
     const response = await axios.post('http://localhost:3000/submitCourse', data);
     if (response.status === 200) {
       if (response.data.courseTitleAlreadyExists) {
-        noteMessage.value = 'Ein Kurs mit dem Namen "' + course.value.title +
-          '" existiert bereits. Du musst den Titel ändern, damit es mit dem Hochladen klappt.';
+        noteMessage.value = 'Ein Kurs mit dem Namen <span style="color: red;"> "' + course.value.title + '"</span> existiert bereits. Du musst den Titel ändern, damit es mit dem Hochladen klappt.';
       } else {
-        noteMessage.value = 'Der Kurs wurde erfolgreich hochgeladen. Er ist jetzt unter dem Namen "' +
-          course.value.title + '" für alle verfügbar. <br> <br> Viel Spass!'
+        noteMessage.value = 'Der Kurs <span style="color: green;">"' +
+          course.value.title + '" </span> wurde erfolgreich hochgeladen. Er ist jetzt unter diesem Namen  für alle verfügbar. <br> <br> Viel Spass!'
       }
       showNoteWindow.value = true;
     } else {

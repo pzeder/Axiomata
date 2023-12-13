@@ -2,7 +2,8 @@
   <div class="backdrop"></div>
   <div class="screen-container">
     <div class="note-container">
-      <div v-html="text" />
+      <div v-html="sanatizedText" />
+      <div> {{ text }} </div>
       <div class="note-ok-button-container">
         <div class="note-ok-button" @click="emit('close')"> OK </div>
       </div>
@@ -11,7 +12,8 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, ComputedRef, computed } from 'vue';
+import DOMPurify from 'dompurify';
 
 interface Props {
   text: string;
@@ -19,6 +21,8 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['close']);
+
+const sanatizedText: ComputedRef<string> = computed(() => DOMPurify.sanitize(props.text));
 </script>
 
 <style>
