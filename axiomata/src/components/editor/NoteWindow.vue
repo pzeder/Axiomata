@@ -3,7 +3,6 @@
   <div class="screen-container">
     <div class="note-container">
       <div v-html="sanatizedText" />
-      <div> {{ text }} </div>
       <div class="note-ok-button-container">
         <div class="note-ok-button" @click="emit('close')"> OK </div>
       </div>

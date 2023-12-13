@@ -1,23 +1,25 @@
 <template>
   <div class="screen-container">
-    <HeadBar :levelTitle="level?.title" :bonusLevel="level?.bonus" :height="headBarHeight" @openLevelMenu="emit('openChapterScreen')" />
+    <HeadBar :levelTitle="level?.title" :bonusLevel="level?.bonus" :height="headBarHeight"
+      @openLevelMenu="emit('openChapterScreen')" />
     <div :style="{ display: 'flex' }">
-      <AxiomBar :title="'Tausch-Regeln'" background="rgb(252, 223, 203)" :width="axiomBarWidth"
-        :height="axiomBarHeight" :axioms="axioms" :symbols="symbols" :variables="variables" @selectAxiom="selectAxiom" />
+      <AxiomBar :title="'Tausch-Regeln'" background="rgb(252, 223, 203)" :width="axiomBarWidth" :height="axiomBarHeight"
+        :axioms="axioms" :symbols="symbols" :variables="variables" @selectAxiom="selectAxiom" />
       <div class="right-side">
         <div :style="{ display: 'flex' }">
           <div :style="{ marginTop: -1 + 'vw' }">
             <SequenceContainer :width="workbenchWidth" :height="workbenchHeight" :maxFill="workbenchMaxFill"
               :maxSymbolWidthRatio="workbenchMaxSymbolWidthRatio" :sequence="workSequence" :symbols="symbols"
-              :variables="variables" :highlights="workHighlights" borderColor="rgb(89, 204, 245)"/>
+              :variables="variables" :highlights="workHighlights" borderColor="rgb(89, 204, 245)" />
           </div>
           <div :style="{ display: 'grid', placeItems: 'center', width: goalContainerWidth + 'vw' }">
-            <SequenceContainer class="goal-window" :title="'START'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
+            <SequenceContainer class="goal-window" :header="'START'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
               :maxSymbolWidthRatio="0.33" :sequence="level ? level.goalAxiom.upperSequence : null" :variables="variables"
               :symbols="symbols" borderColor="orange" />
-            <SequenceContainer class="goal-window" :title="'ZIEL'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
+            <SequenceContainer class="goal-window" :header="'ZIEL'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
               :maxSymbolWidthRatio="0.33" :sequence="level ? level.goalAxiom.lowerSequence : null" :variables="variables"
-              :symbols="symbols" borderColor="orange" />
+              :symbols="symbols" borderColor="orange" :footer="goalMatch ? 'Geschafft!' : ''" footerColor="red"
+              @click="handleGoalClick" />
           </div>
         </div>
         <AxiomBar :title="'Bonus-Regeln'" :background="'rgb(187, 231, 247)'" :width="derivateBarWidth"
@@ -26,16 +28,15 @@
       </div>
     </div>
   </div>
-  <Cursor v-if="showCursorAxiom" :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom" :symbolWidth="workSymbolWidth"
-    :symbols="symbols" :upperHighlights="upperHighlights" :lowerHighlights="lowerHighlights"
-    :aboveCenter="cursorAboveCenter" :workMatch="workMatch" :variables="variables" :varMap="varMap" @dropAxiom="dropAxiom"
-    @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
-  <div v-if="goalMatch" @click="handleGoalClicked"
-    :style="{ position: 'absolute', userSelect: 'none', color: 'red', left: 90 + 'vw', top: 58 + 'vh', width: (goalWidth) + 'vw', height: (goalWidth) + 'vw', fontSize: 1 + 'vw' }">
-    Geschafft!
+  <Cursor v-if="showCursorAxiom" :posX="cursorAxiomX" :posY="cursorAxiomY" :cursorAxiom="cursorAxiom"
+    :symbolWidth="workSymbolWidth" :symbols="symbols" :upperHighlights="upperHighlights"
+    :lowerHighlights="lowerHighlights" :aboveCenter="cursorAboveCenter" :workMatch="workMatch" :variables="variables"
+    :varMap="varMap" @dropAxiom="dropAxiom" @cursorAxiomClicked="cursorAxiomClicked" @swap="swap" />
+  <div :style="{ left: 50 + 'vw', top: 50 + 'hw', zIndex: 1000, color: 'orange', position: 'absolute' }"> {{ goalMatch }}
   </div>
-  <BonusAxiomWindow v-if="showBonusAxiom && level && symbols && variables" :level="level" :symbols="symbols" :variables="variables" 
-    :bonusAxiomGrabed="bonusAxiomGrabed" :levelFinished="levelFinished" @grabBonusAxiom="grabBonusAxiom" @finishLevel="emit('finishLevel')"/>
+  <BonusAxiomWindow v-if="showBonusAxiom && level && symbols && variables" :level="level" :symbols="symbols"
+    :variables="variables" :bonusAxiomGrabed="bonusAxiomGrabed" :levelFinished="levelFinished"
+    @grabBonusAxiom="grabBonusAxiom" @finishLevel="emit('finishLevel')" />
 </template>
 
 <script setup lang=ts>
@@ -217,7 +218,7 @@ function dropBonusAxiom(): void {
   showCursorAxiom.value = false;
   bonusAxiomGrabed.value = false;
 
-  if (cursorAxiomY.value >  workbenchY.value + workbenchHeight.value) {
+  if (cursorAxiomY.value > workbenchY.value + workbenchHeight.value) {
     derivates.value.push(props.level.goalAxiom);
     levelFinished.value = true;
   }
@@ -386,8 +387,8 @@ function updateWorkSequence(): void {
   emit('addMove', newMove);
 }
 
-function handleGoalClicked(): void {
-  if (!props.level) {
+function handleGoalClick(): void {
+  if (!props.level || !goalMatch.value) {
     return;
   }
   if (!props.level?.bonus) {

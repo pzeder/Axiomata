@@ -91,6 +91,7 @@ function confirm(): void {
   height: 100vh;
   display: grid;
   place-items: center;
+  z-index: 300;
 }
 
 .title-container {

@@ -1,8 +1,10 @@
 <template>
   <div class="sequence-container" :style="{ width: width + 'vw', height: height + 'vw', borderColor: borderColor }">
-    <div class="sequence-title" :style="{ width: width + 2 + 'vw', fontSize: (height * 0.15) + 'vw' }"> {{ title }} </div>
+    <div class="sequence-header" :style="{ fontSize: (height * 0.15) + 'vw' }"> {{ header }}
+    </div>
     <SequenceComp :symbolWidth="symbolWidth" :sequence="sequence" :symbols="symbols" :highlights="highlights"
       :variables="variables" :varMap="varMap" @symbolClicked="(index) => emit('symbolClicked', index)" />
+    <div class="sequence-footer" :style="{ fontSize: (height * 0.15) + 'vw', color: borderColor }"> {{ footer }} </div>
   </div>
 </template>
 
@@ -12,7 +14,9 @@ import { SymbolPointer, SymbolData } from '@/scripts/Interfaces';
 import SequenceComp from '@/components/axiom/SequenceComp.vue';
 
 interface Props {
-  title: string;
+  header: string;
+  footer: string;
+  footerColor: string;
   width: number;
   height: number;
   maxFill: number;
@@ -26,7 +30,9 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  title: () => '',
+  header: () => '',
+  footer: () => '',
+  footerColor: () => 'transparent',
   highlights: () => [],
   varMap: () => new Map<number, SymbolPointer>(),
   borderColor: () => 'transparent'
@@ -54,11 +60,18 @@ const symbolWidth = computed(() => {
   border: 1vw solid;
 }
 
-.sequence-title {
+.sequence-header {
   position: absolute;
   color: black;
-  left: -1;
   top: 0;
+  user-select: none;
+  display: grid;
+  place-items: center;
+}
+
+.sequence-footer {
+  position: absolute;
+  bottom: 0;
   user-select: none;
   display: grid;
   place-items: center;
