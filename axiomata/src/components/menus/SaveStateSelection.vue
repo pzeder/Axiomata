@@ -54,15 +54,21 @@ async function fetchCourseSaves(): Promise<void> {
   display: grid;
   place-items: center;
   width: 100vw;
-  margin-left: -2vw;
+  margin-left: -4vw;
 }
 
 .savestate-container {
   width: 60vw;
-  height: 10vw;
   border: 1vw solid black;
   border-radius: 2vw;
   display: grid;
   place-items: center;
+  font-size: 4vw;
+  padding: 3vw;
+  background: lightblue;
+}
+
+.savestate-title {
+  user-select: none;
 }
 </style>
