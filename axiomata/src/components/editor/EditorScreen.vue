@@ -9,6 +9,7 @@
     hochladen </div>
   <TextInput v-if="showTextInput" title="Titel des Kurses ändern" :placeholder="course?.title"
     @updateText="setCourseTitle" @close="showTextInput = false" />
+  <NoteWindow v-if="showNoteWindow" :text="noteMessage" @close="showNoteWindow = false" />
 </template>
 
 <script setup lang="ts">
@@ -18,6 +19,7 @@ import { CourseData, ChapterData, SymbolData, LevelData, AxiomData, SymbolPointe
 import EditChapterList from './chapterEditor/EditChapterList.vue';
 import TextInput from './TextInput.vue';
 import TitleBar from './TitleBar.vue';
+import NoteWindow from './NoteWindow.vue'
 
 interface Props {
   editID: any;
@@ -28,6 +30,8 @@ const emit = defineEmits(['openHomeScreen']);
 
 const course: Ref<CourseData | null> = ref(null);
 const showTextInput: Ref<boolean> = ref(false);
+const noteMessage: Ref<string> = ref('');
+const showNoteWindow: Ref<boolean> = ref(false);
 
 const invalidLevel = (level: LevelData): boolean =>
   level.goalAxiom.upperSequence.length === 0 || level.goalAxiom.lowerSequence.length === 0;
@@ -258,7 +262,7 @@ function toggleBonus(chapterIndex: number, levelIndex: number): void {
 }
 
 async function submitCourse(): Promise<void> {
-  if (!courseValid.value) {
+  if (!courseValid.value || !course.value) {
     return;
   }
   try {
@@ -267,7 +271,14 @@ async function submitCourse(): Promise<void> {
     };
     const response = await axios.post('http://localhost:3000/submitCourse', data);
     if (response.status === 200) {
-      console.log('Course submitted successfully');
+      if (response.data.courseTitleAlreadyExists) {
+        noteMessage.value = 'Ein Kurs mit dem Namen "' + course.value.title +
+          '" existiert bereits. Du musst den Titel ändern, damit es mit dem Hochladen klappt.';
+      } else {
+        noteMessage.value = 'Der Kurs wurde erfolgreich hochgeladen. Er ist jetzt unter dem Namen "' +
+          course.value.title + '" für alle verfügbar. <br> <br> Viel Spass!'
+      }
+      showNoteWindow.value = true;
     } else {
       console.error('Server responded with status', response.status);
     }

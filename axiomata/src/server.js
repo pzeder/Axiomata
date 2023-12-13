@@ -197,6 +197,11 @@ app.post('/submitCourse', async (req, res) => {
   try {
     const { course } = req.body;
 
+    const filter = ({ title: course.title });
+    if (await db.collection('Courses').findOne(filter)) {
+      return res.json({ courseTitleAlreadyExists: true });
+    }
+
     const newCourse = ({
       title: course.title,
       chapters: course.chapters,
@@ -207,7 +212,7 @@ app.post('/submitCourse', async (req, res) => {
     const result = await db.collection('Courses').insertOne(newCourse);
 
     if (result.acknowledged === true) {
-      res.json({ message: 'new course submitted successfully' });
+      res.json({ courseTitleAlreadyExists: false });
     } else {
       res.status(500).json({ error: 'Insert failed' });
     }

@@ -1,8 +1,10 @@
 <template>
   <HomeButton @click="emit('openStartMenu')" />
-  <div class="save-container">
-    <button v-for="ssh in saveStateHeaders" :key="ssh.saveID" @click="emit('openCourse', ssh.saveID)"> {{ ssh.title
-    }} </button>
+  <div class="savestate-list">
+    <div class="savestate-container" v-for="ssh in saveStateHeaders" :key="ssh.saveID"
+      @click="emit('openCourse', ssh.saveID)">
+      <div class="savestate-title"> {{ ssh.title }} </div>
+    </div>
   </div>
   <button @click="emit('openNewCourseMenu')"> Neuer Kurs </button>
 </template>
@@ -48,13 +50,19 @@ async function fetchCourseSaves(): Promise<void> {
 </script>
 
 <style>
-.save-container {
-  display: flex;
-  flex-direction: column;
+.savestate-list {
+  display: grid;
+  place-items: center;
+  width: 100vw;
+  margin-left: -2vw;
 }
 
-.save-container button {
-  margin-bottom: 10px;
-  font-size: 40pt;
+.savestate-container {
+  width: 60vw;
+  height: 10vw;
+  border: 1vw solid black;
+  border-radius: 2vw;
+  display: grid;
+  place-items: center;
 }
 </style>

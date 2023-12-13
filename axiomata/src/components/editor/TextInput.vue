@@ -1,6 +1,6 @@
 <template>
-  <div class="text-input-container" @click="emit('close')">
-    <div class="backdrop" />
+  <div class="backdrop" />
+  <div class="screen-container" @click="emit('close')">
     <div class="text-input-window" @click.stop="() => { }">
       <div class="ti-headbar"> {{ title }} </div>
       <div :style="{ display: 'flex' }">
@@ -32,7 +32,7 @@ function confirm(): void {
 </script>
 
 <style>
-.text-input-container {
+.screen-container {
   position: fixed;
   display: grid;
   place-items: center;
@@ -44,10 +44,14 @@ function confirm(): void {
 }
 
 .backdrop {
-  width: 100%;
-  height: 100%;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  top: 0;
   background-color: black;
   opacity: 60%;
+  z-index: 200;
 }
 
 .text-input-window {
@@ -55,7 +59,6 @@ function confirm(): void {
   width: 30vw;
   height: 15vh;
   background-color: orange;
-  opacity: 2000%;
 }
 
 .ti-headbar {
