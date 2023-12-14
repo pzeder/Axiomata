@@ -1,5 +1,5 @@
 <template>
-  <StartMenu v-if="showStartMenu" @openNewCourseMenu="openNewCourseMenu" @openSaveStateMenu="openSaveStateMenu"
+  <HomeScreen v-if="showHomeScreen" @openNewCourseMenu="openNewCourseMenu" @openSaveStateMenu="openSaveStateMenu"
     @openEditSelection="openEditSelection" />
   <SaveStateSelection v-if="showSaveSelection" :userName="userName" @openCourse="openCourse"
     @openNewCourseMenu="openNewCourseMenu" @openStartMenu="openStartMenu" />
@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { Ref, ref } from 'vue';
-import StartMenu from '@/components/menus/StartMenu.vue';
+import HomeScreen from '@/components/menus/HomeScreen.vue';
 import SaveStateSelection from '@/components/menus/SaveStateSelection.vue';
 import NewCourseSelection from '@/components/menus/NewCourseSelection.vue';
 import CourseScreen from '@/components/play/CourseScreen.vue';
@@ -20,7 +20,7 @@ import EditSelection from '@/components/menus/EditSelection.vue'
 import EditorScreen from '@/components/editor/EditorScreen.vue';
 
 // menu variables
-const showStartMenu: Ref<boolean> = ref(true);
+const showHomeScreen: Ref<boolean> = ref(true);
 const showSaveSelection: Ref<boolean> = ref(false);
 const showNewCourseSelection: Ref<boolean> = ref(false);
 const showEditSelection: Ref<boolean> = ref(false);
@@ -44,7 +44,7 @@ function openCourse(newSaveID: number): void {
 
 function openStartMenu(): void {
   hideAll();
-  showStartMenu.value = true;
+  showHomeScreen.value = true;
 }
 
 function openSaveStateMenu(): void {
@@ -68,7 +68,7 @@ function openEditor(newEditID: any): void {
   showEditorScreen.value = true;
 }
 function hideAll(): void {
-  showStartMenu.value = false;
+  showHomeScreen.value = false;
   showSaveSelection.value = false;
   showNewCourseSelection.value = false;
   showEditSelection.value = false;
