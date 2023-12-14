@@ -1,6 +1,6 @@
 <template>
   <ChapterScreen v-if="showChapterScreen" :chapters="course?.chapters" :frontLevelPointer="frontLevelPointer"
-    @openSaveStateMenu="emit('openSaveStateMenu')" @openLevel="openLevel" @openStartMenu="emit('openStartMenu')" />
+    @openSaveStateMenu="emit('openSaveStateMenu')" @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" />
   <LevelScreen v-if="showLevelScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
     :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openChapterScreen="openChapterScreen"
     @finishLevel="finishLevel" />
@@ -21,7 +21,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['openStartMenu', 'openSaveStateMenu']);
+const emit = defineEmits(['openHomeScreen', 'openSaveStateMenu']);
 
 const showChapterScreen: Ref<boolean> = ref(false);
 const showLevelScreen: Ref<boolean> = ref(false);

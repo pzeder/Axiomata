@@ -7,7 +7,7 @@
       borderRadius: (width * 0.1) + 'vw',
       borderWidth: (width * 0.05) + 'vw'
       }">
-    <AxiomComp :symbolWidth="symbolWidth" :axiomData="axiom" :symbols="symbols" :variables="variables" :varMap="varMap"
+    <AxiomComp v-if="axiom" :symbolWidth="symbolWidth" :axiomData="axiom" :symbols="symbols" :variables="variables" :varMap="varMap"
       @mousedown="(event) => selectAxiom(event, axiom)" />
   </div>
 </template>
@@ -21,7 +21,7 @@ import { maxSequenceLength } from '@/scripts/AxiomMethods';
 interface Props {
   width: number;
   height: number;
-  axiom: AxiomData;
+  axiom: AxiomData | null;
   symbols: SymbolData[] | undefined;
   variables: SymbolData[] | undefined;
   varMap: Map<number, SymbolPointer>;
@@ -40,8 +40,10 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['selectAxiom', 'mouseOver']);
 
-function selectAxiom(event: MouseEvent | Touch, axiom: AxiomData): void {
-  emit('selectAxiom', event, axiom);
+function selectAxiom(event: MouseEvent | Touch, axiom: AxiomData | null): void {
+  if (axiom) {
+    emit('selectAxiom', event, axiom);
+  }
 }
 
 function handleTouchStart(event: TouchEvent): void {
@@ -50,6 +52,9 @@ function handleTouchStart(event: TouchEvent): void {
 }
 
 const symbolWidth = computed(() => {
+  if (!props.axiom) {
+    return 0;
+  }
   const w: number = 0.8 * props.width / maxSequenceLength(props.axiom);
   const maxWidth: number = 0.15 * props.width;
   return Math.min(w, maxWidth);

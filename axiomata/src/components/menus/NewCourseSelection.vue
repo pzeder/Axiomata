@@ -1,5 +1,5 @@
 <template>
-  <HomeButton @click="emit('openStartMenu')" />
+  <HomeButton @click="emit('openHomeScreen')" />
   <div class="course-list">
     <transition-group name="course-list" tag="div">
       <div class="flex-box" v-for="header in courseHeaders" :key="header.courseID">
@@ -13,6 +13,7 @@
     </transition-group>
   </div>
 </template>
+
 <script setup lang="ts">
 import { Ref, onMounted, ref, defineProps, defineEmits } from 'vue';
 import axios from 'axios';
@@ -40,7 +41,7 @@ onMounted(() => {
   fetchCourseHeaders();
 });
 
-const emit = defineEmits(['openCourse', 'openStartMenu']);
+const emit = defineEmits(['openCourse', 'openHomeScreen']);
 
 async function fetchCourseHeaders(): Promise<void> {
   try {

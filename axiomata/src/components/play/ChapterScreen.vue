@@ -1,5 +1,5 @@
 <template>
-  <HomeButton @click="emit('openStartMenu')" />
+  <HomeButton @click="emit('openHomeScreen')" />
   <div class="chapter-container" v-for="(chapter, chIndex) in chapters" :key="chIndex">
     {{ chapter.title }}
     <div class="level-container" v-for="(level, lvlIndex) in chapter.levels" :key="lvlIndex"
@@ -21,7 +21,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['openLevel', 'openStartMenu']);
+const emit = defineEmits(['openLevel', 'openHomeScreen']);
 
 
 function isFrontLevel(chapterIndex: number, levelIndex: number): boolean {

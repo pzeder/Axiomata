@@ -9,8 +9,6 @@
   place-items: center;
   font-size: 2vh;
   color: rgb(44,44,44);
-  margin-left: 2vw;
-  margin-top: 2vw;
   user-select: none;
   border: 0.4vw solid rgb(44,44,44);
   border-radius: 1vw;

@@ -229,11 +229,48 @@ app.post('/newEdit', async (req, res) => {
   }
 });
 
+app.patch('/deleteEdit', async (req, res) => {
+  try {
+    const { editID } = req.body;
+    const filter = ({ _id: new ObjectId(editID) });
+
+    const result = await db.collection('Edits').deleteOne(filter);
+
+    if (result.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to delete edit' });
+    }
+
+    const edits = await db.collection('Edits').find().toArray();
+
+    const editHeaders = edits.map((course) => ({
+      editID: course._id,
+      title: course.title,
+      coverAxiom: course.chapters.length > 0 ? course.chapters[0].newAxioms[0] : null,
+      symbols: course.symbols,
+      variables: course.variables
+    }));
+
+    res.json({ editHeaders: editHeaders })
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
 app.get('/edits', async (req, res) => {
   try {
-    const edits = await db.collection('Edits').find().toArray();
-    const editHeaders = edits.map(e => ({ _id: e._id, title: e.title }));
-    res.json(editHeaders);
+    const { userName } = req.query;
+    const filter = { userName: userName };
+    const edits = await db.collection('Edits').find(filter).toArray();
+
+    const editHeaders = edits.map((course) => ({
+      editID: course._id,
+      title: course.title,
+      coverAxiom: course.chapters.length > 0 ? course.chapters[0].newAxioms[0] : null,
+      symbols: course.symbols,
+      variables: course.variables
+    }));
+
+    res.json({editHeaders: editHeaders});
   } catch (error) {
     res.status(500).json({ error: error });
   }

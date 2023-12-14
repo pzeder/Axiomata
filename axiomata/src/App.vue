@@ -2,12 +2,12 @@
   <HomeScreen v-if="showHomeScreen" @openNewCourseMenu="openNewCourseMenu" @openSaveStateMenu="openSaveStateMenu"
     @openEditSelection="openEditSelection" />
   <SaveStateSelection v-if="showSaveSelection" :userName="userName" @openCourse="openCourse"
-    @openNewCourseMenu="openNewCourseMenu" @openStartMenu="openStartMenu" />
+    @openNewCourseMenu="openNewCourseMenu" @openHomeScreen="openHomeScreen" />
   <NewCourseSelection v-if="showNewCourseSelection" :userName="userName" @openCourse="openCourse"
-    @openStartMenu="openStartMenu" />
-  <CourseScreen v-if="showCourseScreen" :saveID="saveID" @openStartMenu="openStartMenu" />
-  <EditSelection v-if="showEditSelection" :userName="userName" @openEditor="openEditor" />
-  <EditorScreen v-if="showEditorScreen" :editID="editID" @openHomeScreen="openStartMenu" />
+    @openHomeScreen="openHomeScreen" />
+  <CourseScreen v-if="showCourseScreen" :saveID="saveID" @openHomeScreen="openHomeScreen" />
+  <EditSelection v-if="showEditSelection" :userName="userName" @openEditor="openEditor" @openHomeScreen="openHomeScreen"/>
+  <EditorScreen v-if="showEditorScreen" :editID="editID" @openHomeScreen="openHomeScreen" />
 </template>
 
 <script setup lang="ts">
@@ -42,7 +42,7 @@ function openCourse(newSaveID: number): void {
   showCourseScreen.value = true;
 }
 
-function openStartMenu(): void {
+function openHomeScreen(): void {
   hideAll();
   showHomeScreen.value = true;
 }

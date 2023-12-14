@@ -1,5 +1,5 @@
 <template>
-  <HomeButton @click="emit('openStartMenu')" />
+  <HomeButton @click="emit('openHomeScreen')" />
   <div class="savestate-list">
     <transition-group name="savestate-list" tag="div">
       <div class="flex-box" v-for="header in saveStateHeaders" :key="header.saveID">
@@ -46,7 +46,7 @@ onMounted(() => {
   fetchCourseSaves();
 });
 
-const emit = defineEmits(['openCourse', 'openStartMenu']);
+const emit = defineEmits(['openCourse', 'openHomeScreen']);
 
 async function fetchCourseSaves(): Promise<void> {
   try {
