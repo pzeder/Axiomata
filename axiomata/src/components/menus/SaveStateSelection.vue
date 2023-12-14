@@ -9,7 +9,7 @@
         <div class="savestate-title"> {{ header.title }} </div>
         <div class="savestate-progression-display" :style="{ color: progressionColor(header)}"> Levels gelöst: <br> {{ header.solvedLevels }}  / {{ header.totalLevels }}</div>
       </div>
-      <DeleteHeaderButton @click.stop="deleteSaveState(header)"/>
+      <DeleteHeaderButton @click.stop="deleteSaveState(header.saveID)"/>
     </div>
     </transition-group>
   </div>
@@ -62,9 +62,9 @@ async function fetchCourseSaves(): Promise<void> {
   }
 }
 
-async function deleteSaveState(header: SaveStateHeader): Promise<void> {
+async function deleteSaveState(saveID: any): Promise<void> {
   try {
-    const data = { saveID: header.saveID, userName: props.userName }
+    const data = { saveID: saveID, userName: props.userName }
     const response = await axios.patch('http://localhost:3000/deleteSaveState', data);
     if (response.status === 200) {
       saveStateHeaders.value = response.data.saveStateHeaders;

@@ -8,7 +8,7 @@
           background="white" borderColor="rgb(70, 179, 215)"/>
         <div class="course-title"> {{ header.title }} </div>
       </div>
-      <DeleteHeaderButton @click.stop="deleteCourse(header)"/>
+      <DeleteHeaderButton @click.stop="deleteCourse(header.courseID)"/>
     </div>
     </transition-group>
   </div>
@@ -70,6 +70,21 @@ async function clickedCourse(courseID: any): Promise<void> {
     }
   } catch (error) {
     console.error('Error fetching data:', error);
+  }
+}
+
+async function deleteCourse(courseID: any): Promise<void> {
+  try {
+    const data = { courseID: courseID }
+    const response = await axios.patch('http://localhost:3000/deleteCourse', data);
+    if (response.status === 200) {
+      courseHeaders.value = response.data.courseHeaders;
+      console.log('course deleted successfully');
+    } else {
+      console.error('Server responded with status', response.status);
+    }
+  } catch (error) {
+    console.error('Error patching data:', error);
   }
 }
 </script>

@@ -43,6 +43,33 @@ app.get('/courseHeaders', async (req, res) => {
   }
 });
 
+app.patch('/deleteCourse', async (req, res) => {
+  try {
+    const { courseID } = req.body;
+    const filter = ({ _id: new ObjectId(courseID) });
+
+    const result = await db.collection('Courses').deleteOne(filter);
+
+    if (result.modifiedCount === 0) {
+      return res.status(500).json({ error: 'Failed to update status' });
+    }
+
+    const courses = await db.collection('Courses').find().toArray();
+
+    const courseHeaders = courses.map((course) => ({
+      courseID: course._id,
+      title: course.title,
+      coverAxiom: course.chapters[0].newAxioms[0],
+      symbols: course.symbols,
+      variables: course.variables
+    }));
+
+    res.json({ courseHeaders: courseHeaders })
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
 app.post('/newSaveState', async (req, res) => {
   try {
     const { userName, courseID } = req.body;
