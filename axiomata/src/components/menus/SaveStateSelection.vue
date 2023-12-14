@@ -1,7 +1,8 @@
 <template>
   <HomeButton @click="emit('openStartMenu')" />
   <div class="savestate-list">
-    <div class="flex-box" v-for="(header, index) in saveStateHeaders" :key="index">
+    <transition-group name="savestate-list" tag="div">
+      <div class="flex-box" v-for="header in saveStateHeaders" :key="header.saveID">
       <div class="savestate-container" @click="emit('openCourse', header.saveID)">
         <AxiomContainer class="header-axiom" :width=10 :height=10 :axiom="header.coverAxiom" :symbols="header.symbols" :variables="header.variables"
           background="white" borderColor="rgb(70, 179, 215)"/>
@@ -10,6 +11,7 @@
       </div>
       <DeleteHeaderButton @click.stop="deleteSaveState(header)"/>
     </div>
+    </transition-group>
   </div>
 </template>
 
@@ -132,5 +134,23 @@ function progressionColor(header: SaveStateHeader): string {
 
 .header-axiom {
   flex: 1;
+}
+
+.savestate-list-enter-active, .savestate-list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.savestate-list-enter, .savestate-list-leave-to  {
+  opacity: 0;
+  transform: translateX(-10vw);
+}
+
+.savestate-list-move {
+  transition: transform 0.5s ease;
+  transition-delay: 0.3s;
+}
+
+.savestate-list-leave-active {
+  position: absolute;
 }
 </style>
