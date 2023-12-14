@@ -87,9 +87,4 @@ html {
 body {
   font-family: 'Fredoka One', cursive;
 }
-
-button {
-  font-family: 'Fredoka One', cursive;
-  border-radius: 20pt;
-}
 </style>

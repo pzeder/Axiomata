@@ -1,6 +1,7 @@
 <template>
-  <div class="sidebar">
+  <div class="sidebar-left">
     <HomeButton @click="emit('openHomeScreen')" />
+    <div class="new-edit-button" @click="createNewEdit"> Neuen Kurs erstellen </div>
   </div>
   <div class="edit-list">
     <transition-group name="edit-list" tag="div">
@@ -14,7 +15,6 @@
     </div>
     </transition-group>
   </div>
-  <div class="new-edit-button" @click="createNewEdit"> Neuen Kurs erstellen </div>
 </template>
 
 <script setup lang="ts">
@@ -24,6 +24,7 @@ import AxiomContainer from '../axiom/AxiomContainer.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import HomeButton from './HomeButton.vue';
 import DeleteHeaderButton from './DeleteHeaderButton.vue';
+import EditorScreen from '../editor/EditorScreen.vue';
 
 interface Props {
   userName: string;
@@ -68,7 +69,11 @@ async function createNewEdit() {
     });
     const response = await axios.post('http://localhost:3000/newEdit', data);
     if (response.status === 200) {
-      emit('openEditor', response.data.editID);
+      editHeaders.value = response.data.editHeaders;
+      window.scrollTo({
+        top: document.body.scrollHeight+10,
+        behavior: 'smooth'
+      });
     } else {
       console.error('Server responded with status', response.status);
     }
@@ -94,13 +99,34 @@ async function deleteEdit(editID: any): Promise<void> {
 </script>
 
 <style>
-.sidebar {
+.sidebar-left {
   position: fixed;
   left: 2vw;
   top: 2vw;
   display: grid;
   place-items: left;
-  width: 20vw;
+}
+
+.new-edit-button {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-size: 1.5vh;
+  width: 7vw;
+  height: 5vw;;
+  color: rgb(44,44,44);
+  user-select: none;
+  border: 0.4vw solid rgb(44,44,44);
+  border-radius: 1vw;
+  background: lightgreen;
+  transform: scale(1);
+  opacity: 90%;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.new-edit-button:hover {
+  transform: scale(1.1);
+  opacity: 100%;
 }
 
 .edit-list {
