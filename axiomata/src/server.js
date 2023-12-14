@@ -220,17 +220,8 @@ app.post('/newEdit', async (req, res) => {
     }
     const result = await db.collection('Edits').insertOne(newEdit);
     if (result.acknowledged === true && result.insertedId) {
-      const edits = await db.collection('Edits').find().toArray();
-
-      const editHeaders = edits.map((course) => ({
-        editID: course._id,
-        title: course.title,
-        coverAxiom: course.chapters.length > 0 ? course.chapters[0].newAxioms[0] : null,
-        symbols: course.symbols,
-        variables: course.variables
-      }));
-  
-      res.json({ editHeaders: editHeaders })
+      const edits = await db.collection('Edits').find().toArray();  
+      res.json({ editID: result.insertedId })
     } else {
       res.status(500).json({ error: 'Insert failed' });
     }

@@ -69,11 +69,7 @@ async function createNewEdit() {
     });
     const response = await axios.post('http://localhost:3000/newEdit', data);
     if (response.status === 200) {
-      editHeaders.value = response.data.editHeaders;
-      window.scrollTo({
-        top: document.body.scrollHeight+10,
-        behavior: 'smooth'
-      });
+      emit('openEditor', response.data.editID);
     } else {
       console.error('Server responded with status', response.status);
     }
