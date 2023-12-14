@@ -25,6 +25,62 @@ app.listen(3000, function () {
 // MENU //
 //////////
 
+app.get('/courseHeaders', async (req, res) => {
+  try {
+    const courses = await db.collection('Courses').find().toArray();
+
+    const courseHeaders = courses.map((course) => ({
+      courseID: course._id,
+      title: course.title,
+      coverAxiom: course.chapters[0].newAxioms[0],
+      symbols: course.symbols,
+      variables: course.variables
+    }));
+
+    res.json({courseHeaders: courseHeaders});
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
+app.post('/newSaveState', async (req, res) => {
+  try {
+    const { userName, courseID } = req.body;
+    const filter = ({ _id: new ObjectId(courseID) });
+    const courseData = await db.collection('Courses').findOne(filter);
+
+    const emptyLevel = (lvl) => ({
+      title: lvl.title,
+      goalAxiom: lvl.goalAxiom,
+      moveHistory: [{
+        axiom: null,
+        sequence: lvl.goalAxiom.upperSequence
+      }],
+      bestSolution: null,
+      bonus: lvl.bonus
+    });
+
+    const emptyChapter = (ch) => ({
+      title: ch.title,
+      newAxioms: ch.newAxioms,
+      levels: ch.levels.map(emptyLevel)
+    });
+
+    const courseSave = {
+      userName: userName,
+      title: courseData.title,
+      symbols: courseData.symbols,
+      chapters: courseData.chapters.map(emptyChapter),
+      variables: courseData.variables
+    };
+
+    const result = await db.collection('SaveStates').insertOne(courseSave);
+    res.json({ saveID: result.insertedId });
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
 app.get('/saveStateHeaders', async (req, res) => {
   try {
     const filter = { userName: req.query.userName };
@@ -84,51 +140,6 @@ app.patch('/deleteSaveState', async (req, res) => {
   }
 });
 
-
-app.get('/courseHeaders', async (req, res) => {
-  try {
-    const courses = await db.collection('Courses').find().toArray();
-    const courseHeaders = courses.map(c => ({ title: c.title }));
-    res.json(courseHeaders)
-  } catch (error) {
-    res.status(500).json({ error: error });
-  }
-});
-
-app.post('/newSaveState', async (req, res) => {
-  try {
-    const { userName, courseTitle } = req.body;
-    const courseData = await db.collection('Courses').findOne({ title: courseTitle });
-
-    const emptyLevel = (lvl) => ({
-      title: lvl.title,
-      goalAxiom: lvl.goalAxiom,
-      moveHistory: [{
-        axiom: null,
-        sequence: lvl.goalAxiom.upperSequence
-      }],
-      bestSolution: null,
-      bonus: lvl.bonus
-    });
-
-    const courseSave = {
-      userName: userName,
-      title: courseTitle,
-      symbols: courseData.symbols,
-      chapters: courseData.chapters.map(ch => ({
-        title: ch.title,
-        newAxioms: ch.newAxioms,
-        levels: ch.levels.map(emptyLevel)
-      })),
-      variables: courseData.variables
-    };
-
-    const result = await db.collection('SaveStates').insertOne(courseSave);
-    res.json({ saveID: result.insertedId });
-  } catch (error) {
-    res.status(500).json({ error: error });
-  }
-});
 
 //////////
 // GAME //
