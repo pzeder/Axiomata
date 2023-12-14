@@ -44,7 +44,6 @@ app.get('/saveStateHeaders', async (req, res) => {
     });
 
     const saveStateHeaders = saveStates.map(getHeader);
-    console.log(saveStateHeaders);
     res.json({saveStateHeaders: saveStateHeaders})
   } catch (error) {
     res.status(500).json({ error: error });
