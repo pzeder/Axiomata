@@ -104,7 +104,7 @@ function progressionColor(header: SaveStateHeader): string {
   margin-bottom: 1vw;
   opacity: 85%;
   transform: scale(1);
-  transition: margin 0.3s ease-in-out, opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 .savestate-container:hover {
@@ -139,6 +139,14 @@ function progressionColor(header: SaveStateHeader): string {
   border-radius: 1vw;
   user-select: none;
   margin-left: 1.5vw;
+  opacity: 85%;
+  transform: scale(1);
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.savestate-delete-button:hover {
+  opacity: 100%;
+  transform: scale(1.1);
 }
 
 .header-axiom {
