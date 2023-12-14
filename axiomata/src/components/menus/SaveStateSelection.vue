@@ -84,7 +84,8 @@ function progressionColor(header: SaveStateHeader): string {
   display: grid;
   place-items: center;
   width: 100vw;
-  margin-left: -4vw;
+  margin-left: -2vw;
+  margin-top: 5vw;
 }
 
 .flex-box {
@@ -107,7 +108,6 @@ function progressionColor(header: SaveStateHeader): string {
 }
 
 .savestate-container:hover {
-  /* margin-left: 7vw; */
   opacity: 100%;
   transform: scale(1.04); 
 }
