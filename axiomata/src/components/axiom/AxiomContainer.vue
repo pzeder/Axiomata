@@ -1,5 +1,12 @@
 <template>
-  <div class="axiom-container" @touchstart="handleTouchStart" :style="{ width: width + 'vw', height: height + 'vw' }">
+  <div class="axiom-container" @touchstart="handleTouchStart" :style="{ 
+      width: width + 'vw', 
+      height: height + 'vw', 
+      background: background, 
+      borderColor: borderColor, 
+      borderRadius: (width * 0.1) + 'vw',
+      borderWidth: (width * 0.05) + 'vw'
+      }">
     <AxiomComp :symbolWidth="symbolWidth" :axiomData="axiom" :symbols="symbols" :variables="variables" :varMap="varMap"
       @mousedown="(event) => selectAxiom(event, axiom)" />
   </div>
@@ -20,11 +27,15 @@ interface Props {
   varMap: Map<number, SymbolPointer>;
   upperHighlights: boolean[];
   lowerHighlights: boolean[];
+  background: string;
+  borderColor: string;
 }
 const props = withDefaults(defineProps<Props>(), {
   upperHighlights: () => [],
   lowerHighlights: () => [],
-  varMap: () => new Map<number, SymbolPointer>()
+  varMap: () => new Map<number, SymbolPointer>(),
+  background: () => 'transparent',
+  borderColor: () => 'transparent'
 });
 
 const emit = defineEmits(['selectAxiom', 'mouseOver']);
@@ -49,5 +60,6 @@ const symbolWidth = computed(() => {
 .axiom-container {
   display: grid;
   place-items: center;
+  border-style: solid;
 }
 </style>

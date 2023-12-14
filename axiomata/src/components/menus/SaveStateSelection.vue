@@ -3,18 +3,22 @@
   <div class="savestate-list">
     <div class="flex-box" v-for="(header, index) in saveStateHeaders" :key="index">
       <div class="savestate-container" @click="emit('openCourse', header.saveID)">
+        <AxiomContainer class="header-axiom" :width=10 :height=10 :axiom="header.coverAxiom" :symbols="header.symbols" :variables="header.variables"
+          background="white" borderColor="rgb(70, 179, 215)"/>
         <div class="savestate-title"> {{ header.title }} </div>
+        <div class="savestate-progression-display" :style="{ color: progressionColor(header)}"> Levels gelöst: <br> {{ header.solvedLevels }}  / {{ header.totalLevels }}</div>
       </div>
       <div class="savestate-delete-button" @click.stop="deleteSaveState(header)"> Löschen </div>
     </div>
   </div>
-  <button @click="emit('openNewCourseMenu')"> Neuer Kurs </button>
 </template>
 
 <script setup lang="ts">
 import { Ref, onMounted, ref, defineProps, defineEmits } from 'vue';
 import axios from 'axios';
 import HomeButton from './HomeButton.vue';
+import { AxiomData, SymbolData } from '@/scripts/Interfaces';
+import AxiomContainer from '../axiom/AxiomContainer.vue';
 
 interface Props {
   userName: string;
@@ -26,6 +30,11 @@ const userName: Ref<string> = ref(props.userName);
 interface SaveStateHeader {
   saveID: any;
   title: string;
+  solvedLevels: number;
+  totalLevels: number;
+  coverAxiom: AxiomData;
+  symbols: SymbolData[];
+  variables: SymbolData[];
 }
 
 const saveStateHeaders: Ref<SaveStateHeader[]> = ref([]);
@@ -34,14 +43,14 @@ onMounted(() => {
   fetchCourseSaves();
 });
 
-const emit = defineEmits(['openCourse', 'openNewCourseMenu', 'openStartMenu']);
+const emit = defineEmits(['openCourse', 'openStartMenu']);
 
 async function fetchCourseSaves(): Promise<void> {
   try {
     const query: string = '?userName=' + userName.value;
     const response = await axios.get('http://localhost:3000/saveStateHeaders' + query);
     if (response.status === 200) {
-      saveStateHeaders.value = response.data;
+      saveStateHeaders.value = response.data.saveStateHeaders;
     } else {
       console.error('Server responded with status', response.status);
     }
@@ -64,6 +73,10 @@ async function deleteSaveState(header: SaveStateHeader): Promise<void> {
     console.error('Error patching data:', error);
   }
 }
+
+function progressionColor(header: SaveStateHeader): string {
+  return header.solvedLevels === header.totalLevels ? 'rgb(70, 179, 215)' : 'rgb(120, 120, 120)';
+}
 </script>
 
 <style>
@@ -81,28 +94,54 @@ async function deleteSaveState(header: SaveStateHeader): Promise<void> {
 
 .savestate-container {
   width: 60vw;
-  border: 1vw solid rgb(44, 44, 44);
+  border: 0.7vw solid rgb(44, 44, 44);
   border-radius: 2vw;
   display: flex;
   justify-content: center;
-  font-size: 4vw;
-  color: rgb(44, 44, 44);
-  padding: 3vw;
+  align-items: center;
   background: lightblue;
+  margin-bottom: 1vw;
+  opacity: 85%;
+  transform: scale(1);
+  transition: margin 0.3s ease-in-out, opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.savestate-container:hover {
+  /* margin-left: 7vw; */
+  opacity: 100%;
+  transform: scale(1.04); 
 }
 
 .savestate-title {
   user-select: none;
+  font-size: 3vw;
+  flex: 2;
+  padding-left: 4vw;
+  color: rgb(44, 44, 44);;
+}
+
+.savestate-progression-display {
+  user-select: none;
+  font-size: 1vw;
+  margin-left: 9vw;
+  text-align: center;
+  flex: 1;
+  padding-right: 2vw;
 }
 
 .savestate-delete-button {
   display: grid;
   place-items: center;
-  font-size: 2vw;
-  padding: 2vw;
+  font-size: 1vw;
+  padding: 1vw;
   background: red;
   border: 0.3vw solid rgb(44, 44, 44);
   border-radius: 1vw;
   user-select: none;
+  margin-left: 1.5vw;
+}
+
+.header-axiom {
+  flex: 1;
 }
 </style>

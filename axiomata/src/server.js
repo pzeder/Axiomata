@@ -29,8 +29,23 @@ app.get('/saveStateHeaders', async (req, res) => {
   try {
     const filter = { userName: req.query.userName };
     const saveStates = await db.collection('SaveStates').find(filter).toArray();
-    const saveStateHeader = saveStates.map(s => ({ saveID: s._id, title: s.title }));
-    res.json(saveStateHeader)
+
+    const countSolved = (chapter) => chapter.levels.filter((level) => level.bestSolution !== null).length;
+    const countLevels = (chapter) => chapter.levels.length;
+
+    const getHeader = (saveState) => ({
+      saveID: saveState._id,
+      title: saveState.title,
+      solvedLevels: saveState.chapters.map(countSolved).reduce((acc, val) => acc + val, 0),
+      totalLevels: saveState.chapters.map(countLevels).reduce((acc, val) => acc + val, 0),
+      coverAxiom: saveState.chapters[0].newAxioms[0],
+      symbols: saveState.symbols,
+      variables: saveState.variables
+    });
+
+    const saveStateHeaders = saveStates.map(getHeader);
+    console.log(saveStateHeaders);
+    res.json({saveStateHeaders: saveStateHeaders})
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -49,7 +64,21 @@ app.patch('/deleteSaveState', async (req, res) => {
     }
 
     const saveStates = await db.collection('SaveStates').find(userFilter).toArray();
-    const saveStateHeaders = saveStates.map(s => ({ saveID: s._id, title: s.title }));
+
+    const countSolved = (chapter) => chapter.levels.filter((level) => level.bestSolution !== null).length;
+    const countLevels = (chapter) => chapter.levels.length;
+
+    const getHeader = (saveState) => ({
+      saveID: saveState._id,
+      title: saveState.title,
+      solvedLevels: saveState.chapters.map(countSolved).reduce((acc, val) => acc + val, 0),
+      totalLevels: saveState.chapters.map(countLevels).reduce((acc, val) => acc + val, 0),
+      coverAxiom: saveState.chapters[0].newAxioms[0],
+      symbols: saveState.symbols,
+      variables: saveState.variables
+    });
+
+    const saveStateHeaders = saveStates.map(getHeader);
     res.json({ saveStateHeaders: saveStateHeaders })
   } catch (error) {
     res.status(500).json({ error: error });
