@@ -8,7 +8,7 @@
         <div class="savestate-title"> {{ header.title }} </div>
         <div class="savestate-progression-display" :style="{ color: progressionColor(header)}"> Levels gelöst: <br> {{ header.solvedLevels }}  / {{ header.totalLevels }}</div>
       </div>
-      <div class="savestate-delete-button" @click.stop="deleteSaveState(header)"> Löschen </div>
+      <DeleteHeaderButton @click.stop="deleteSaveState(header)"/>
     </div>
   </div>
 </template>
@@ -19,6 +19,7 @@ import axios from 'axios';
 import HomeButton from './HomeButton.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import AxiomContainer from '../axiom/AxiomContainer.vue';
+import DeleteHeaderButton from './DeleteHeaderButton.vue';
 
 interface Props {
   userName: string;
@@ -127,26 +128,6 @@ function progressionColor(header: SaveStateHeader): string {
   text-align: center;
   flex: 1;
   padding-right: 2vw;
-}
-
-.savestate-delete-button {
-  display: grid;
-  place-items: center;
-  font-size: 1vw;
-  padding: 1vw;
-  background: red;
-  border: 0.3vw solid rgb(44, 44, 44);
-  border-radius: 1vw;
-  user-select: none;
-  margin-left: 1.5vw;
-  opacity: 85%;
-  transform: scale(1);
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-}
-
-.savestate-delete-button:hover {
-  opacity: 100%;
-  transform: scale(1.1);
 }
 
 .header-axiom {
