@@ -3,14 +3,15 @@
   <div class="savestate-list">
     <transition-group name="savestate-list" tag="div">
       <div class="flex-box" v-for="header in saveStateHeaders" :key="header.saveID">
-      <div class="savestate-container" @click="emit('openCourse', header.saveID)">
-        <AxiomContainer class="header-axiom" :width=10 :height=10 :axiom="header.coverAxiom" :symbols="header.symbols" :variables="header.variables"
-          background="white" borderColor="rgb(70, 179, 215)"/>
-        <div class="savestate-title"> {{ header.title }} </div>
-        <div class="savestate-progression-display" :style="{ color: progressionColor(header)}"> Levels gelöst: <br> {{ header.solvedLevels }}  / {{ header.totalLevels }}</div>
+        <div class="savestate-container" @click="emit('openCourse', header.saveID)">
+          <AxiomContainer class="header-axiom" :width=10 :height=10 :axiom="header.coverAxiom" :symbols="header.symbols"
+            :variables="header.variables" background="white" borderColor="rgb(70, 179, 215)" />
+          <div class="savestate-title"> {{ header.title }} </div>
+          <div class="savestate-progression-display" :style="{ color: progressionColor(header) }"> Levels gelöst: <br> {{
+            header.solvedLevels }} / {{ header.totalLevels }}</div>
+        </div>
+        <TextButton text="Löschen" @click.stop="deleteSaveState(header.saveID)" />
       </div>
-      <DeleteHeaderButton @click.stop="deleteSaveState(header.saveID)"/>
-    </div>
     </transition-group>
   </div>
 </template>
@@ -21,7 +22,7 @@ import axios from 'axios';
 import HomeButton from './HomeButton.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import AxiomContainer from '../axiom/AxiomContainer.vue';
-import DeleteHeaderButton from './DeleteHeaderButton.vue';
+import TextButton from './TextButton.vue';
 
 interface Props {
   userName: string;
@@ -112,7 +113,7 @@ function progressionColor(header: SaveStateHeader): string {
 
 .savestate-container:hover {
   opacity: 100%;
-  transform: scale(1.04); 
+  transform: scale(1.04);
 }
 
 .savestate-title {
@@ -120,7 +121,8 @@ function progressionColor(header: SaveStateHeader): string {
   font-size: 3vw;
   flex: 2;
   padding-left: 4vw;
-  color: rgb(44, 44, 44);;
+  color: rgb(44, 44, 44);
+  ;
 }
 
 .savestate-progression-display {
@@ -136,11 +138,13 @@ function progressionColor(header: SaveStateHeader): string {
   flex: 1;
 }
 
-.savestate-list-enter-active, .savestate-list-leave-active {
+.savestate-list-enter-active,
+.savestate-list-leave-active {
   transition: all 0.5s ease;
 }
 
-.savestate-list-enter, .savestate-list-leave-to  {
+.savestate-list-enter,
+.savestate-list-leave-to {
   opacity: 0;
   transform: translateX(-10vw);
 }
@@ -152,5 +156,4 @@ function progressionColor(header: SaveStateHeader): string {
 
 .savestate-list-leave-active {
   position: absolute;
-}
-</style>
+}</style>

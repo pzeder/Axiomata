@@ -10,7 +10,7 @@
             :variables="header.variables" background="white" borderColor="rgb(70, 179, 215)" />
           <div class="new-course-title"> {{ header.title }} </div>
         </div>
-        <DeleteHeaderButton @click.stop="deleteCourse(header.courseID)" />
+        <TextButton text="Löschen" @click.stop="deleteCourse(header.courseID)" />
       </div>
     </transition-group>
   </div>
@@ -21,7 +21,7 @@ import { Ref, onMounted, ref, defineProps, defineEmits } from 'vue';
 import axios from 'axios';
 import HomeButton from './HomeButton.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
-import DeleteHeaderButton from './DeleteHeaderButton.vue';
+import TextButton from './TextButton.vue';
 import AxiomContainer from '../axiom/AxiomContainer.vue';
 
 interface Props {
@@ -164,4 +164,5 @@ async function deleteCourse(courseID: any): Promise<void> {
 
 .course-list-leave-active {
   position: absolute;
-}</style>
+}
+</style>

@@ -6,15 +6,15 @@
   <div class="edit-list">
     <transition-group name="edit-list" tag="div">
       <div class="flex-box" v-for="header in editHeaders" :key="header.editID">
-      <div class="edit-container" @click="emit('openEditor', header.editID)">
-        <AxiomContainer class="header-axiom" :width=10 :height=10 :axiom="header.coverAxiom" :symbols="header.symbols" :variables="header.variables"
-          background="white" borderColor="rgb(70, 179, 215)"/>
-        <div class="edit-title"> {{ header.title }} </div>
+        <div class="edit-container" @click="emit('openEditor', header.editID)">
+          <AxiomContainer class="header-axiom" :width=10 :height=10 :axiom="header.coverAxiom" :symbols="header.symbols"
+            :variables="header.variables" background="white" borderColor="rgb(70, 179, 215)" />
+          <div class="edit-title"> {{ header.title }} </div>
+        </div>
+        <TextButton text="Löschen" @click.stop="deleteEdit(header.editID)" />
       </div>
-      <DeleteHeaderButton @click.stop="deleteEdit(header.editID)"/>
-    </div>
     </transition-group>
-  </div>
+  </div>T
 </template>
 
 <script setup lang="ts">
@@ -23,7 +23,7 @@ import { Ref, ref, onMounted, defineProps, defineEmits } from 'vue';
 import AxiomContainer from '../axiom/AxiomContainer.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import HomeButton from './HomeButton.vue';
-import DeleteHeaderButton from './DeleteHeaderButton.vue';
+import TextButton from './TextButton.vue';
 
 interface Props {
   userName: string;
@@ -108,10 +108,11 @@ async function deleteEdit(editID: any): Promise<void> {
   text-align: center;
   font-size: 1vw;
   width: 7vw;
-  height: 5vw;;
-  color: rgb(44,44,44);
+  height: 5vw;
+  ;
+  color: rgb(44, 44, 44);
   user-select: none;
-  border: 0.4vw solid rgb(44,44,44);
+  border: 0.4vw solid rgb(44, 44, 44);
   border-radius: 1vw;
   background: lightgreen;
   transform: scale(1);
@@ -153,7 +154,7 @@ async function deleteEdit(editID: any): Promise<void> {
 
 .edit-container:hover {
   opacity: 100%;
-  transform: scale(1.04); 
+  transform: scale(1.04);
 }
 
 .edit-title {
@@ -161,18 +162,21 @@ async function deleteEdit(editID: any): Promise<void> {
   font-size: 3vw;
   flex: 3;
   padding-left: 4vw;
-  color: rgb(44, 44, 44);;
+  color: rgb(44, 44, 44);
+  ;
 }
 
 .header-axiom {
   flex: 1;
 }
 
-.edit-list-enter-active, .edit-list-leave-active {
+.edit-list-enter-active,
+.edit-list-leave-active {
   transition: all 0.5s ease;
 }
 
-.edit-list-enter, .edit-list-leave-to  {
+.edit-list-enter,
+.edit-list-leave-to {
   opacity: 0;
   transform: translateX(-10vw);
 }
@@ -184,5 +188,4 @@ async function deleteEdit(editID: any): Promise<void> {
 
 .edit-list-leave-active {
   position: absolute;
-}
-</style>
+}</style>

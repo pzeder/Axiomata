@@ -1,9 +1,19 @@
 <template>
-    <div class="header-delete-button"> Löschen </div>
+  <div class="text-button"> {{ text }} </div>
 </template>
 
+<script setup lang="ts">
+import { defineProps } from 'vue';
+
+interface Props {
+  text: string;
+}
+
+const props = defineProps<Props>();
+</script>
+
 <style>
-.header-delete-button {
+.text-button {
   display: grid;
   place-items: center;
   font-size: 1vw;
@@ -18,7 +28,7 @@
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
-.header-delete-button:hover {
+.text-button:hover {
   opacity: 100%;
   transform: scale(1.1);
 }

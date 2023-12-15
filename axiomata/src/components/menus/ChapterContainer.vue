@@ -6,24 +6,29 @@
     <div class="level-list" v-for="(level, levelIndex) in chapter.levels">
       <LevelContainer :course="course" :chapterIndex="chapterIndex" :levelIndex="levelIndex" :level="level"
         :frontLevelPointer="frontLevelPointer" @openLevel="emit('openLevel', levelIndex)" />
+      <TextButton v-if="editable" text="Löschen" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, withDefaults, defineEmits } from 'vue';
 import AxiomList from '../editor/chapterEditor/AxiomList.vue';
 import LevelContainer from './LevelContainer.vue';
 import { ChapterData, CourseData, LevelPointer } from '@/scripts/Interfaces';
+import TextButton from '../menus/TextButton.vue';
 
 interface Props {
   course: CourseData;
   chapterIndex: number;
   chapter: ChapterData;
   frontLevelPointer: LevelPointer | null;
+  editable: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  editable: () => false
+});
 const emit = defineEmits(['openLevel']);
 </script>
 
@@ -41,5 +46,11 @@ const emit = defineEmits(['openLevel']);
   color: lightblue;
   text-align: center;
   margin-bottom: 1vw;
+}
+
+.level-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
