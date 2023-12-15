@@ -8,7 +8,7 @@
       <div class="course-container" @click="clickedCourse(header.courseID)">
         <AxiomContainer class="header-axiom" :width=10 :height=10 :axiom="header.coverAxiom" :symbols="header.symbols" :variables="header.variables"
           background="white" borderColor="rgb(70, 179, 215)"/>
-        <div class="course-title"> {{ header.title }} </div>
+        <div class="new-course-title"> {{ header.title }} </div>
       </div>
       <DeleteHeaderButton @click.stop="deleteCourse(header.courseID)"/>
     </div>
@@ -133,7 +133,7 @@ async function deleteCourse(courseID: any): Promise<void> {
   transform: scale(1.04); 
 }
 
-.course-title {
+.new-course-title {
   user-select: none;
   font-size: 3vw;
   flex: 3;

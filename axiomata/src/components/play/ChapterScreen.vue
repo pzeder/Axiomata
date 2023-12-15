@@ -3,6 +3,7 @@
     <HomeButton @click="emit('openHomeScreen')" />
   </div>
   <div class="chapter-list-container">
+    <div class="course-title"> {{ course.title }} </div>
     <div class="chapter-container" v-for="(chapter, chIndex) in course.chapters" :key="chIndex">
       <div class="chapter-title"> {{ chapter.title }} </div>
       <AxiomList v-if="chapter.newAxioms.length > 0" :title="''" :axioms="chapter.newAxioms" :symbols="course.symbols" :variables="course.variables" :maxWidth=40 :containerWidth=10 />
@@ -59,6 +60,13 @@ function levelColor(chapterIndex: number, levelIndex: number, level: LevelData):
   margin-top: 5vw;
 }
 
+.course-title {
+  display: grid;
+  place-items: center;
+  font-size: 9vw;
+  color: rgb(44,44,44);
+}
+
 .chapter-container {
   display: grid;
   place-items: center;
@@ -69,8 +77,9 @@ function levelColor(chapterIndex: number, levelIndex: number, level: LevelData):
   user-select: none;
   font-size: 5vw;
   flex: 3;
-  color: rgb(44, 44, 44);
+  color: lightblue;
   text-align: center;
+  margin-bottom: 1vw;
 }
 
 .level-container {
@@ -104,6 +113,6 @@ function levelColor(chapterIndex: number, levelIndex: number, level: LevelData):
   text-align: center;
   padding-left: 3vw;
   padding-right: 10vw;
-  color: rgb(44, 44, 44);;
+  color: rgb(44, 44, 44);
 }
 </style>

@@ -41,7 +41,6 @@ const containerWidth: ComputedRef<number> = computed(() => Math.min(props.contai
   background: white;
   border: 0.5vw solid black;
   border-radius: 2vw;
-  margin-top: 2vw;
   margin-bottom: 2vw;
 }
 
