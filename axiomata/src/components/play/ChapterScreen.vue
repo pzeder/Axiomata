@@ -2,18 +2,10 @@
   <div class="sidebar-left">
     <HomeButton @click="emit('openHomeScreen')" />
   </div>
-  <div class="chapter-list-container">
-    <div class="course-title"> {{ course.title }} </div>
-    <div class="chapter-container" v-for="(chapter, chapterIndex) in course.chapters" :key="chapterIndex">
-      <div class="chapter-title"> {{ chapter.title }} </div>
-      <AxiomList v-if="chapter.newAxioms.length > 0" :title="''" :axioms="chapter.newAxioms" :symbols="course.symbols"
-        :variables="course.variables" :maxWidth=40 :containerWidth=10 />
-      <div class="level-list" v-for="(level, levelIndex) in chapter.levels">
-        <LevelContainer :course="course" :chapterIndex="chapterIndex" :levelIndex="levelIndex" :level="level"
-          :frontLevelPointer="frontLevelPointer"
-          @openLevel="(levelIndex) => emit('openLevel', chapterIndex, levelIndex)" />
-      </div>
-    </div>
+  <div class="course-title"> {{ course.title }} </div>
+  <div class="chapter-list" v-for="(chapter, chapterIndex) in course.chapters" :key="chapterIndex">
+    <ChapterContainer :course="course" :chapterIndex="chapterIndex" :chapter="chapter"
+      :frontLevelPointer="frontLevelPointer" />
   </div>
 </template>
 
@@ -21,8 +13,7 @@
 import { defineProps, defineEmits } from 'vue';
 import { CourseData, LevelPointer } from '@/scripts/Interfaces';
 import HomeButton from '../menus/HomeButton.vue';
-import AxiomList from '../editor/chapterEditor/AxiomList.vue';
-import LevelContainer from '../menus/LevelContainer.vue';
+import ChapterContainer from '../menus/ChapterContainer.vue';
 
 interface Props {
   course: CourseData;
