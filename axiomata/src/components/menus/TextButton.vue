@@ -1,15 +1,19 @@
 <template>
-  <div class="text-button"> {{ text }} </div>
+  <div class="text-button" :style="{ background: background }"> {{ text }} </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { defineProps, withDefaults } from 'vue';
 
 interface Props {
   text: string;
+  background: string;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  text: () => '',
+  background: () => 'red'
+});
 </script>
 
 <style>
@@ -18,7 +22,6 @@ const props = defineProps<Props>();
   place-items: center;
   font-size: 1vw;
   padding: 1vw;
-  background: red;
   border: 0.3vw solid rgb(44, 44, 44);
   border-radius: 1vw;
   user-select: none;

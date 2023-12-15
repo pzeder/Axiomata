@@ -4,9 +4,12 @@
     <AxiomList v-if="chapter.newAxioms.length > 0" :title="''" :axioms="chapter.newAxioms" :symbols="course.symbols"
       :variables="course.variables" :maxWidth=40 :containerWidth=10 />
     <div class="level-list" v-for="(level, levelIndex) in chapter.levels">
-      <LevelContainer :course="course" :chapterIndex="chapterIndex" :levelIndex="levelIndex" :level="level"
-        :frontLevelPointer="frontLevelPointer" @openLevel="emit('openLevel', levelIndex)" />
-      <TextButton v-if="editable" text="Löschen" />
+      <TextButton v-if="editable" text="Neues Level hinzufügen" background="orange" />
+      <div class="level-package">
+        <LevelContainer :course="course" :chapterIndex="chapterIndex" :levelIndex="levelIndex" :level="level"
+          :frontLevelPointer="frontLevelPointer" @openLevel="emit('openLevel', levelIndex)" />
+        <TextButton v-if="editable" text="Löschen" />
+      </div>
     </div>
   </div>
 </template>
@@ -48,7 +51,7 @@ const emit = defineEmits(['openLevel']);
   margin-bottom: 1vw;
 }
 
-.level-list {
+.level-package {
   display: flex;
   justify-content: center;
   align-items: center;
