@@ -31,3 +31,39 @@ function levelColor(levelIndex: number, level: LevelData): string {
   return (isFrontLevel(levelIndex) ? 'orange' : (level.bestSolution ? 'lightgreen' : 'rgb(150,150,150)'));
 }
 </script>
+
+<style>
+.level-container {
+  display: flex;
+  place-items: center;
+  border: 0.5vw solid black;
+  border-radius: 1.5vw;
+  margin-bottom: 1vw;
+  user-select: none;
+  opacity: 85%;
+  transform: scale(1);
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.level-container:hover {
+  opacity: 100%;
+  transform: scale(1.04);
+}
+
+.goal-axiom {
+  flex: 1;
+  margin-left: 2vw;
+}
+
+.level-title {
+  user-select: none;
+  font-size: 3vw;
+  flex: 3;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding-left: 3vw;
+  padding-right: 10vw;
+  color: rgb(44, 44, 44);
+}
+</style>

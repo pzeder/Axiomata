@@ -5,13 +5,13 @@
   <div class="course-list">
     <transition-group name="course-list" tag="div">
       <div class="flex-box" v-for="header in courseHeaders" :key="header.courseID">
-      <div class="course-container" @click="clickedCourse(header.courseID)">
-        <AxiomContainer class="header-axiom" :width=10 :height=10 :axiom="header.coverAxiom" :symbols="header.symbols" :variables="header.variables"
-          background="white" borderColor="rgb(70, 179, 215)"/>
-        <div class="new-course-title"> {{ header.title }} </div>
+        <div class="new-course-container" @click="clickedCourse(header.courseID)">
+          <AxiomContainer class="header-axiom" :width=10 :height=10 :axiom="header.coverAxiom" :symbols="header.symbols"
+            :variables="header.variables" background="white" borderColor="rgb(70, 179, 215)" />
+          <div class="new-course-title"> {{ header.title }} </div>
+        </div>
+        <DeleteHeaderButton @click.stop="deleteCourse(header.courseID)" />
       </div>
-      <DeleteHeaderButton @click.stop="deleteCourse(header.courseID)"/>
-    </div>
     </transition-group>
   </div>
 </template>
@@ -114,7 +114,7 @@ async function deleteCourse(courseID: any): Promise<void> {
   align-items: center;
 }
 
-.course-container {
+.new-course-container {
   width: 60vw;
   border: 0.7vw solid rgb(44, 44, 44);
   border-radius: 2vw;
@@ -128,9 +128,9 @@ async function deleteCourse(courseID: any): Promise<void> {
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
-.course-container:hover {
+.new-course-container:hover {
   opacity: 100%;
-  transform: scale(1.04); 
+  transform: scale(1.04);
 }
 
 .new-course-title {
@@ -138,18 +138,21 @@ async function deleteCourse(courseID: any): Promise<void> {
   font-size: 3vw;
   flex: 3;
   padding-left: 4vw;
-  color: rgb(44, 44, 44);;
+  color: rgb(44, 44, 44);
+  ;
 }
 
 .header-axiom {
   flex: 1;
 }
 
-.course-list-enter-active, .course-list-leave-active {
+.course-list-enter-active,
+.course-list-leave-active {
   transition: all 0.5s ease;
 }
 
-.course-list-enter, .course-list-leave-to  {
+.course-list-enter,
+.course-list-leave-to {
   opacity: 0;
   transform: translateX(-10vw);
 }
@@ -161,5 +164,4 @@ async function deleteCourse(courseID: any): Promise<void> {
 
 .course-list-leave-active {
   position: absolute;
-}
-</style>
+}</style>

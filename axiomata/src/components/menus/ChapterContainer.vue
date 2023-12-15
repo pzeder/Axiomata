@@ -12,6 +12,7 @@
 
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
+import AxiomList from '../editor/chapterEditor/AxiomList.vue';
 import LevelContainer from './LevelContainer.vue';
 import { ChapterData, CourseData, LevelPointer } from '@/scripts/Interfaces';
 
@@ -25,3 +26,20 @@ interface Props {
 const props = defineProps<Props>();
 const emit = defineEmits(['openLevel']);
 </script>
+
+<style>
+.chapter-container {
+  display: grid;
+  place-items: center;
+  margin-bottom: 2vw;
+}
+
+.chapter-title {
+  user-select: none;
+  font-size: 5vw;
+  flex: 3;
+  color: lightblue;
+  text-align: center;
+  margin-bottom: 1vw;
+}
+</style>
