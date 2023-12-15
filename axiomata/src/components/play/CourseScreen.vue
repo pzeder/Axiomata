@@ -1,12 +1,12 @@
 <template>
   <div v-if="course">
     <ChapterScreen v-if="showChapterScreen" :course="course" :frontLevelPointer="frontLevelPointer"
-    @openSaveStateMenu="emit('openSaveStateMenu')" @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" />
-  <LevelScreen v-if="showLevelScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
-    :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openChapterScreen="openChapterScreen"
-    @finishLevel="finishLevel" />
-  <VictoryWindow v-if="showVictoryWindow" :hasNextLevel="frontLevelPointer !== null" @openLevelMenu="openChapterScreen"
-    @nextLevel="nextLevel" />
+      @openSaveStateMenu="emit('openSaveStateMenu')" @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" />
+    <LevelScreen v-if="showLevelScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
+      :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openChapterScreen="openChapterScreen"
+      @finishLevel="finishLevel" />
+    <VictoryWindow v-if="showVictoryWindow" :hasNextLevel="frontLevelPointer !== null" @openLevelMenu="openChapterScreen"
+      @nextLevel="nextLevel" />
   </div>
 </template>
 

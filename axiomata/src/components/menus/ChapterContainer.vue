@@ -5,7 +5,7 @@
       :variables="course.variables" :maxWidth=40 :containerWidth=10 />
     <div class="level-list" v-for="(level, levelIndex) in chapter.levels">
       <LevelContainer :course="course" :chapterIndex="chapterIndex" :levelIndex="levelIndex" :level="level"
-        :frontLevelPointer="frontLevelPointer" @openLevel="(levelIndex) => emit('openLevel', levelIndex)" />
+        :frontLevelPointer="frontLevelPointer" @openLevel="emit('openLevel', levelIndex)" />
     </div>
   </div>
 </template>
