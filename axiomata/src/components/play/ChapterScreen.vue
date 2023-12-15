@@ -4,26 +4,25 @@
   </div>
   <div class="chapter-list-container">
     <div class="course-title"> {{ course.title }} </div>
-    <div class="chapter-container" v-for="(chapter, chIndex) in course.chapters" :key="chIndex">
+    <div class="chapter-container" v-for="(chapter, chapterIndex) in course.chapters" :key="chapterIndex">
       <div class="chapter-title"> {{ chapter.title }} </div>
-      <AxiomList v-if="chapter.newAxioms.length > 0" :title="''" :axioms="chapter.newAxioms" :symbols="course.symbols" :variables="course.variables" :maxWidth=40 :containerWidth=10 />
-      <div class="level-container" v-for="(level, lvlIndex) in chapter.levels" :key="lvlIndex"
-        @click="emit('openLevel', chIndex, lvlIndex)"
-        :style="{ backgroundColor: levelColor(chIndex, lvlIndex, level) }">
-        <AxiomContainer class="goal-axiom" :width=10 :height=10 :axiom="level.goalAxiom" :symbols="course.symbols" :variables="course.variables"
-          :background="levelColor(chIndex, lvlIndex, level)" :borderColor="levelColor(chIndex, lvlIndex, level)"/>
-        <div class="level-title"> {{ level.title }} </div>
+      <AxiomList v-if="chapter.newAxioms.length > 0" :title="''" :axioms="chapter.newAxioms" :symbols="course.symbols"
+        :variables="course.variables" :maxWidth=40 :containerWidth=10 />
+      <div class="level-list" v-for="(level, levelIndex) in chapter.levels">
+        <LevelContainer :course="course" :chapterIndex="chapterIndex" :levelIndex="levelIndex" :level="level"
+          :frontLevelPointer="frontLevelPointer"
+          @openLevel="(levelIndex) => emit('openLevel', chapterIndex, levelIndex)" />
+      </div>
     </div>
-  </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
-import { CourseData, LevelData, LevelPointer } from '@/scripts/Interfaces';
+import { CourseData, LevelPointer } from '@/scripts/Interfaces';
 import HomeButton from '../menus/HomeButton.vue';
-import AxiomContainer from '../axiom/AxiomContainer.vue';
 import AxiomList from '../editor/chapterEditor/AxiomList.vue';
+import LevelContainer from '../menus/LevelContainer.vue';
 
 interface Props {
   course: CourseData;
@@ -32,15 +31,6 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['openLevel', 'openHomeScreen']);
-
-
-function isFrontLevel(chapterIndex: number, levelIndex: number): boolean {
-  return props.frontLevelPointer?.chapterIndex === chapterIndex && props.frontLevelPointer?.levelIndex === levelIndex;
-}
-
-function levelColor(chapterIndex: number, levelIndex: number, level: LevelData): string {
-  return (isFrontLevel(chapterIndex, levelIndex) ? 'orange' : (level.bestSolution ? 'lightgreen' : 'rgb(150,150,150)'));
-}
 </script>
 
 <style>
@@ -64,7 +54,7 @@ function levelColor(chapterIndex: number, levelIndex: number, level: LevelData):
   display: grid;
   place-items: center;
   font-size: 9vw;
-  color: rgb(44,44,44);
+  color: rgb(44, 44, 44);
 }
 
 .chapter-container {
@@ -96,7 +86,7 @@ function levelColor(chapterIndex: number, levelIndex: number, level: LevelData):
 
 .level-container:hover {
   opacity: 100%;
-  transform: scale(1.04); 
+  transform: scale(1.04);
 }
 
 .goal-axiom {
