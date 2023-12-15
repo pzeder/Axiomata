@@ -5,7 +5,7 @@
   <div class="course-title"> {{ course.title }} </div>
   <div class="chapter-list" v-for="(chapter, chapterIndex) in course.chapters" :key="chapterIndex">
     <ChapterContainer :course="course" :chapterIndex="chapterIndex" :chapter="chapter"
-      :frontLevelPointer="frontLevelPointer" />
+      :frontLevelPointer="frontLevelPointer" @openLevel="(levelIndex) => emit('openLevel', chapterIndex, levelIndex)" />
   </div>
 </template>
 

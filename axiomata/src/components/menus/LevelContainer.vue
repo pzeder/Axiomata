@@ -1,6 +1,5 @@
 <template>
-  <div class="level-container" @click="emit('openLevel', levelIndex)"
-    :style="{ backgroundColor: levelColor(levelIndex, level) }">
+  <div class="level-container" @click="emit('openLevel')" :style="{ backgroundColor: levelColor(levelIndex, level) }">
     <AxiomContainer class="goal-axiom" :width=10 :height=10 :axiom="level.goalAxiom" :symbols="course.symbols"
       :variables="course.variables" :background="levelColor(levelIndex, level)"
       :borderColor="levelColor(levelIndex, level)" />
