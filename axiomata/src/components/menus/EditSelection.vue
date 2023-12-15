@@ -24,7 +24,6 @@ import AxiomContainer from '../axiom/AxiomContainer.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import HomeButton from './HomeButton.vue';
 import DeleteHeaderButton from './DeleteHeaderButton.vue';
-import EditorScreen from '../editor/EditorScreen.vue';
 
 interface Props {
   userName: string;
@@ -107,7 +106,7 @@ async function deleteEdit(editID: any): Promise<void> {
   display: grid;
   place-items: center;
   text-align: center;
-  font-size: 1.5vh;
+  font-size: 1vw;
   width: 7vw;
   height: 5vw;;
   color: rgb(44,44,44);

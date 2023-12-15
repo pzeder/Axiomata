@@ -1,5 +1,7 @@
 <template>
-  <HomeButton @click="emit('openHomeScreen')" />
+  <div class="sidebar-left">
+    <HomeButton @click="emit('openHomeScreen')" />
+  </div>
   <div class="course-list">
     <transition-group name="course-list" tag="div">
       <div class="flex-box" v-for="header in courseHeaders" :key="header.courseID">
@@ -91,6 +93,14 @@ async function deleteCourse(courseID: any): Promise<void> {
 </script>
 
 <style>
+.sidebar-left {
+  position: fixed;
+  left: 2vw;
+  top: 2vw;
+  display: grid;
+  place-items: left;
+}
+
 .course-list {
   display: grid;
   place-items: center;

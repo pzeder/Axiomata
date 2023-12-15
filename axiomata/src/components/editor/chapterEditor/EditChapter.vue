@@ -3,10 +3,10 @@
     <TitleBar :tag="chapterTag" :title="chapter.title" :height=5 @editTitle="emit('editChapterTitle')" />
     <div :style="{ display: 'flex' }">
       <AxiomList title="Neue Tauschregeln in diesem Kapitel" :axioms="chapter.newAxioms" :symbols="symbols"
-        :variables="variables" :maxWidth="60" :containerWidth="20" @editNewAxiom="emit('editNewAxiom')"
+        :variables="variables" :maxWidth="60" :containerWidth="20" :editable="true" @editNewAxiom="emit('editNewAxiom')"
         @deleteAxiom="(index) => emit('deleteAxiom', index)" />
     </div>
-    <EditLevelList :chapterIndex="chapterIndex" :levels="chapter.levels" :symbols="symbols" :variables="variables"
+    <EditLevelList :chapterIndex="chapterIndex" :levels="chapter.levels" :symbols="symbols" :variables="variables" 
       @addNewLevel="(index) => emit('addNewLevel', index)" @deleteLevel="(index) => emit('deleteLevel', index)"
       @setLevelTitle="(index, title) => emit('setLevelTitle', index, title)"
       @setGoalAxiom="(index, axiom) => emit('setGoalAxiom', index, axiom)"

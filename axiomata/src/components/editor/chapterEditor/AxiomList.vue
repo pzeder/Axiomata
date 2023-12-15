@@ -1,19 +1,19 @@
 <template>
   <div class="axiom-list">
-    <div class="axiom-list-title"> {{ title }} </div>
+    <div class="axiom-list-title" v-if="title !== ''"> {{ title }} </div>
     <div :style="{ display: 'flex' }">
       <div class="axiom-package" v-for="(axiom, index) in axioms" :key="index">
         <AxiomContainer :width="containerWidth" :height="containerWidth" :axiom="axiom" :symbols="symbols"
           :variables="variables" />
-        <div class="axiom-delete-button" @click="emit('deleteAxiom', index)"> löschen </div>
+        <div class="axiom-delete-button" v-if="editable" @click="emit('deleteAxiom', index)"> löschen </div>
       </div>
-      <div class="axiom-add-button" @click="emit('editNewAxiom')"> Tauschregel hinzufügen </div>
+      <div class="axiom-add-button" v-if="editable" @click="emit('editNewAxiom')"> Tauschregel hinzufügen </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ComputedRef, computed, defineProps, defineEmits } from 'vue';
+import { ComputedRef, computed, defineProps, defineEmits, withDefaults } from 'vue';
 import AxiomContainer from '@/components/axiom/AxiomContainer.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 
@@ -24,9 +24,12 @@ interface Props {
   variables: SymbolData[];
   maxWidth: number;
   containerWidth: number;
+  editable: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  editable: () => false
+});
 const emit = defineEmits(['editNewAxiom', 'deleteAxiom']);
 
 const maxContainerWidth: ComputedRef<number> = computed(() => props.maxWidth / props.axioms.length);

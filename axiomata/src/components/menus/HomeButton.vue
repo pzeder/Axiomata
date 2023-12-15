@@ -7,7 +7,7 @@
   display: grid;
   place-items: center;
   margin-bottom: 1vw;
-  font-size: 2vh;
+  font-size: 2vw;
   width: 7vw;
   height: 5vw;
   color: rgb(44,44,44);
