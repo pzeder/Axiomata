@@ -3,7 +3,7 @@
     <div class="chapter-title"> {{ chapter.title }} </div>
     <AxiomList v-if="chapter.newAxioms.length > 0" :title="''" :axioms="chapter.newAxioms" :symbols="course.symbols"
       :variables="course.variables" :maxWidth=40 :containerWidth=10 />
-    <div class="level-list" v-for="(level, levelIndex) in chapter.levels">
+    <div class="level-list" v-for="(level, levelIndex) in chapter.levels" :key="levelIndex">
       <TextButton v-if="editable" text="Neues Level hinzufügen" background="orange" />
       <div class="level-package">
         <LevelContainer :course="course" :chapterIndex="chapterIndex" :levelIndex="levelIndex" :level="level"

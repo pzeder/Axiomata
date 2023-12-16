@@ -1,6 +1,6 @@
 <template>
   <div v-if="course">
-    <ChapterScreen v-if="showChapterScreen" :course="course" :frontLevelPointer="frontLevelPointer"
+    <LevelSelection v-if="showChapterScreen" :course="course" :frontLevelPointer="frontLevelPointer"
       @openSaveStateMenu="emit('openSaveStateMenu')" @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" />
     <LevelScreen v-if="showLevelScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
       :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openChapterScreen="openChapterScreen"
@@ -14,9 +14,9 @@
 import { AxiomData, ChapterData, CourseData, LevelData, LevelPointer, MoveData } from '@/scripts/Interfaces';
 import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef } from 'vue';
-import ChapterScreen from './ChapterScreen.vue';
 import LevelScreen from './LevelScreen.vue';
 import VictoryWindow from './VictoryWindow.vue';
+import LevelSelection from '../menus/LevelSelection.vue';
 
 interface Props {
   saveID: any;
