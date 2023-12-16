@@ -22,7 +22,7 @@ import axios from 'axios';
 import HomeButton from './HomeButton.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import AxiomContainer from '../axiom/AxiomContainer.vue';
-import TextButton from './TextButton.vue';
+import TextButton from '../UI/TextButton.vue';
 
 interface Props {
   userName: string;

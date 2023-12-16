@@ -19,7 +19,7 @@ import { defineProps, withDefaults, defineEmits } from 'vue';
 import AxiomList from '../editor/chapterEditor/AxiomList.vue';
 import LevelContainer from './LevelContainer.vue';
 import { ChapterData, CourseData, LevelPointer } from '@/scripts/Interfaces';
-import TextButton from '../menus/TextButton.vue';
+import TextButton from '../UI/TextButton.vue';
 
 interface Props {
   course: CourseData;

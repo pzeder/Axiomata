@@ -21,7 +21,7 @@ import { Ref, onMounted, ref, defineProps, defineEmits } from 'vue';
 import axios from 'axios';
 import HomeButton from './HomeButton.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
-import TextButton from './TextButton.vue';
+import TextButton from '../UI/TextButton.vue';
 import AxiomContainer from '../axiom/AxiomContainer.vue';
 
 interface Props {

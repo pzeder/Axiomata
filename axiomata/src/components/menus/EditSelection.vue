@@ -23,7 +23,7 @@ import { Ref, ref, onMounted, defineProps, defineEmits } from 'vue';
 import AxiomContainer from '../axiom/AxiomContainer.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import HomeButton from './HomeButton.vue';
-import TextButton from './TextButton.vue';
+import TextButton from '../UI/TextButton.vue';
 
 interface Props {
   userName: string;
