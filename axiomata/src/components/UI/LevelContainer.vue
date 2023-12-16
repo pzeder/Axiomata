@@ -38,7 +38,8 @@ function levelColor(levelIndex: number, level: LevelData): string {
   place-items: center;
   border: 0.5vw solid black;
   border-radius: 1.5vw;
-  margin-bottom: 1vw;
+  margin-top: 0.5vw;
+  margin-bottom: 0.5vw;
   user-select: none;
   opacity: 85%;
   transform: scale(1);

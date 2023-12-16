@@ -5,7 +5,7 @@
     @openNewCourseMenu="openNewCourseMenu" @openHomeScreen="openHomeScreen" />
   <NewCourseSelection v-if="showNewCourseSelection" :userName="userName" @openCourse="openCourse"
     @openHomeScreen="openHomeScreen" />
-  <CourseScreen v-if="showCourseScreen" :saveID="saveID" @openHomeScreen="openHomeScreen" />
+  <PlayHub v-if="showCourseScreen" :saveID="saveID" @openHomeScreen="openHomeScreen" />
   <EditSelection v-if="showEditSelection" :userName="userName" @openEditor="openEditor" @openHomeScreen="openHomeScreen"/>
   <EditorScreen v-if="showEditorScreen" :editID="editID" @openHomeScreen="openHomeScreen" />
 </template>
@@ -15,9 +15,9 @@ import { Ref, ref } from 'vue';
 import HomeScreen from '@/components/menus/HomeScreen.vue';
 import SaveStateSelection from '@/components/menus/SaveStateSelection.vue';
 import NewCourseSelection from '@/components/menus/NewCourseSelection.vue';
-import CourseScreen from '@/components/play/CourseScreen.vue';
 import EditSelection from '@/components/menus/EditSelection.vue'
 import EditorScreen from '@/components/editor/EditorScreen.vue';
+import PlayHub from './components/play/PlayHub.vue';
 
 // menu variables
 const showHomeScreen: Ref<boolean> = ref(true);

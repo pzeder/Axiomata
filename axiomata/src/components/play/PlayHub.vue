@@ -2,7 +2,7 @@
   <div v-if="course">
     <LevelSelection v-if="showChapterScreen" :course="course" :frontLevelPointer="frontLevelPointer"
       @openSaveStateMenu="emit('openSaveStateMenu')" @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" />
-    <LevelScreen v-if="showLevelScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
+    <PlayScreen v-if="showPlayScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
       :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openChapterScreen="openChapterScreen"
       @finishLevel="finishLevel" />
     <VictoryWindow v-if="showVictoryWindow" :hasNextLevel="frontLevelPointer !== null" @openLevelMenu="openChapterScreen"
@@ -14,9 +14,9 @@
 import { AxiomData, ChapterData, CourseData, LevelData, LevelPointer, MoveData } from '@/scripts/Interfaces';
 import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef } from 'vue';
-import LevelScreen from './LevelScreen.vue';
 import VictoryWindow from './VictoryWindow.vue';
 import LevelSelection from '../menus/LevelSelection.vue';
+import PlayScreen from './PlayScreen.vue';
 
 interface Props {
   saveID: any;
@@ -26,7 +26,7 @@ const props = defineProps<Props>();
 const emit = defineEmits(['openHomeScreen', 'openSaveStateMenu']);
 
 const showChapterScreen: Ref<boolean> = ref(false);
-const showLevelScreen: Ref<boolean> = ref(false);
+const showPlayScreen: Ref<boolean> = ref(false);
 const showVictoryWindow: Ref<boolean> = ref(false);
 
 const course: Ref<CourseData | null> = ref(null);
@@ -118,12 +118,12 @@ async function fetchCourse(): Promise<void> {
 
 function openLevel(chapterIndex: number, levelIndex: number) {
   selectedLevelPointer.value = { chapterIndex: chapterIndex, levelIndex: levelIndex };
-  openLevelScreen();
+  openPlayScreen();
 }
 
-function openLevelScreen(): void {
+function openPlayScreen(): void {
   hideAll();
-  showLevelScreen.value = true;
+  showPlayScreen.value = true;
 }
 
 function openChapterScreen(): void {
@@ -138,7 +138,7 @@ function openVictoryWindow(): void {
 
 function hideAll(): void {
   showChapterScreen.value = false;
-  showLevelScreen.value = false;
+  showPlayScreen.value = false;
   showVictoryWindow.value = false;
 }
 
@@ -187,7 +187,7 @@ function finishLevel(): void {
 function nextLevel(): void {
   updateSelectedLevelPointer();
   if (selectedLevelPointer.value) {
-    openLevelScreen();
+    openPlayScreen();
   }
 }
 

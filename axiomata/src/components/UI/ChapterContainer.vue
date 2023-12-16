@@ -30,7 +30,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  editable: () => false
+  editable: () => true
 });
 const emit = defineEmits(['openLevel']);
 </script>
