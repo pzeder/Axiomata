@@ -10,7 +10,7 @@
 import { defineProps, defineEmits } from 'vue';
 import { CourseData, LevelPointer } from '@/scripts/Interfaces';
 import HomeButton from '../menus/HomeButton.vue';
-import CourseContainer from '../menus/CourseContainer.vue';
+import CourseContainer from '../UI/CourseContainer.vue';
 
 interface Props {
   course: CourseData;

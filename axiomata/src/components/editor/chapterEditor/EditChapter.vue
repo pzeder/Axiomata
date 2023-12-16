@@ -22,7 +22,7 @@ import { defineProps, defineEmits, ComputedRef, computed } from 'vue';
 import TitleBar from '../TitleBar.vue';
 import EditLevelList from './EditLevelList.vue';
 import DeleteButton from '../DeleteButton.vue';
-import AxiomList from '@/components/UI/AxiomList.vue';
+import AxiomList from '@/components/axiom/AxiomList.vue';
 import { ChapterData, SymbolData } from '@/scripts/Interfaces';
 
 interface Props {

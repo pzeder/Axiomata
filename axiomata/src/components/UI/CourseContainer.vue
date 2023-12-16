@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
-import ChapterContainer from './ChapterContainer.vue';
+import ChapterContainer from '../UI/ChapterContainer.vue';
 import { CourseData, LevelPointer } from '@/scripts/Interfaces';
 
 interface Props {
