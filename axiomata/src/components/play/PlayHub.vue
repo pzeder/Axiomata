@@ -5,7 +5,7 @@
     <PlayScreen v-if="showPlayScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
       :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openChapterScreen="openChapterScreen"
       @finishLevel="finishLevel" />
-    <VictoryWindow v-if="showVictoryWindow" :hasNextLevel="frontLevelPointer !== null" @openLevelMenu="openChapterScreen"
+    <VictoryWindow v-if="showVictoryWindow" :hasNextLevel="hasNextLevel" @openLevelMenu="openChapterScreen"
       @nextLevel="nextLevel" />
   </div>
 </template>
@@ -51,6 +51,15 @@ const frontLevelPointer: ComputedRef<LevelPointer | null> = computed(() => {
 });
 
 const selectedLevelPointer: Ref<LevelPointer | null> = ref(null);
+
+const hasNextLevel: ComputedRef<boolean> = computed(() => {
+  if (!selectedLevelPointer.value || !course.value) {
+    return false;
+  }
+  const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
+  const levelIndex: number = selectedLevelPointer.value.levelIndex;
+  return chapterIndex < course.value.chapters.length - 1 || levelIndex < course.value.chapters[chapterIndex].levels.length - 1;
+});
 
 const selectedLevel: ComputedRef<LevelData | null> = computed(() => {
   if (!selectedLevelPointer.value || !course.value) {
