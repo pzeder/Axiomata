@@ -194,13 +194,13 @@ function finishLevel(): void {
 }
 
 function nextLevel(): void {
-  updateSelectedLevelPointer();
+  incrementSelectedLevelPointer();
   if (selectedLevelPointer.value) {
     openPlayScreen();
   }
 }
 
-function updateSelectedLevelPointer(): void {
+function incrementSelectedLevelPointer(): void {
   if (!selectedLevelPointer.value || !course.value) {
     return;
   }
