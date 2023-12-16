@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { defineProps, withDefaults, defineEmits } from 'vue';
-import AxiomList from '../editor/chapterEditor/AxiomList.vue';
+import AxiomList from '@/components/UI/AxiomList.vue';
 import LevelContainer from './LevelContainer.vue';
 import { ChapterData, CourseData, LevelPointer } from '@/scripts/Interfaces';
 import TextButton from '../UI/TextButton.vue';
