@@ -2,7 +2,7 @@
   <div class="chapter-container">
     <div class="chapter-title-package">
       <div class="chapter-title"> {{ chapter.title }} </div>
-      <TextButton v-if="editable" text="Titel ändern" background="yellow"/>
+      <TextButton v-if="editable" text="Titel ändern" background="yellow" @click="emit('editText')"/>
       <TextButton v-if="editable" text="Löschen"/>
     </div>
     <AxiomList v-if="chapter.newAxioms.length > 0" :title="''" :axioms="chapter.newAxioms" :symbols="course.symbols"
@@ -27,7 +27,7 @@
 import { defineProps, withDefaults, defineEmits } from 'vue';
 import AxiomList from '@/components/axiom/AxiomList.vue';
 import LevelContainer from './LevelContainer.vue';
-import { ChapterData, CourseData, LevelPointer } from '@/scripts/Interfaces';
+import { ChapterData, CourseData, LevelPointer, TextEditTarget } from '@/scripts/Interfaces';
 import TextButton from './TextButton.vue';
 
 interface Props {
@@ -41,7 +41,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   editable: () => false
 });
-const emit = defineEmits(['openLevel']);
+const emit = defineEmits(['openLevel', 'editText']);
 </script>
 
 <style>

@@ -11,7 +11,8 @@
       </div>
       <ChapterContainer :course="course" :chapterIndex="chapterIndex" :chapter="chapter"
         :frontLevelPointer="frontLevelPointer" :editable="editable"
-        @openLevel="(levelIndex) => emit('openLevel', chapterIndex, levelIndex)" />
+        @openLevel="(levelIndex) => emit('openLevel', chapterIndex, levelIndex)" 
+        @editText="emit('editText', { target: TextEditTarget.CHAPTER, index: chapterIndex })"/>
     </div>
     <div class="new-chapter-button">
       <TextButton v-if="editable" text="Neues Kapitel hinzufügen" background="lightblue" 
