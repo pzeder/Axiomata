@@ -3,7 +3,7 @@
     <div class="chapter-title-package">
       <div class="chapter-title"> {{ chapter.title }} </div>
       <TextButton v-if="editable" text="Titel ändern" background="yellow" @click="emit('editText')"/>
-      <TextButton v-if="editable" text="Löschen"/>
+      <TextButton v-if="editable" text="Löschen" @click="emit('deleteChapter')"/>
     </div>
     <AxiomList v-if="chapter.newAxioms.length > 0" :title="''" :axioms="chapter.newAxioms" :symbols="course.symbols"
       :variables="course.variables" :maxWidth=40 :containerWidth=10 :editable="editable"/>
@@ -41,7 +41,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   editable: () => false
 });
-const emit = defineEmits(['openLevel', 'editText']);
+const emit = defineEmits(['openLevel', 'editText', 'deleteChapter']);
 </script>
 
 <style>

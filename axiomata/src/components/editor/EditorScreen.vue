@@ -2,7 +2,7 @@
   <div v-if="course">
     <LevelSelection v-if="showLevelSelection" :course="course" :frontLevelPointer="null" :editable="true"
       @editText="editText" @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" 
-      @addNewChapter="addNewChapter"/>
+      @addNewChapter="addNewChapter" @deleteChapter="deleteChapter"/>
     <PlayScreen v-if="showPlayScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
       :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openLevelSelection="openLevelSelection"
       @finishLevel="finishLevel" />
@@ -252,7 +252,6 @@ function addNewChapter(index: number): void {
   if (!course.value) {
     return
   }
-  console.log(index)
   const newChapter: ChapterData = {
     title: 'Neues Kapitel',
     newAxioms: [],

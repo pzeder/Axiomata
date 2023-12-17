@@ -12,7 +12,8 @@
       <ChapterContainer :course="course" :chapterIndex="chapterIndex" :chapter="chapter"
         :frontLevelPointer="frontLevelPointer" :editable="editable"
         @openLevel="(levelIndex) => emit('openLevel', chapterIndex, levelIndex)" 
-        @editText="emit('editText', { target: TextEditTarget.CHAPTER, index: chapterIndex })"/>
+        @editText="emit('editText', { target: TextEditTarget.CHAPTER, index: chapterIndex })"
+        @deleteChapter="emit('deleteChapter', chapterIndex)"/>
     </div>
     <div class="new-chapter-button">
       <TextButton v-if="editable" text="Neues Kapitel hinzufügen" background="lightblue" 
@@ -37,7 +38,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   editable: () => false
 });
-const emit = defineEmits(['editText', 'openLevel', 'addNewChapter']);
+const emit = defineEmits(['editText', 'openLevel', 'addNewChapter', 'deleteChapter']);
 </script>
 
 <style>
