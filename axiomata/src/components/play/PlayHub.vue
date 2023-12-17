@@ -1,11 +1,11 @@
 <template>
   <div v-if="course">
-    <LevelSelection v-if="showChapterScreen" :course="course" :frontLevelPointer="frontLevelPointer"
-      @openSaveStateMenu="emit('openSaveStateMenu')" @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" />
+    <LevelSelection v-if="showLevelSelection" :course="course" :frontLevelPointer="frontLevelPointer"
+      @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" />
     <PlayScreen v-if="showPlayScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
-      :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openChapterScreen="openChapterScreen"
+      :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openLevelSelection="openLevelSelection"
       @finishLevel="finishLevel" />
-    <VictoryWindow v-if="showVictoryWindow" :hasNextLevel="hasNextLevel" @openLevelMenu="openChapterScreen"
+    <VictoryWindow v-if="showVictoryWindow" :hasNextLevel="hasNextLevel" @openLevelSelection="openLevelSelection"
       @nextLevel="nextLevel" />
   </div>
 </template>
@@ -25,7 +25,7 @@ interface Props {
 const props = defineProps<Props>();
 const emit = defineEmits(['openHomeScreen', 'openSaveStateMenu']);
 
-const showChapterScreen: Ref<boolean> = ref(false);
+const showLevelSelection: Ref<boolean> = ref(false);
 const showPlayScreen: Ref<boolean> = ref(false);
 const showVictoryWindow: Ref<boolean> = ref(false);
 
@@ -108,7 +108,7 @@ const selectedDerivates: ComputedRef<AxiomData[]> = computed(() => {
 
 onMounted(() => {
   fetchCourse();
-  showChapterScreen.value = true;
+  openLevelSelection();
 });
 
 async function fetchCourse(): Promise<void> {
@@ -135,9 +135,9 @@ function openPlayScreen(): void {
   showPlayScreen.value = true;
 }
 
-function openChapterScreen(): void {
+function openLevelSelection(): void {
   hideAll();
-  showChapterScreen.value = true;
+  showLevelSelection.value = true;
 }
 
 function openVictoryWindow(): void {
@@ -146,7 +146,7 @@ function openVictoryWindow(): void {
 }
 
 function hideAll(): void {
-  showChapterScreen.value = false;
+  showLevelSelection.value = false;
   showPlayScreen.value = false;
   showVictoryWindow.value = false;
 }

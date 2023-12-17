@@ -1,7 +1,7 @@
 <template>
   <div class="screen-container">
     <HeadBar :levelTitle="level?.title" :bonusLevel="level?.bonus" :height="headBarHeight"
-      @openLevelMenu="emit('openChapterScreen')" />
+      @openLevelMenu="emit('openLevelSelection')" />
     <div :style="{ display: 'flex' }">
       <AxiomBar :title="'Tausch-Regeln'" background="rgb(252, 223, 203)" :width="axiomBarWidth" :height="axiomBarHeight"
         :axioms="axioms" :symbols="symbols" :variables="variables" @selectAxiom="selectAxiom" />
@@ -55,7 +55,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['openChapterScreen', 'finishLevel', 'addMove', 'nextLevel']);
+const emit = defineEmits(['openLevelSelection', 'finishLevel', 'addMove', 'nextLevel']);
 
 const showCursorAxiom: Ref<boolean> = ref(false);
 const showBonusAxiom: Ref<boolean> = ref(false);
