@@ -1,6 +1,9 @@
 <template>
   <div class="course-container">
-    <div class="course-title"> {{ course.title }} </div>
+    <div class="course-flex">
+      <div class="course-title"> {{ course.title }} </div>
+      <TextButton text="Titel ändern" background="yellow"/>
+    </div>
     <div class="chapter-list" v-for="(chapter, chapterIndex) in course.chapters" :key="chapterIndex">
       <ChapterContainer :course="course" :chapterIndex="chapterIndex" :chapter="chapter"
         :frontLevelPointer="frontLevelPointer" @openLevel="(levelIndex) => emit('openLevel', chapterIndex, levelIndex)" />
@@ -12,6 +15,7 @@
 import { defineProps, defineEmits } from 'vue';
 import ChapterContainer from '../UI/ChapterContainer.vue';
 import { CourseData, LevelPointer } from '@/scripts/Interfaces';
+import TextButton from './TextButton.vue';
 
 interface Props {
   course: CourseData;
@@ -29,10 +33,17 @@ const emit = defineEmits(['openLevel']);
   margin-top: 10vw;
 }
 
+.course-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .course-title {
   display: grid;
   place-items: center;
   font-size: 9vw;
   color: rgb(44, 44, 44);
+  user-select: none;
 }
 </style>
