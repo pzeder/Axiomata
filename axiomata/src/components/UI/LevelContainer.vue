@@ -1,6 +1,9 @@
 <template>
   <div class="level-container" @click="handleClick" :style="{ backgroundColor: levelColor }">
-    <AxiomContainer class="goal-axiom" :width=10 :height=10 :axiom="level.goalAxiom" :symbols="course.symbols"
+    <div class="axiom-placeholder"> 
+      <TextButton text="START / ZIEL festlegen" background="white"/>
+    </div>
+    <AxiomContainer class="goal-axiom" v-if="axiomValid(level.goalAxiom)" :width=10 :height=10 :axiom="level.goalAxiom" :symbols="course.symbols"
       :variables="course.variables" :background="levelColor"
       :borderColor="levelColor"/>
     <div class="level-title"> Level {{ levelNumber }} </div>
@@ -18,6 +21,7 @@ import { defineProps, defineEmits, ComputedRef, computed } from 'vue';
 import AxiomContainer from '../axiom/AxiomContainer.vue';
 import { CourseData, LevelData, LevelPointer } from '@/scripts/Interfaces';
 import TextButton from './TextButton.vue';
+import { axiomValid } from '@/scripts/AxiomMethods';
 
 interface Props {
   course: CourseData;
@@ -74,6 +78,12 @@ function handleClick(): void {
 .goal-axiom {
   flex: 1;
   margin-left: 2vw;
+}
+
+.axiom-placeholder {
+  display: grid;
+  place-items: center;
+  padding: 1vw;
 }
 
 .level-title {
