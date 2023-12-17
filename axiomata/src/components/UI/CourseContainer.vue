@@ -2,7 +2,8 @@
   <div class="course-container">
     <div class="course-title-package">
       <div class="course-title"> {{ course.title }} </div>
-      <TextButton v-if="editable" text="Titel ändern" background="yellow"/>
+      <TextButton v-if="editable" text="Titel ändern" background="yellow" 
+      @click="emit('editText', { target: TextEditTarget.COURSE, index: -1 } )"/>
     </div>
     <div v-for="(chapter, chapterIndex) in course.chapters" :key="chapterIndex">
       <div class="new-chapter-button">
@@ -22,7 +23,7 @@
 <script setup lang="ts">
 import { defineProps, withDefaults, defineEmits } from 'vue';
 import ChapterContainer from '../UI/ChapterContainer.vue';
-import { CourseData, LevelPointer } from '@/scripts/Interfaces';
+import { CourseData, LevelPointer, TextEditTarget } from '@/scripts/Interfaces';
 import TextButton from './TextButton.vue';
 
 interface Props {
@@ -34,7 +35,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   editable: () => false
 });
-const emit = defineEmits(['openLevel']);
+const emit = defineEmits(['editText', 'openLevel']);
 </script>
 
 <style>

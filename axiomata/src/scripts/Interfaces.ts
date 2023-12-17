@@ -51,3 +51,12 @@ export interface SymbolPointer {
     type: SymbolType;
     index: number
 }
+
+export enum TextEditTarget {
+    COURSE, CHAPTER, SYMBOL
+}
+
+export interface TextEditPointer {
+    target: TextEditTarget;
+    index: number
+}

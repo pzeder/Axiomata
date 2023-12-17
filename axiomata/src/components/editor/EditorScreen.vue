@@ -1,19 +1,22 @@
 <template>
   <div v-if="course">
     <LevelSelection v-if="showLevelSelection" :course="course" :frontLevelPointer="null" :editable="true"
-      @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" />
+      @editText="editText" @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" />
     <PlayScreen v-if="showPlayScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
       :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openLevelSelection="openLevelSelection"
       @finishLevel="finishLevel" />
+    <TextInput v-if="showTextInput" :title="textEditTitle" :placeholder="textEditPlaceholder"
+      @close="showTextInput = false" @updateText="updateText"/>
   </div>
 </template>
 
 <script setup lang="ts">
-import { AxiomData, ChapterData, CourseData, LevelData, LevelPointer, MoveData, SymbolData, SymbolType, SymbolPointer } from '@/scripts/Interfaces';
+import { AxiomData, ChapterData, CourseData, LevelData, LevelPointer, MoveData, SymbolData, SymbolType, SymbolPointer, TextEditPointer, TextEditTarget } from '@/scripts/Interfaces';
 import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef } from 'vue';
 import LevelSelection from '../menus/LevelSelection.vue';
 import PlayScreen from '../play/PlayScreen.vue';
+import TextInput from '../UI/TextInput.vue';
 
 interface Props {
   editID: any;
@@ -28,7 +31,41 @@ const showVictoryWindow: Ref<boolean> = ref(false);
 const showTextInput: Ref<boolean> = ref(false);
 const showNoteWindow: Ref<boolean> = ref(false);
 const noteMessage: Ref<string> = ref('');
+const textEditPointer: Ref<TextEditPointer | null> = ref(null);
 const course: Ref<CourseData | null> = ref(null);
+
+const textEditTitle: ComputedRef<string> = computed(() => {
+  if (!textEditPointer.value || !course.value) {
+    return '';
+  }
+  switch (textEditPointer.value.target) {
+    case TextEditTarget.COURSE:
+      return 'Titel des Kurses ändern';
+    case TextEditTarget.CHAPTER:
+      return 'Titel des Kapitels ändern';
+    case TextEditTarget.SYMBOL:
+      return 'Symboltext ändern';
+    default:
+      return '';
+  }
+});
+
+const textEditPlaceholder: ComputedRef<string> = computed(() => {
+  if (!textEditPointer.value || !course.value) {
+    return '';
+  }
+  const index: number = textEditPointer.value.index;
+  switch (textEditPointer.value.target) {
+    case TextEditTarget.COURSE:
+      return course.value.title;
+    case TextEditTarget.CHAPTER:
+      return course.value.chapters[index].title;
+    case TextEditTarget.SYMBOL:
+      return course.value.symbols[index].text;
+    default:
+      return '';
+  }
+});
   
 const invalidLevel = (level: LevelData): boolean =>
   level.goalAxiom.upperSequence.length === 0 || level.goalAxiom.lowerSequence.length === 0;
@@ -44,15 +81,6 @@ const courseValid: ComputedRef<boolean> = computed(() => {
 });
 
 const selectedLevelPointer: Ref<LevelPointer | null> = ref(null);
-
-const hasNextLevel: ComputedRef<boolean> = computed(() => {
-  if (!selectedLevelPointer.value || !course.value) {
-    return false;
-  }
-  const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
-  const levelIndex: number = selectedLevelPointer.value.levelIndex;
-  return chapterIndex < course.value.chapters.length - 1 || levelIndex < course.value.chapters[chapterIndex].levels.length - 1;
-});
 
 const selectedLevel: ComputedRef<LevelData | null> = computed(() => {
   if (!selectedLevelPointer.value || !course.value) {
@@ -147,7 +175,7 @@ function hideAll(): void {
 async function saveEdit(): Promise<void> {
   try {
     const updatedData = {
-      saveID: props.editID,
+      editID: props.editID,
       course: course.value
     };
     const response = await axios.patch(`http://localhost:3000/saveEdit`, updatedData);
@@ -159,6 +187,30 @@ async function saveEdit(): Promise<void> {
   } catch (error) {
     console.error('Error updating data:', error);
   }
+}
+
+function editText(pointer: TextEditPointer): void {
+  textEditPointer.value = pointer;
+  showTextInput.value = true;
+}
+
+function updateText(text: string): void {
+  if (!textEditPointer.value || !course.value) {
+    return;
+  }
+  const index: number = textEditPointer.value.index;
+  switch (textEditPointer.value.target) {
+    case TextEditTarget.COURSE:
+      course.value.title = text;
+      break;
+    case TextEditTarget.CHAPTER:
+      course.value.chapters[index].title = text;
+      break;
+    case TextEditTarget.SYMBOL:
+      course.value.symbols[index].text = text;
+      break;
+  }
+  saveEdit();
 }
 
 function addMove(move: MoveData): void {
@@ -184,28 +236,6 @@ function finishLevel(): void {
   }
   course.value.chapters[chapterIndex].levels[levelIndex].moveHistory = [level.moveHistory[0]];
   saveEdit();
-}
-
-function nextLevel(): void {
-  incrementSelectedLevelPointer();
-  if (selectedLevelPointer.value) {
-    openPlayScreen();
-  }
-}
-
-function incrementSelectedLevelPointer(): void {
-  if (!selectedLevelPointer.value || !course.value) {
-    return;
-  }
-  const maxLevel: number = course.value.chapters[selectedLevelPointer.value.chapterIndex].levels.length;
-  selectedLevelPointer.value.levelIndex += 1;
-  if (selectedLevelPointer.value.levelIndex >= maxLevel) {
-    selectedLevelPointer.value.chapterIndex += 1;
-    selectedLevelPointer.value.levelIndex = 0;
-  }
-  if (selectedLevelPointer.value.chapterIndex >= course.value.chapters.length) {
-    selectedLevelPointer.value = null;
-  }
 }
 
 function setCourseTitle(text: string): void {

@@ -3,7 +3,8 @@
     <HomeButton @click="emit('openHomeScreen')" />
   </div>
   <CourseContainer :course="course" :frontLevelPointer="frontLevelPointer" :editable="editable"
-    @openLevel="(chapterIndex, levelIndex) => emit('openLevel', chapterIndex, levelIndex)" />
+    @openLevel="(chapterIndex, levelIndex) => emit('openLevel', chapterIndex, levelIndex)"
+    @editText="(pointer) => emit('editText', pointer)" />
 </template>
 
 <script setup lang="ts">
@@ -21,7 +22,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   editable: () => false
 });
-const emit = defineEmits(['openLevel', 'openHomeScreen']);
+const emit = defineEmits(['openLevel', 'openHomeScreen', 'editText']);
 </script>
 
 <style>
