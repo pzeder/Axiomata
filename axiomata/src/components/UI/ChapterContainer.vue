@@ -1,8 +1,12 @@
 <template>
   <div class="chapter-container">
-    <div class="chapter-title"> {{ chapter.title }} </div>
+    <div class="chapter-title-package">
+      <div class="chapter-title"> {{ chapter.title }} </div>
+      <TextButton v-if="editable" text="Titel ändern" background="yellow"/>
+      <TextButton v-if="editable" text="Löschen"/>
+    </div>
     <AxiomList v-if="chapter.newAxioms.length > 0" :title="''" :axioms="chapter.newAxioms" :symbols="course.symbols"
-      :variables="course.variables" :maxWidth=40 :containerWidth=10 />
+      :variables="course.variables" :maxWidth=40 :containerWidth=10 :editable="editable"/>
     <div v-for="(level, levelIndex) in chapter.levels" :key="levelIndex">
       <div class="new-level-button">
         <TextButton v-if="editable" text="Neues Level hinzufügen" background="orange" />
@@ -35,7 +39,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  editable: () => true
+  editable: () => false
 });
 const emit = defineEmits(['openLevel']);
 </script>
@@ -45,6 +49,12 @@ const emit = defineEmits(['openLevel']);
   display: grid;
   place-items: center;
   margin-bottom: 2vw;
+}
+
+.chapter-title-package {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .chapter-title {

@@ -1,18 +1,26 @@
 <template>
   <div class="course-container">
-    <div class="course-flex">
+    <div class="course-title-package">
       <div class="course-title"> {{ course.title }} </div>
-      <TextButton text="Titel ändern" background="yellow"/>
+      <TextButton v-if="editable" text="Titel ändern" background="yellow"/>
     </div>
-    <div class="chapter-list" v-for="(chapter, chapterIndex) in course.chapters" :key="chapterIndex">
+    <div v-for="(chapter, chapterIndex) in course.chapters" :key="chapterIndex">
+      <div class="new-chapter-button">
+        <TextButton v-if="editable" text="Neues Kapitel hinzufügen" background="lightblue" />
+      </div>
       <ChapterContainer :course="course" :chapterIndex="chapterIndex" :chapter="chapter"
-        :frontLevelPointer="frontLevelPointer" @openLevel="(levelIndex) => emit('openLevel', chapterIndex, levelIndex)" />
+        :frontLevelPointer="frontLevelPointer" :editable="editable"
+        @openLevel="(levelIndex) => emit('openLevel', chapterIndex, levelIndex)" />
+    </div>
+    <div class="new-chapter-button">
+      <TextButton v-if="editable" text="Neues Kapitel hinzufügen" background="lightblue" 
+        :style="{ width: 16.5 + 'vw', marginLeft: -8.5 + 'vw'}" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, withDefaults, defineEmits } from 'vue';
 import ChapterContainer from '../UI/ChapterContainer.vue';
 import { CourseData, LevelPointer } from '@/scripts/Interfaces';
 import TextButton from './TextButton.vue';
@@ -20,9 +28,12 @@ import TextButton from './TextButton.vue';
 interface Props {
   course: CourseData;
   frontLevelPointer: LevelPointer | null;
+  editable: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  editable: () => false
+});
 const emit = defineEmits(['openLevel']);
 </script>
 
@@ -30,10 +41,17 @@ const emit = defineEmits(['openLevel']);
 .course-container {
   display: flex;
   flex-direction: column;
+  align-items: center;
   margin-top: 10vw;
+  margin-bottom: 10vw;
 }
 
-.course-flex {
+.new-chapter-button {
+  width: 20vw;
+  margin-left: 8.5vw;
+}
+
+.course-title-package {
   display: flex;
   justify-content: center;
   align-items: center;
