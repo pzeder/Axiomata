@@ -26,7 +26,7 @@ import { defineProps, defineEmits, Ref, ref, ComputedRef, computed } from 'vue';
 import { AxiomData, ChapterData, CourseData } from '@/scripts/Interfaces';
 import EditChapter from './EditChapter.vue';
 import AddButton from '@/components/editor/AddButton.vue';
-import AxiomEditor from '../axiomEditor/AxiomEditor.vue';
+import AxiomEditor from '../AxiomEditor.vue';
 import TextInput from '../TextInput.vue';
 
 interface Props {

@@ -1,38 +1,35 @@
 <template>
-  <div class="home-button" @click="emit('openHomeScreen')"> Home </div>
-  <TitleBar tag="Kurs" :title="course?.title" :height=10 @editTitle="showTextInput = true" />
-  <EditChapterList v-if="course" :course="course" @addNewChapter="addNewChapter" @setChapterTitle="setChapterTitle"
-    @deleteChapter="deleteChapter" @addSymbol="addSymbol" @deleteSymbol="deleteSymbol" @addNewAxiom="addNewAxiom"
-    @deleteAxiom="deleteAxiom" @addNewLevel="addNewLevel" @deleteLevel="deleteLevel" @setLevelTitle="setLevelTitle"
-    @setGoalAxiom="setGoalAxiom" @toggleVarTarget="toggleVarTarget" @toggleBonus="toggleBonus" />
-  <div class="submit-button" :style="{ background: courseValid ? 'lightgreen' : 'gray' }" @click="submitCourse"> Kurs
-    hochladen </div>
-  <TextInput v-if="showTextInput" title="Titel des Kurses ändern" :placeholder="course?.title"
-    @updateText="setCourseTitle" @close="showTextInput = false" />
-  <NoteWindow v-if="showNoteWindow" :text="noteMessage" @close="showNoteWindow = false" />
+  <div v-if="course">
+    <LevelSelection v-if="showLevelSelection" :course="course" :frontLevelPointer="null" :editable="true"
+      @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" />
+    <PlayScreen v-if="showPlayScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
+      :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openLevelSelection="openLevelSelection"
+      @finishLevel="finishLevel" />
+  </div>
 </template>
 
 <script setup lang="ts">
+import { AxiomData, ChapterData, CourseData, LevelData, LevelPointer, MoveData, SymbolData, SymbolType, SymbolPointer } from '@/scripts/Interfaces';
 import axios from 'axios';
-import { Ref, ref, defineProps, onMounted, ComputedRef, computed, defineEmits } from 'vue';
-import { CourseData, ChapterData, SymbolData, LevelData, AxiomData, SymbolPointer, SymbolType } from '@/scripts/Interfaces';
-import EditChapterList from './chapterEditor/EditChapterList.vue';
-import TextInput from './TextInput.vue';
-import TitleBar from './TitleBar.vue';
-import NoteWindow from './NoteWindow.vue'
+import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef } from 'vue';
+import LevelSelection from '../menus/LevelSelection.vue';
+import PlayScreen from '../play/PlayScreen.vue';
 
 interface Props {
   editID: any;
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['openHomeScreen']);
+const emit = defineEmits(['openHomeScreen', 'openSaveStateMenu']);
 
-const course: Ref<CourseData | null> = ref(null);
+const showLevelSelection: Ref<boolean> = ref(false);
+const showPlayScreen: Ref<boolean> = ref(false);
+const showVictoryWindow: Ref<boolean> = ref(false);
 const showTextInput: Ref<boolean> = ref(false);
-const noteMessage: Ref<string> = ref('');
 const showNoteWindow: Ref<boolean> = ref(false);
-
+const noteMessage: Ref<string> = ref('');
+const course: Ref<CourseData | null> = ref(null);
+  
 const invalidLevel = (level: LevelData): boolean =>
   level.goalAxiom.upperSequence.length === 0 || level.goalAxiom.lowerSequence.length === 0;
 
@@ -46,11 +43,68 @@ const courseValid: ComputedRef<boolean> = computed(() => {
   return course.value.chapters.filter(invalidChapter).length === 0;
 });
 
-onMounted(() => {
-  fetchEdit();
+const selectedLevelPointer: Ref<LevelPointer | null> = ref(null);
+
+const hasNextLevel: ComputedRef<boolean> = computed(() => {
+  if (!selectedLevelPointer.value || !course.value) {
+    return false;
+  }
+  const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
+  const levelIndex: number = selectedLevelPointer.value.levelIndex;
+  return chapterIndex < course.value.chapters.length - 1 || levelIndex < course.value.chapters[chapterIndex].levels.length - 1;
 });
 
-async function fetchEdit(): Promise<void> {
+const selectedLevel: ComputedRef<LevelData | null> = computed(() => {
+  if (!selectedLevelPointer.value || !course.value) {
+    return null;
+  }
+  let chapterIndex = selectedLevelPointer.value.chapterIndex;
+  let levelIndex = selectedLevelPointer.value.levelIndex;
+  return course.value.chapters[chapterIndex].levels[levelIndex];
+});
+
+const selectedAxioms: ComputedRef<AxiomData[]> = computed(() => {
+  if (!course.value || !selectedLevelPointer.value) {
+    return [];
+  }
+  let axioms: AxiomData[] = []
+  const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
+  for (let i = 0; i <= chapterIndex; i++) {
+    axioms.push(...course.value.chapters[i].newAxioms);
+  }
+  return axioms;
+}
+);
+
+const selectedDerivates: ComputedRef<AxiomData[]> = computed(() => {
+  if (!course.value || !selectedLevelPointer.value) {
+    return [];
+  }
+  let derivates: AxiomData[] = [];
+  const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
+  const levelIndex: number = selectedLevelPointer.value.levelIndex;
+  const addGoalAxiom = (ch: number, lvl: number) => {
+    if (course.value?.chapters[ch].levels[lvl].bonus) {
+      derivates.push(course.value.chapters[ch].levels[lvl].goalAxiom);
+    }
+  }
+  for (let ch = 0; ch < chapterIndex; ch++) {
+    for (let lvl = 0; lvl < course.value.chapters[ch].levels.length; lvl++) {
+      addGoalAxiom(ch, lvl);
+    }
+  }
+  for (let lvl = 0; lvl < levelIndex; lvl++) {
+    addGoalAxiom(chapterIndex, lvl);
+  }
+  return derivates;
+});
+
+onMounted(() => {
+  fetchCourse();
+  openLevelSelection();
+});
+
+async function fetchCourse(): Promise<void> {
   try {
     const query: string = '?editID=' + props.editID;
     const response = await axios.get('http://localhost:3000/edit' + query);
@@ -64,20 +118,93 @@ async function fetchEdit(): Promise<void> {
   }
 }
 
+function openLevel(chapterIndex: number, levelIndex: number) {
+  selectedLevelPointer.value = { chapterIndex: chapterIndex, levelIndex: levelIndex };
+  openPlayScreen();
+}
+
+function openPlayScreen(): void {
+  hideAll();
+  showPlayScreen.value = true;
+}
+
+function openLevelSelection(): void {
+  hideAll();
+  showLevelSelection.value = true;
+}
+
+function openVictoryWindow(): void {
+  hideAll();
+  showVictoryWindow.value = true;
+}
+
+function hideAll(): void {
+  showLevelSelection.value = false;
+  showPlayScreen.value = false;
+  showVictoryWindow.value = false;
+}
+
 async function saveEdit(): Promise<void> {
   try {
-    const updateData = {
-      editID: props.editID,
+    const updatedData = {
+      saveID: props.editID,
       course: course.value
     };
-    const response = await axios.patch('http://localhost:3000/saveEdit', updateData);
+    const response = await axios.patch(`http://localhost:3000/saveEdit`, updatedData);
     if (response.status === 200) {
-      console.log(response.data.message);
+      console.log('Edit saved successfully:', response.data);
     } else {
-      console.error('Server responded with status', response.status);
+      console.error('Server responded with status:', response.status);
     }
   } catch (error) {
-    console.error('Error fetching data:', error);
+    console.error('Error updating data:', error);
+  }
+}
+
+function addMove(move: MoveData): void {
+  if (!selectedLevelPointer.value || !course.value) {
+    return;
+  }
+  const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
+  const levelIndex: number = selectedLevelPointer.value.levelIndex;
+  course.value.chapters[chapterIndex].levels[levelIndex].moveHistory.push(move);
+  saveEdit();
+}
+
+function finishLevel(): void {
+  if (!selectedLevelPointer.value || !course.value) {
+    return;
+  }
+  openVictoryWindow();
+  const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
+  const levelIndex: number = selectedLevelPointer.value.levelIndex;
+  const level: LevelData = course.value.chapters[chapterIndex].levels[levelIndex];
+  if (!level.bestSolution || level.moveHistory.length < level.bestSolution.length) {
+    course.value.chapters[chapterIndex].levels[levelIndex].bestSolution = level.moveHistory;
+  }
+  course.value.chapters[chapterIndex].levels[levelIndex].moveHistory = [level.moveHistory[0]];
+  saveEdit();
+}
+
+function nextLevel(): void {
+  incrementSelectedLevelPointer();
+  if (selectedLevelPointer.value) {
+    openPlayScreen();
+  }
+}
+
+function incrementSelectedLevelPointer(): void {
+  if (!selectedLevelPointer.value || !course.value) {
+    return;
+  }
+  const maxLevel: number = course.value.chapters[selectedLevelPointer.value.chapterIndex].levels.length;
+  selectedLevelPointer.value.levelIndex += 1;
+  if (selectedLevelPointer.value.levelIndex >= maxLevel) {
+    selectedLevelPointer.value.chapterIndex += 1;
+    selectedLevelPointer.value.levelIndex = 0;
+  }
+  if (selectedLevelPointer.value.chapterIndex >= course.value.chapters.length) {
+    selectedLevelPointer.value = null;
   }
 }
 
@@ -287,30 +414,3 @@ async function submitCourse(): Promise<void> {
   }
 }
 </script>
-
-<style>
-.home-button {
-  width: 10vw;
-  font-size: 1vw;
-  color: black;
-  padding: 0.5vw;
-  background-color: white;
-  border: 0.2vw solid black;
-  border-radius: 1vw;
-  display: grid;
-  place-items: center;
-  user-select: none;
-}
-
-.submit-button {
-  display: grid;
-  place-items: center;
-  padding: 1vw;
-  font-size: 3vw;
-  color: black;
-  background: lightgreen;
-  border: 1vw solid black;
-  border-radius: 2vw;
-  user-select: none;
-}
-</style>

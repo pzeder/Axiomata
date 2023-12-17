@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import { AxiomData, SymbolPointer, SymbolData, SymbolType } from '@/scripts/Interfaces';
 import { defineProps, defineEmits, Ref, ref, withDefaults } from 'vue';
-import SymbolList from './SymbolList.vue'
+import SymbolList from '../axiom/SymbolList.vue'
 import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import { axiomValid } from '@/scripts/AxiomMethods';
 

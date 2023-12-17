@@ -19,7 +19,7 @@ import { AxiomData, LevelData, SymbolData } from '@/scripts/Interfaces';
 import { defineProps, defineEmits, Ref, ref, ComputedRef, computed } from 'vue';
 import AddButton from '@/components/editor/AddButton.vue'
 import EditLevel from './EditLevel.vue'
-import AxiomEditor from '../axiomEditor/AxiomEditor.vue';
+import AxiomEditor from '../AxiomEditor.vue';
 import TextInput from '../TextInput.vue';
 
 interface Props {

@@ -10,14 +10,11 @@
         </div>
         <div class="symbol-add-button" @click="showSymbolEditor = true"> {{ addButtonText }} </div>
     </div>
-    <SymbolEditor v-if="showSymbolEditor" :type="type" @close="showSymbolEditor = false"
-        @addSymbol="(symbol) => emit('addSymbol', symbol)" />
 </template>
 
 <script setup lang="ts">
 import { defineProps, defineEmits, Ref, ref, ComputedRef, computed } from 'vue';
 import SymbolComp from '@/components/axiom/SymbolComp.vue';
-import SymbolEditor from '../symbolEditor/SymbolEditor.vue';
 import { SymbolData, SymbolType } from '@/scripts/Interfaces';
 
 interface Props {
