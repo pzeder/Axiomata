@@ -7,9 +7,10 @@
     </div>
     <AxiomList v-if="chapter.newAxioms.length > 0" :title="''" :axioms="chapter.newAxioms" :symbols="course.symbols"
       :variables="course.variables" :maxWidth=40 :containerWidth=10 :editable="editable"/>
-    <div v-for="(level, levelIndex) in chapter.levels" :key="levelIndex">
-      <div class="new-level-button">
-        <TextButton v-if="editable" text="Neues Level hinzufügen" background="orange" />
+    <transition-group name="level-list" tag="div">
+      <div v-for="(level, levelIndex) in chapter.levels" :key="levelIndex">
+      <div class="new-level-button" v-if="editable">
+        <TextButton text="Neues Level hinzufügen" background="orange" @click="emit('addNewLevel', levelIndex)"/>
       </div>
       <div class="level-package">
         <LevelContainer :course="course" :chapterIndex="chapterIndex" :levelIndex="levelIndex" :level="level"
@@ -17,8 +18,9 @@
         <TextButton v-if="editable" text="Löschen" />
       </div>
     </div>
-    <div class="new-level-button" :style="{ marginLeft: -11.1 + 'vw'}">
-      <TextButton v-if="editable" text="Neues Level hinzufügen" background="orange" />
+    </transition-group>
+    <div class="new-level-button" v-if="editable" :style="{ marginLeft: -11.1 + 'vw'}">
+      <TextButton text="Neues Level hinzufügen" background="orange" @click="emit('addNewLevel', chapter.levels.length)"/>
     </div>
   </div>
 </template>
@@ -41,7 +43,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   editable: () => false
 });
-const emit = defineEmits(['openLevel', 'editText', 'deleteChapter']);
+const emit = defineEmits(['openLevel', 'editText', 'deleteChapter', 'addNewLevel']);
 </script>
 
 <style>
@@ -77,23 +79,23 @@ const emit = defineEmits(['openLevel', 'editText', 'deleteChapter']);
   align-items: center;
 }
 
-.chapter-list-enter-active,
-.chapter-list-leave-active {
+.level-list-enter-active,
+.level-list-leave-active {
   transition: all 0.5s ease;
 }
 
-.chapter-list-enter,
-.chapter-list-leave-to {
+.level-list-enter,
+.level-list-leave-to {
   opacity: 0;
   transform: translateX(-10vw);
 }
 
-.chapter-list-move {
+.level-list-move {
   transition: transform 0.5s ease;
   transition-delay: 0.3s;
 }
 
-.chapter-list-leave-active {
+.level-list-leave-active {
   position: absolute;
 }
 </style>

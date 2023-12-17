@@ -6,7 +6,8 @@
     @openLevel="(chapterIndex, levelIndex) => emit('openLevel', chapterIndex, levelIndex)"
     @editText="(pointer) => emit('editText', pointer)"
     @addNewChapter="(index) => emit('addNewChapter', index)"
-    @deleteChapter="(index) => emit('deleteChapter', index)" />
+    @deleteChapter="(index) => emit('deleteChapter', index)"
+    @addNewLevel="(chapterIndex, levelIndex) => emit('addNewLevel', chapterIndex, levelIndex)" />
 </template>
 
 <script setup lang="ts">
@@ -24,7 +25,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   editable: () => false
 });
-const emit = defineEmits(['openLevel', 'openHomeScreen', 'editText', 'addNewChapter', 'deleteChapter']);
+const emit = defineEmits(['openLevel', 'openHomeScreen', 'editText', 'addNewChapter', 'deleteChapter', 'addNewLevel']);
 </script>
 
 <style>

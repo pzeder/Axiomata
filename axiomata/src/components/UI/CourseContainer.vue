@@ -14,7 +14,8 @@
           :frontLevelPointer="frontLevelPointer" :editable="editable"
           @openLevel="(levelIndex) => emit('openLevel', chapterIndex, levelIndex)" 
           @editText="emit('editText', { target: TextEditTarget.CHAPTER, index: chapterIndex })"
-         @deleteChapter="emit('deleteChapter', chapterIndex)"/>
+          @deleteChapter="emit('deleteChapter', chapterIndex)"
+          @addNewLevel="(levelIndex) => emit('addNewLevel', chapterIndex, levelIndex)"/>
       </div>
     </transition-group>
     <div class="new-chapter-button">
@@ -40,7 +41,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   editable: () => false
 });
-const emit = defineEmits(['editText', 'openLevel', 'addNewChapter', 'deleteChapter']);
+const emit = defineEmits(['editText', 'openLevel', 'addNewChapter', 'deleteChapter', 'addNewLevel']);
 </script>
 
 <style>
