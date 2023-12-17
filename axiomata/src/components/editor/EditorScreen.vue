@@ -5,7 +5,7 @@
     <PlayScreen v-if="showPlayScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
       :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openLevelSelection="openLevelSelection"
       @finishLevel="finishLevel" />
-    <TextInput v-if="showTextInput" :title="textEditTitle" :placeholder="textEditPlaceholder"
+    <TextInputWindow v-if="showTextInput" :title="textEditTitle" :placeholder="textEditPlaceholder"
       @close="showTextInput = false" @updateText="updateText"/>
   </div>
 </template>
@@ -16,7 +16,7 @@ import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef } from 'vue';
 import LevelSelection from '../menus/LevelSelection.vue';
 import PlayScreen from '../play/PlayScreen.vue';
-import TextInput from '../UI/TextInput.vue';
+import TextInputWindow from '../UI/TextInputWindow.vue';
 
 interface Props {
   editID: any;
