@@ -16,7 +16,8 @@
           @editText="emit('editText', { target: TextEditTarget.CHAPTER, index: chapterIndex })"
           @deleteChapter="emit('deleteChapter', chapterIndex)"
           @addNewLevel="(levelIndex) => emit('addNewLevel', chapterIndex, levelIndex)"
-          @deleteLevel="(levelIndex) => emit('deleteLevel', chapterIndex, levelIndex)"/>
+          @deleteLevel="(levelIndex) => emit('deleteLevel', chapterIndex, levelIndex)"
+          @toggleBonus="(levelIndex) => emit('toggleBonus', chapterIndex, levelIndex)"/>
       </div>
     </transition-group>
     <div class="new-chapter-button">
@@ -42,7 +43,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   editable: () => false
 });
-const emit = defineEmits(['editText', 'openLevel', 'addNewChapter', 'deleteChapter', 'addNewLevel', 'deleteLevel']);
+const emit = defineEmits(['editText', 'openLevel', 'addNewChapter', 'deleteChapter', 'addNewLevel', 'deleteLevel',
+  'toggleBonus']);
 </script>
 
 <style>

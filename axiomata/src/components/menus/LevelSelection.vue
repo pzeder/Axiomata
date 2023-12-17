@@ -8,7 +8,8 @@
     @addNewChapter="(index) => emit('addNewChapter', index)"
     @deleteChapter="(index) => emit('deleteChapter', index)"
     @addNewLevel="(chapterIndex, levelIndex) => emit('addNewLevel', chapterIndex, levelIndex)"
-    @deleteLevel="(chapterIndex, levelIndex) => emit('deleteLevel', chapterIndex, levelIndex)" />
+    @deleteLevel="(chapterIndex, levelIndex) => emit('deleteLevel', chapterIndex, levelIndex)"
+    @toggleBonus="(chapterIndex, levelIndex) => emit('toggleBonus', chapterIndex, levelIndex)" />
 </template>
 
 <script setup lang="ts">
@@ -26,7 +27,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   editable: () => false
 });
-const emit = defineEmits(['openLevel', 'openHomeScreen', 'editText', 'addNewChapter', 'deleteChapter', 'addNewLevel', 'deleteLevel']);
+const emit = defineEmits(['openLevel', 'openHomeScreen', 'editText', 'addNewChapter', 'deleteChapter', 'addNewLevel', 'deleteLevel', 'toggleBonus']);
 </script>
 
 <style>

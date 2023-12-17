@@ -14,7 +14,8 @@
       </div>
       <div class="level-package">
         <LevelContainer :course="course" :chapterIndex="chapterIndex" :levelIndex="levelIndex" :level="level"
-          :frontLevelPointer="frontLevelPointer" :editable="editable" @openLevel="emit('openLevel', levelIndex)" />
+          :frontLevelPointer="frontLevelPointer" :editable="editable" @openLevel="emit('openLevel', levelIndex)" 
+          @toggleBonus="emit('toggleBonus', levelIndex)"/>
         <TextButton v-if="editable" text="Löschen" @click="emit('deleteLevel', levelIndex)"/>
       </div>
     </div>
@@ -43,7 +44,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   editable: () => false
 });
-const emit = defineEmits(['openLevel', 'editText', 'deleteChapter', 'addNewLevel', 'deleteLevel']);
+const emit = defineEmits(['openLevel', 'editText', 'deleteChapter', 'addNewLevel', 'deleteLevel', 'toggleBonus']);
 </script>
 
 <style>

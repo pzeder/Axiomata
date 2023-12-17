@@ -5,7 +5,7 @@
       :borderColor="levelColor"/>
     <div class="level-title"> Level {{ levelNumber }} </div>
     <div class="edit-bonus-tag" v-if="editable">
-      <TextButton :text="bonusTagText" :background="bonusTagColor"/>
+      <TextButton :text="bonusTagText" :background="bonusTagColor" @click="emit('toggleBonus')"/>
     </div>
     <div class="test-button" v-if="editable">
       <TextButton text="Testen" background="lightgreen" />
@@ -29,7 +29,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['openLevel']);
+const emit = defineEmits(['openLevel', 'toggleBonus']);
 
 const levelNumber: ComputedRef<number> = computed(() => {
   return props.course.chapters.slice(0, props.chapterIndex).map(c => c.levels.length).reduce((acc, val) =>  acc + val, 1) + props.levelIndex;
