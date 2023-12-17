@@ -2,8 +2,14 @@
   <div class="level-container" @click="emit('openLevel')" :style="{ backgroundColor: levelColor(levelIndex, level) }">
     <AxiomContainer class="goal-axiom" :width=10 :height=10 :axiom="level.goalAxiom" :symbols="course.symbols"
       :variables="course.variables" :background="levelColor(levelIndex, level)"
-      :borderColor="levelColor(levelIndex, level)" />
+      :borderColor="levelColor(levelIndex, level)"/>
     <div class="level-title"> Level {{ levelNumber }} </div>
+    <div class="edit-bonus-tag" v-if="editable">
+      <TextButton :text="bonusTagText" :background="bonusTagColor"/>
+    </div>
+    <div class="test-button" v-if="editable">
+      <TextButton text="Testen" background="lightgreen" />
+    </div>
   </div>
 </template>
 
@@ -11,6 +17,7 @@
 import { defineProps, defineEmits, ComputedRef, computed } from 'vue';
 import AxiomContainer from '../axiom/AxiomContainer.vue';
 import { CourseData, LevelData, LevelPointer } from '@/scripts/Interfaces';
+import TextButton from './TextButton.vue';
 
 interface Props {
   course: CourseData;
@@ -18,6 +25,7 @@ interface Props {
   levelIndex: number;
   level: LevelData;
   frontLevelPointer: LevelPointer | null;
+  editable: boolean;
 }
 
 const props = defineProps<Props>();
@@ -26,6 +34,9 @@ const emit = defineEmits(['openLevel']);
 const levelNumber: ComputedRef<number> = computed(() => {
   return props.course.chapters.slice(0, props.chapterIndex).map(c => c.levels.length).reduce((acc, val) =>  acc + val, 1) + props.levelIndex;
 });
+
+const bonusTagText: ComputedRef<string> = computed(() => props.level.bonus ? 'BONUS' : 'NORMAL');
+const bonusTagColor: ComputedRef<string> = computed(() => props.level.bonus ? 'gold' : 'grey');
 
 function isFrontLevel(levelIndex: number): boolean {
   return props.frontLevelPointer?.chapterIndex === props.chapterIndex && props.frontLevelPointer?.levelIndex === levelIndex;
@@ -70,5 +81,9 @@ function levelColor(levelIndex: number, level: LevelData): string {
   padding-left: 3vw;
   padding-right: 10vw;
   color: rgb(44, 44, 44);
+}
+
+.test-button {
+  margin-right: 2vw;
 }
 </style>

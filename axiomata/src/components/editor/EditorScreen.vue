@@ -2,7 +2,8 @@
   <div v-if="course">
     <LevelSelection v-if="showLevelSelection" :course="course" :frontLevelPointer="null" :editable="true"
       @editText="editText" @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" 
-      @addNewChapter="addNewChapter" @deleteChapter="deleteChapter" @addNewLevel="addNewLevel"/>
+      @addNewChapter="addNewChapter" @deleteChapter="deleteChapter" @addNewLevel="addNewLevel"
+      @deleteLevel="deleteLevel"/>
     <PlayScreen v-if="showPlayScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
       :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openLevelSelection="openLevelSelection"
       @finishLevel="finishLevel" />

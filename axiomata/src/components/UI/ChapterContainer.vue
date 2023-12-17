@@ -14,8 +14,8 @@
       </div>
       <div class="level-package">
         <LevelContainer :course="course" :chapterIndex="chapterIndex" :levelIndex="levelIndex" :level="level"
-          :frontLevelPointer="frontLevelPointer" @openLevel="emit('openLevel', levelIndex)" />
-        <TextButton v-if="editable" text="Löschen" />
+          :frontLevelPointer="frontLevelPointer" :editable="editable" @openLevel="emit('openLevel', levelIndex)" />
+        <TextButton v-if="editable" text="Löschen" @click="emit('deleteLevel', levelIndex)"/>
       </div>
     </div>
     </transition-group>
@@ -29,7 +29,7 @@
 import { defineProps, withDefaults, defineEmits } from 'vue';
 import AxiomList from '@/components/axiom/AxiomList.vue';
 import LevelContainer from './LevelContainer.vue';
-import { ChapterData, CourseData, LevelPointer, TextEditTarget } from '@/scripts/Interfaces';
+import { ChapterData, CourseData, LevelPointer } from '@/scripts/Interfaces';
 import TextButton from './TextButton.vue';
 
 interface Props {
@@ -43,7 +43,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   editable: () => false
 });
-const emit = defineEmits(['openLevel', 'editText', 'deleteChapter', 'addNewLevel']);
+const emit = defineEmits(['openLevel', 'editText', 'deleteChapter', 'addNewLevel', 'deleteLevel']);
 </script>
 
 <style>
@@ -77,25 +77,5 @@ const emit = defineEmits(['openLevel', 'editText', 'deleteChapter', 'addNewLevel
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.level-list-enter-active,
-.level-list-leave-active {
-  transition: all 0.5s ease;
-}
-
-.level-list-enter,
-.level-list-leave-to {
-  opacity: 0;
-  transform: translateX(-10vw);
-}
-
-.level-list-move {
-  transition: transform 0.5s ease;
-  transition-delay: 0.3s;
-}
-
-.level-list-leave-active {
-  position: absolute;
 }
 </style>

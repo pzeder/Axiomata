@@ -15,7 +15,8 @@
           @openLevel="(levelIndex) => emit('openLevel', chapterIndex, levelIndex)" 
           @editText="emit('editText', { target: TextEditTarget.CHAPTER, index: chapterIndex })"
           @deleteChapter="emit('deleteChapter', chapterIndex)"
-          @addNewLevel="(levelIndex) => emit('addNewLevel', chapterIndex, levelIndex)"/>
+          @addNewLevel="(levelIndex) => emit('addNewLevel', chapterIndex, levelIndex)"
+          @deleteLevel="(levelIndex) => emit('deleteLevel', chapterIndex, levelIndex)"/>
       </div>
     </transition-group>
     <div class="new-chapter-button">
@@ -41,7 +42,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   editable: () => false
 });
-const emit = defineEmits(['editText', 'openLevel', 'addNewChapter', 'deleteChapter', 'addNewLevel']);
+const emit = defineEmits(['editText', 'openLevel', 'addNewChapter', 'deleteChapter', 'addNewLevel', 'deleteLevel']);
 </script>
 
 <style>
@@ -70,25 +71,5 @@ const emit = defineEmits(['editText', 'openLevel', 'addNewChapter', 'deleteChapt
   font-size: 9vw;
   color: rgb(44, 44, 44);
   user-select: none;
-}
-
-.chapter-list-enter-active,
-.chapter-list-leave-active {
-  transition: all 0.5s ease;
-}
-
-.chapter-list-enter,
-.chapter-list-leave-to {
-  opacity: 0;
-  transform: translateX(-10vw);
-}
-
-.chapter-list-move {
-  transition: transform 0.5s ease;
-  transition-delay: 0.3s;
-}
-
-.chapter-list-leave-active {
-  position: absolute;
 }
 </style>
