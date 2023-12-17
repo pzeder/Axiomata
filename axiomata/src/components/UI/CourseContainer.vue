@@ -7,7 +7,7 @@
     </div>
     <div v-for="(chapter, chapterIndex) in course.chapters" :key="chapterIndex">
       <div class="new-chapter-button">
-        <TextButton v-if="editable" text="Neues Kapitel hinzufügen" background="lightblue" />
+        <TextButton v-if="editable" text="Neues Kapitel hinzufügen" background="lightblue" @click="emit('addNewChapter', chapterIndex)" />
       </div>
       <ChapterContainer :course="course" :chapterIndex="chapterIndex" :chapter="chapter"
         :frontLevelPointer="frontLevelPointer" :editable="editable"
@@ -15,7 +15,8 @@
     </div>
     <div class="new-chapter-button">
       <TextButton v-if="editable" text="Neues Kapitel hinzufügen" background="lightblue" 
-        :style="{ width: 16.5 + 'vw', marginLeft: -8.5 + 'vw'}" />
+        :style="{ width: 16.5 + 'vw', marginLeft: -8.5 + 'vw'}"
+        @click="emit('addNewChapter', course.chapters.length)" />
     </div>
   </div>
 </template>
@@ -35,7 +36,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   editable: () => false
 });
-const emit = defineEmits(['editText', 'openLevel']);
+const emit = defineEmits(['editText', 'openLevel', 'addNewChapter']);
 </script>
 
 <style>
