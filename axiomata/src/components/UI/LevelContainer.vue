@@ -1,8 +1,8 @@
 <template>
-  <div class="level-container" @click="emit('openLevel')" :style="{ backgroundColor: levelColor(levelIndex, level) }">
+  <div class="level-container" @click="handleClick" :style="{ backgroundColor: levelColor }">
     <AxiomContainer class="goal-axiom" :width=10 :height=10 :axiom="level.goalAxiom" :symbols="course.symbols"
-      :variables="course.variables" :background="levelColor(levelIndex, level)"
-      :borderColor="levelColor(levelIndex, level)"/>
+      :variables="course.variables" :background="levelColor"
+      :borderColor="levelColor"/>
     <div class="level-title"> Level {{ levelNumber }} </div>
     <div class="edit-bonus-tag" v-if="editable">
       <TextButton :text="bonusTagText" :background="bonusTagColor"/>
@@ -38,12 +38,17 @@ const levelNumber: ComputedRef<number> = computed(() => {
 const bonusTagText: ComputedRef<string> = computed(() => props.level.bonus ? 'BONUS' : 'NORMAL');
 const bonusTagColor: ComputedRef<string> = computed(() => props.level.bonus ? 'gold' : 'grey');
 
-function isFrontLevel(levelIndex: number): boolean {
-  return props.frontLevelPointer?.chapterIndex === props.chapterIndex && props.frontLevelPointer?.levelIndex === levelIndex;
-}
+const isFrontLevel: ComputedRef<boolean> = computed(() => props.frontLevelPointer?.chapterIndex === props.chapterIndex && props.frontLevelPointer?.levelIndex === props.levelIndex);
 
-function levelColor(levelIndex: number, level: LevelData): string {
-  return (isFrontLevel(levelIndex) ? 'orange' : (level.bestSolution ? 'lightgreen' : 'rgb(150,150,150)'));
+const levelColor: ComputedRef<string> = computed(() => isFrontLevel.value ? 'orange' : (props.level.bestSolution ? 'lightgreen' : 'rgb(150,150,150)')); 
+
+function handleClick(): void {
+  if (props.editable) {
+    return;
+  }
+  if (isFrontLevel.value || props.level.bestSolution) {
+    emit('openLevel');
+  }
 }
 </script>
 
