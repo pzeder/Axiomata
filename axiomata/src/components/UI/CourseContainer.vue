@@ -5,16 +5,18 @@
       <TextButton v-if="editable" text="Titel ändern" background="yellow" 
       @click="emit('editText', { target: TextEditTarget.COURSE, index: -1 } )"/>
     </div>
-    <div v-for="(chapter, chapterIndex) in course.chapters" :key="chapterIndex">
-      <div class="new-chapter-button">
-        <TextButton v-if="editable" text="Neues Kapitel hinzufügen" background="lightblue" @click="emit('addNewChapter', chapterIndex)" />
+    <transition-group name="chapter-list" tag="div">
+      <div v-for="(chapter, chapterIndex) in course.chapters" :key="chapter.title">
+        <div class="new-chapter-button">
+          <TextButton v-if="editable" text="Neues Kapitel hinzufügen" background="lightblue" @click="emit('addNewChapter', chapterIndex)" />
+        </div>
+        <ChapterContainer :course="course" :chapterIndex="chapterIndex" :chapter="chapter"
+          :frontLevelPointer="frontLevelPointer" :editable="editable"
+          @openLevel="(levelIndex) => emit('openLevel', chapterIndex, levelIndex)" 
+          @editText="emit('editText', { target: TextEditTarget.CHAPTER, index: chapterIndex })"
+         @deleteChapter="emit('deleteChapter', chapterIndex)"/>
       </div>
-      <ChapterContainer :course="course" :chapterIndex="chapterIndex" :chapter="chapter"
-        :frontLevelPointer="frontLevelPointer" :editable="editable"
-        @openLevel="(levelIndex) => emit('openLevel', chapterIndex, levelIndex)" 
-        @editText="emit('editText', { target: TextEditTarget.CHAPTER, index: chapterIndex })"
-        @deleteChapter="emit('deleteChapter', chapterIndex)"/>
-    </div>
+    </transition-group>
     <div class="new-chapter-button">
       <TextButton v-if="editable" text="Neues Kapitel hinzufügen" background="lightblue" 
         :style="{ width: 16.5 + 'vw', marginLeft: -8.5 + 'vw'}"
@@ -67,5 +69,25 @@ const emit = defineEmits(['editText', 'openLevel', 'addNewChapter', 'deleteChapt
   font-size: 9vw;
   color: rgb(44, 44, 44);
   user-select: none;
+}
+
+.chapter-list-enter-active,
+.chapter-list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.chapter-list-enter,
+.chapter-list-leave-to {
+  opacity: 0;
+  transform: translateX(-10vw);
+}
+
+.chapter-list-move {
+  transition: transform 0.5s ease;
+  transition-delay: 0.3s;
+}
+
+.chapter-list-leave-active {
+  position: absolute;
 }
 </style>

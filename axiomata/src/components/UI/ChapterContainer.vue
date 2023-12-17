@@ -76,4 +76,24 @@ const emit = defineEmits(['openLevel', 'editText', 'deleteChapter']);
   justify-content: center;
   align-items: center;
 }
+
+.chapter-list-enter-active,
+.chapter-list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.chapter-list-enter,
+.chapter-list-leave-to {
+  opacity: 0;
+  transform: translateX(-10vw);
+}
+
+.chapter-list-move {
+  transition: transform 0.5s ease;
+  transition-delay: 0.3s;
+}
+
+.chapter-list-leave-active {
+  position: absolute;
+}
 </style>
