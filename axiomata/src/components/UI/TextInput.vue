@@ -2,18 +2,19 @@
   <div class="backdrop-text" />
   <div class="screen-container-text" @click="emit('close')">
     <div class="text-input-window" @click.stop="() => { }">
-      <div class="ti-headbar"> {{ title }} </div>
-      <div :style="{ display: 'flex' }">
+      <div class="text-input-title"> {{ title }} </div>
         <input id="input-bar" type="text" maxLength=100 v-model="textInput" :placeholder="placeholder"
-          @keyup.enter="confirm">
-        <div class="ok-button" @click="confirm"> ok </div>
-      </div>
+          @keyup.enter="confirm" autocomplete="off">
+        <div class="ok-button-container">
+          <TextButton text="OK" background="lightgreen" @click="confirm"/>
+        </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { defineProps, Ref, ref, defineEmits } from 'vue';
+import TextButton from './TextButton.vue';
 
 interface Props {
   title: string;
@@ -55,40 +56,31 @@ function confirm(): void {
 }
 
 .text-input-window {
-  position: absolute;
-  width: 30vw;
-  height: 15vh;
-  background-color: orange;
+  background-color: lightblue;
+  border: 0.5vw solid rgb(44,44,44);
+  border-radius: 1vw;
   z-index: 400;
+  display: grid;
+  place-items: center;
 }
 
-.ti-headbar {
-  width: 100%;
-  height: 30%;
-  background-color: rgb(215, 140, 0);
+.text-input-title {
+  font-size: 2vw;
   text-align: center;
-  font-size: 4vh;
-  user-select: none;
+  padding: 1vw;
+  color: rgb(44,44,44);
 }
 
 #input-bar {
-  width: 50%;
-  height: 20%;
-  padding: 10px;
-  margin: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  width: 20vw;
+  height: 2vw;
+  padding: 0.3vw;
+  border: 0.1vw solid #ccc;
+  border-radius: 0.5vw;
+  font-size: 1vw;
 }
 
-.ok-button {
-  width: 10%;
-  height: 20%;
-  margin: 2vw;
-  background-color: green;
-  border: 1px solid black;
-  border-radius: 4px;
-  text-align: center;
-  color: black;
-  user-select: none;
+.ok-button-container {
+  padding: 1vw;
 }
 </style>
