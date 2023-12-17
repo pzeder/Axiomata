@@ -3,12 +3,12 @@
     <AxiomContainer class="goal-axiom" :width=10 :height=10 :axiom="level.goalAxiom" :symbols="course.symbols"
       :variables="course.variables" :background="levelColor(levelIndex, level)"
       :borderColor="levelColor(levelIndex, level)" />
-    <div class="level-title"> {{ level.title }} </div>
+    <div class="level-title"> Level {{ levelNumber }} </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, ComputedRef, computed } from 'vue';
 import AxiomContainer from '../axiom/AxiomContainer.vue';
 import { CourseData, LevelData, LevelPointer } from '@/scripts/Interfaces';
 
@@ -22,6 +22,10 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['openLevel']);
+
+const levelNumber: ComputedRef<number> = computed(() => {
+  return props.course.chapters.slice(0, props.chapterIndex).map(c => c.levels.length).reduce((acc, val) =>  acc + val, 1) + props.levelIndex;
+});
 
 function isFrontLevel(levelIndex: number): boolean {
   return props.frontLevelPointer?.chapterIndex === props.chapterIndex && props.frontLevelPointer?.levelIndex === levelIndex;
