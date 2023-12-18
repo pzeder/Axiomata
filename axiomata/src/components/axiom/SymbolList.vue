@@ -8,7 +8,9 @@
             <div class="symbol-delete-button" @click="emit('deleteSymbol', { type: type, index: index })"> Löschen
             </div>
         </div>
-        <div class="symbol-add-button" @click="showSymbolEditor = true"> {{ addButtonText }} </div>
+        <div class="symbol-add-button">
+            <TextButton :text="addButtonText" background="lightgreen" @click="showSymbolEditor = true" />
+        </div> 
     </div>
 </template>
 
@@ -16,6 +18,7 @@
 import { defineProps, defineEmits, Ref, ref, ComputedRef, computed } from 'vue';
 import SymbolComp from '@/components/axiom/SymbolComp.vue';
 import { SymbolData, SymbolType } from '@/scripts/Interfaces';
+import TextButton from '../UI/TextButton.vue';
 
 interface Props {
     symbols: SymbolData[] | undefined;
@@ -79,17 +82,8 @@ function varTagColor(symbol: SymbolData): string {
 }
 
 .symbol-add-button {
-    width: 20vw;
-    height: 5vh;
-    border: 2px solid black;
-    border-radius: 5vw;
-    margin-top: 2vw;
-    margin-bottom: 2vw;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10pt;
-    user-select: none;
-    background: rgb(104, 206, 104);
+    margin: 2vw;
+    display: grid;
+    place-items: center;
 }
 </style>

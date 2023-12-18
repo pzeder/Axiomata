@@ -10,7 +10,7 @@
     <TextInputWindow v-if="showTextInput" :title="textEditTitle" :placeholder="textEditPlaceholder"
       @close="showTextInput = false" @updateText="updateText"/>
     <AxiomEditor v-if="showAxiomEditor" :axiom="editedAxiom" :symbols="course.symbols" :variables="course.variables" :upTitle="axiomEditorUpTitle"
-      :lowTitle="axiomEditorLowTitle" :borderColor="axiomEditorBorderColor"/>
+      :lowTitle="axiomEditorLowTitle" :borderColor="axiomEditorBorderColor" @close="showAxiomEditor = false"/>
   </div>
 </template>
 

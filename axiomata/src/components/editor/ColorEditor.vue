@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { ComputedRef, Ref, computed, ref, defineEmits, defineProps } from 'vue';
-import ValueSlider from './ValueSlider.vue';
+import ValueSlider from '../UI/ValueSlider.vue';
 
 interface Props {
   title: string;

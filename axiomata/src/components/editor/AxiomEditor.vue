@@ -22,8 +22,12 @@
                 @symbolClicked="(symbol) => addSymbolToSequence(symbol)" />
         </div>
         <div class="button-container">
-            <div class="axiom-cancel-button" @click="emit('close')"> Abbrechen </div>
-            <div v-if="axiomValid(axiom)" class="axiom-save-button" @click="confirm"> Speichern </div>
+            <div class="axiom-editor-button">
+                <TextButton text="Abbrechen" background="red" @click="emit('close')" />
+            </div>
+            <div class="axiom-editor-button" v-if="axiomValid(axiom)">
+                <TextButton text="Speichern" background="lightgreen" @click="confirm" />
+            </div>
         </div>
     </div>
 </template>
@@ -34,6 +38,7 @@ import { defineProps, defineEmits, Ref, ref, withDefaults } from 'vue';
 import SymbolList from '../axiom/SymbolList.vue'
 import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import { axiomValid } from '@/scripts/AxiomMethods';
+import TextButton from '../UI/TextButton.vue';
 
 interface Props {
     axiom: AxiomData | null;
@@ -115,15 +120,9 @@ function confirm(): void {
     display: flex;
 }
 
-.axiom-cancel-button {
+.axiom-editor-button {
     display: grid;
     place-items: center;
-    border: 0.2vw solid black;
-    border-radius: 2vw;
-    font-size: 2vw;
-    padding: 3vw;
-    background: rgb(230, 33, 3);
-    user-select: none;
 }
 
 .axiom-save-button {
