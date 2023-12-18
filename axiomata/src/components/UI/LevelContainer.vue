@@ -1,6 +1,6 @@
 <template>
   <div class="level-container" @click="handleClick" :style="{ backgroundColor: levelColor }">
-    <div class="axiom-placeholder"> 
+    <div class="axiom-placeholder" v-if="editable && !level.goalAxiom"> 
       <TextButton text="START / ZIEL festlegen" background="white"/>
     </div>
     <AxiomContainer class="goal-axiom" v-if="axiomValid(level.goalAxiom)" :width=10 :height=10 :axiom="level.goalAxiom" :symbols="course.symbols"
