@@ -3,7 +3,7 @@
     width: symbolWidth + 'vw',
     height: symbolWidth + 'vw',
     background: backgroundColor,
-    color: symbol.textColor,
+    color: getColorString(symbol.textColor),
     borderColor: borderColor,
     borderWidth: (symbolWidth * 0.077) + 'vw',
     borderRadius: borderRadius + 'vw',
@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { SymbolData, SymbolType } from "@/scripts/Interfaces";
+import { ColorValue, SymbolData, SymbolType } from "@/scripts/Interfaces";
 import { ComputedRef, computed, defineProps, withDefaults } from "vue";
 
 interface Props {
@@ -33,8 +33,12 @@ const borderRadius: ComputedRef<number> = computed(() =>
 const borderColor: ComputedRef<string> = computed(() =>
   props.highlight ? 'rgb(144, 144, 144)' : 'rgb(42, 42, 42)');
 
+function getColorString(rgb: ColorValue): string {
+  return 'rgb(' + rgb.red + ',' + rgb.green + ',' + rgb.blue + ')';
+}
+
 const backgroundColor: ComputedRef<string> = computed(() =>
-  props.symbol?.type === SymbolType.TERMINAL ? props.symbol.backgroundColor : 'linear-gradient(45deg, red, orange, yellow, lightgreen, lightblue, violet)');
+  props.symbol?.type === SymbolType.TERMINAL ? getColorString(props.symbol.backgroundColor) : 'linear-gradient(45deg, red, orange, yellow, lightgreen, lightblue, violet)');
 </script>
 
 <style>

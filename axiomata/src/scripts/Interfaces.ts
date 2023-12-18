@@ -8,9 +8,9 @@ export enum SymbolType {
 }
 
 export interface SymbolData {
-    backgroundColor: string;
+    backgroundColor: ColorValue;
     text: string;
-    textColor: string;
+    textColor: ColorValue;
     fontSize: number;
     type: SymbolType;
     varTarget: boolean;
@@ -68,4 +68,10 @@ export enum AxiomEditTarget {
 export interface AxiomEditPointer {
     target: AxiomEditTarget;
     levelPointer: LevelPointer;
+}
+
+export interface ColorValue {
+    red: number;
+    green: number;
+    blue: number;
 }

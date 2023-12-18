@@ -1,17 +1,21 @@
 <template>
   <div v-if="course">
     <LevelSelection v-if="showLevelSelection" :course="course" :frontLevelPointer="null" :editable="true"
-      @editText="editText" @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" 
-      @addNewChapter="addNewChapter" @deleteChapter="deleteChapter" @addNewLevel="addNewLevel"
-      @deleteLevel="deleteLevel" @toggleBonus="toggleBonus" @editAxiom="editAxiom"/>
+      @editText="editText" @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" @addNewChapter="addNewChapter"
+      @deleteChapter="deleteChapter" @addNewLevel="addNewLevel" @deleteLevel="deleteLevel" @toggleBonus="toggleBonus"
+      @editAxiom="editAxiom" />
     <PlayScreen v-if="showPlayScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
       :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openLevelSelection="openLevelSelection"
       @finishLevel="finishLevel" />
     <TextInputWindow v-if="showTextInput" :title="textEditTitle" :placeholder="textEditPlaceholder"
-      @close="showTextInput = false" @updateText="updateText"/>
-    <AxiomEditor v-if="showAxiomEditor" :axiom="editedAxiom" :symbols="course.symbols" :variables="course.variables" :upTitle="axiomEditorUpTitle"
-      :lowTitle="axiomEditorLowTitle" :borderColor="axiomEditorBorderColor" @close="showAxiomEditor = false"/>
-  </div>
+      @close="showTextInput = false" @updateText="updateText" />
+    <AxiomEditor v-if="showAxiomEditor" :axiom="editedAxiom" :symbols="course.symbols" :variables="course.variables"
+      :upTitle="axiomEditorUpTitle" :lowTitle="axiomEditorLowTitle" :borderColor="axiomEditorBorderColor"
+      @close="showAxiomEditor = false" @editSymbol="editSymbol" />
+    <SymbolEditor v-if="showSymbolEditor && editedSymbol" :symbol="editedSymbol" @updateSymbol="updateSymbol"
+      @close="showSymbolEditor = false" />
+    <div> {{ editSymbolPointer }}</div>
+  </div>"
 </template>
 
 <script setup lang="ts">
@@ -22,6 +26,7 @@ import LevelSelection from '../menus/LevelSelection.vue';
 import PlayScreen from '../play/PlayScreen.vue';
 import TextInputWindow from '../UI/TextInputWindow.vue';
 import AxiomEditor from './AxiomEditor.vue';
+import SymbolEditor from './SymbolEditor.vue';
 
 interface Props {
   editID: any;
@@ -40,6 +45,33 @@ const textEditPointer: Ref<TextEditPointer | null> = ref(null);
 const course: Ref<CourseData | null> = ref(null);
 const showAxiomEditor: Ref<boolean> = ref(false);
 const axiomEditPointer: Ref<AxiomEditPointer | null> = ref(null);
+const showSymbolEditor: Ref<boolean> = ref(false);
+const editSymbolPointer: Ref<SymbolPointer | null> = ref(null)
+
+const editedSymbol: ComputedRef<SymbolData | null> = computed(() => {
+  if (!editSymbolPointer.value || !course.value) {
+    return null;
+  }
+  if (editSymbolPointer.value.type === SymbolType.TERMINAL && editSymbolPointer.value.index < course.value.symbols.length) {
+    return course.value.symbols[editSymbolPointer.value.index];
+  }
+  if (editSymbolPointer.value.type === SymbolType.VARIABLE && editSymbolPointer.value.index < course.value.variables.length) {
+    return course.value.variables[editSymbolPointer.value.index];
+  }
+  return ({
+    backgroundColor: { red: 255, green: 255, blue: 255 },
+    text: 'text',
+    textColor: { red: 44, green: 44, blue: 44 },
+    fontSize: 35,
+    type: editSymbolPointer.value.type,
+    varTarget: true
+  });
+});
+
+function editSymbol(pointer: SymbolPointer): void {
+  editSymbolPointer.value = pointer;
+  showSymbolEditor.value = true;
+}
 
 const textEditTitle: ComputedRef<string> = computed(() => {
   if (!textEditPointer.value || !course.value) {
@@ -67,13 +99,11 @@ const textEditPlaceholder: ComputedRef<string> = computed(() => {
       return course.value.title;
     case TextEditTarget.CHAPTER:
       return course.value.chapters[index].title;
-    case TextEditTarget.SYMBOL:
-      return course.value.symbols[index].text;
     default:
       return '';
   }
 });
-  
+
 const invalidLevel = (level: LevelData): boolean =>
   level.goalAxiom?.upperSequence.length === 0 || level.goalAxiom?.lowerSequence.length === 0;
 
@@ -233,9 +263,6 @@ function updateText(text: string): void {
     case TextEditTarget.CHAPTER:
       course.value.chapters[index].title = text;
       break;
-    case TextEditTarget.SYMBOL:
-      course.value.symbols[index].text = text;
-      break;
   }
   saveEdit();
 }
@@ -308,14 +335,15 @@ function deleteChapter(chapterIndex: number) {
   saveEdit();
 }
 
-function updateSymbol(pointer: SymbolPointer, symbol: SymbolData): void {
-  if (!course.value) {
+function updateSymbol(symbol: SymbolData): void {
+  if (!course.value || !editSymbolPointer.value) {
     return
   }
   if (symbol.type === SymbolType.VARIABLE) {
-    course.value.variables.push(symbol);
-  } else {
-    course.value.symbols.push(symbol);
+    course.value.variables.splice(editSymbolPointer.value.index, 1, symbol);
+  }
+  if (symbol.type === SymbolType.TERMINAL) {
+    course.value.symbols.splice(editSymbolPointer.value.index, 1, symbol);
   }
   saveEdit();
 }

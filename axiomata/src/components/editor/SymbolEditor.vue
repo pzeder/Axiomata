@@ -6,13 +6,13 @@
         <div class="edit-symbol-title"> Neues Symbol erstellen </div>
       </div>
       <div class="flex-container">
-        <ColorEditor title="Hintergrundfarbe" :defaultValue=255 @changeColor="setBackgroundColor" />
+        <ColorEditor title="Hintergrundfarbe" :color="editSymbol.backgroundColor" @changeColor="setBackgroundColor" />
         <div class="middle">
           <SymbolComp :symbolWidth=20 :symbol="editSymbol" @click="showTextInput = true" />
-          <div class="font-size-title"> Schriftgrösse {{ showTextInput }}</div>
-          <ValueSlider :minValue=1 :defaultValue=35 :maxValue=100 @changeValue="setFontSize" />
+          <div class="font-size-title"> Schriftgrösse </div>
+          <ValueSlider :minValue=1 :defaultValue="editSymbol.fontSize" :maxValue=100 @changeValue="setFontSize" />
         </div>
-        <ColorEditor title="Schriftfarbe" :defaultValue=42 @changeColor="setTextColor" />
+        <ColorEditor title="Schriftfarbe" :color="editSymbol.textColor" @changeColor="setTextColor" />
       </div>
       <div class="button-container">
         <div class="cancel-button" @click="emit('close')"> abbrechen </div>
@@ -20,33 +20,36 @@
       </div>
     </div>
   </div>
+  <TextInputWindow v-if="showTextInput" title="Symboltext ändern" :placeholder="editSymbol.text"
+    @close="showTextInput = false" @updateText="setText" />
 </template>
 
 <script setup lang="ts">
-import { SymbolData, SymbolType } from '@/scripts/Interfaces';
+import { ColorValue, SymbolData } from '@/scripts/Interfaces';
 import { Ref, ref, defineEmits, defineProps } from 'vue';
 import ColorEditor from './ColorEditor.vue';
 import SymbolComp from '@/components/axiom/SymbolComp.vue';
 import ValueSlider from '../UI/ValueSlider.vue';
+import TextInputWindow from '../UI/TextInputWindow.vue';
 
 interface Props {
-  type: SymbolType;
+  symbol: SymbolData;
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['addSymbol', 'close']);
+const emit = defineEmits(['updateSymbol', 'close']);
 const showTextInput: Ref<boolean> = ref(false);
 
 const editSymbol: Ref<SymbolData> = ref({
-  backgroundColor: '',
-  text: 'text',
-  textColor: '',
-  fontSize: 35,
-  type: props.type,
-  varTarget: false
+  backgroundColor: props.symbol.backgroundColor,
+  text: props.symbol.text,
+  textColor: props.symbol.textColor,
+  fontSize: props.symbol.fontSize,
+  type: props.symbol.type,
+  varTarget: props.symbol.varTarget
 });
 
-function setBackgroundColor(color: string) {
+function setBackgroundColor(color: ColorValue) {
   editSymbol.value.backgroundColor = color;
 }
 
@@ -55,7 +58,7 @@ function setText(text: string): void {
   editSymbol.value.text = text;
 }
 
-function setTextColor(color: string) {
+function setTextColor(color: ColorValue) {
   editSymbol.value.textColor = color;
 }
 
@@ -64,7 +67,7 @@ function setFontSize(fontSize: number) {
 }
 
 function confirm(): void {
-  emit('addSymbol', editSymbol.value);
+  emit('updateSymbol', editSymbol.value);
   emit('close');
 }
 </script>
@@ -88,7 +91,7 @@ function confirm(): void {
   height: 100vh;
   display: grid;
   place-items: center;
-  z-index: 300;
+  z-index: 400;
 }
 
 .title-container {

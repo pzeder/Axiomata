@@ -1,45 +1,41 @@
 <template>
   <div class="color-editor">
     <div class="color-editor-title"> {{ title }} </div>
-    <ValueSlider :maxValue=255 :defaultValue="defaultValue" color="red" @changeValue="setRed" />
-    <ValueSlider :maxValue=255 :defaultValue="defaultValue" color='green' @changeValue="setGreen" />
-    <ValueSlider :maxValue=255 :defaultValue="defaultValue" color='blue' @changeValue="setBlue" />
+    <ValueSlider :maxValue=255 :defaultValue="editColor.red" color="red" @changeValue="setRed" />
+    <ValueSlider :maxValue=255 :defaultValue="editColor.green" color='green' @changeValue="setGreen" />
+    <ValueSlider :maxValue=255 :defaultValue="editColor.blue" color='blue' @changeValue="setBlue" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ComputedRef, Ref, computed, ref, defineEmits, defineProps } from 'vue';
+import { Ref, ref, defineEmits, defineProps } from 'vue';
 import ValueSlider from '../UI/ValueSlider.vue';
+import { ColorValue } from '@/scripts/Interfaces';
 
 interface Props {
   title: string;
-  defaultValue: number;
+  color: ColorValue;
 }
 
 const props = defineProps<Props>();
 
 const emit = defineEmits(['changeColor']);
 
-const red: Ref<number> = ref(props.defaultValue);
-const green: Ref<number> = ref(props.defaultValue);
-const blue: Ref<number> = ref(props.defaultValue);
-
-const rgb: ComputedRef<string> = computed(() =>
-  'rgb(' + red.value + ',' + green.value + ',' + blue.value + ')');
+const editColor: Ref<ColorValue> = ref(props.color);
 
 function setRed(value: number) {
-  red.value = value;
-  emit('changeColor', rgb.value);
+  editColor.value.red = value;
+  emit('changeColor', editColor.value);
 }
 
 function setGreen(value: number) {
-  green.value = value;
-  emit('changeColor', rgb.value);
+  editColor.value.green = value;
+  emit('changeColor', editColor.value);
 }
 
 function setBlue(value: number) {
-  blue.value = value;
-  emit('changeColor', rgb.value);
+  editColor.value.blue = value;
+  emit('changeColor', editColor.value);
 }
 </script>
 

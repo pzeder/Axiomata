@@ -14,11 +14,11 @@
             </div>
             <SymbolList :symbols="symbols" :type="SymbolType.TERMINAL"
                 :showVarTags="variables !== undefined && variables.length > 0"
-                @addSymbol="(symbol) => emit('addSymbol', symbol)" @deleteSymbol="(symbol) => deleteSymbol(symbol)"
-                @symbolClicked="(symbol) => addSymbolToSequence(symbol)"
-                @toggleVarTarget="(symbol) => emit('toggleVarTarget', symbol)" />
+                @deleteSymbol="(symbol) => deleteSymbol(symbol)" @symbolClicked="(symbol) => addSymbolToSequence(symbol)"
+                @toggleVarTarget="(symbol) => emit('toggleVarTarget', symbol)"
+                @editSymbol="(pointer) => emit('editSymbol', pointer)" />
             <SymbolList :symbols="variables" :type="SymbolType.VARIABLE" :showVarTags="false"
-                @addSymbol="(symbol) => emit('addSymbol', symbol)" @deleteSymbol="(symbol) => deleteSymbol(symbol)"
+                @editSymbol="(pointer) => emit('editSymbol', pointer)" @deleteSymbol="(symbol) => deleteSymbol(symbol)"
                 @symbolClicked="(symbol) => addSymbolToSequence(symbol)" />
         </div>
         <div class="button-container">
@@ -52,7 +52,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     axiom: () => ({ upperSequence: [], lowerSequence: [] })
 });
-const emit = defineEmits(['addSymbol', 'deleteSymbol', 'saveAxiom', 'close', 'toggleVarTarget']);
+const emit = defineEmits(['deleteSymbol', 'saveAxiom', 'close', 'toggleVarTarget', 'editSymbol']);
 
 const upperSeqSelected: Ref<boolean> = ref(true);
 const axiom: Ref<AxiomData> = ref({
