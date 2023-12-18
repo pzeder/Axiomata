@@ -60,3 +60,12 @@ export interface TextEditPointer {
     target: TextEditTarget;
     index: number
 }
+
+export enum AxiomEditTarget {
+    CHAPTER, LEVEL
+}
+
+export interface AxiomEditPointer {
+    target: AxiomEditTarget;
+    levelPointer: LevelPointer;
+}

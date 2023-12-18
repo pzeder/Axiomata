@@ -5,9 +5,14 @@
       <div class="axiom-package" v-for="(axiom, index) in axioms" :key="index">
         <AxiomContainer :width="containerWidth" :height="containerWidth" :axiom="axiom" :symbols="symbols"
           :variables="variables" />
-        <div class="axiom-delete-button" v-if="editable" @click="emit('deleteAxiom', index)"> löschen </div>
+        <div class="axiom-delete-button" v-if="editable">
+          <TextButton text="Löschen" background="red" @click="emit('deleteAxiom', index)" />
+        </div> 
       </div>
-      <div class="axiom-add-button" v-if="editable" @click="emit('editNewAxiom')"> Tauschregel hinzufügen </div>
+      <div class="axiom-add-button" v-if="editable">
+        <TextButton text="Tauschregel hinzufügen" background="lightgreen" 
+        @click="emit('editAxiom')"/> 
+      </div> 
     </div>
   </div>
 </template>
@@ -16,6 +21,7 @@
 import { ComputedRef, computed, defineProps, defineEmits, withDefaults } from 'vue';
 import AxiomContainer from '@/components/axiom/AxiomContainer.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
+import TextButton from '../UI/TextButton.vue';
 
 interface Props {
   title: string;
@@ -30,7 +36,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   editable: () => false
 });
-const emit = defineEmits(['editNewAxiom', 'deleteAxiom']);
+const emit = defineEmits(['editNewAxiom', 'deleteAxiom', 'editAxiom']);
 
 const maxContainerWidth: ComputedRef<number> = computed(() => props.maxWidth / props.axioms.length);
 const containerWidth: ComputedRef<number> = computed(() => Math.min(props.containerWidth, maxContainerWidth.value));
@@ -60,20 +66,13 @@ const containerWidth: ComputedRef<number> = computed(() => Math.min(props.contai
 .axiom-add-button {
   display: grid;
   place-items: center;
-  border: 0.2vw solid black;
-  border-radius: 2vw;
-  font-size: 2vw;
   padding: 2vw;
-  background: rgb(247, 247, 110);
 }
 
 .axiom-delete-button {
   display: grid;
   place-items: center;
   background: red;
-  border: 0.3vw solid black;
-  border-radius: 0.5vw;
-  font-size: 2vw;
   padding: 1vw;
   margin-top: -2vw;
 }

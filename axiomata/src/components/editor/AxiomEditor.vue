@@ -36,7 +36,7 @@ import SequenceContainer from '@/components/axiom/SequenceContainer.vue';
 import { axiomValid } from '@/scripts/AxiomMethods';
 
 interface Props {
-    axiom: AxiomData | undefined;
+    axiom: AxiomData | null;
     symbols: SymbolData[] | undefined;
     variables: SymbolData[] | undefined;
     upTitle: string;

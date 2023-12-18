@@ -3,22 +3,25 @@
     <LevelSelection v-if="showLevelSelection" :course="course" :frontLevelPointer="null" :editable="true"
       @editText="editText" @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" 
       @addNewChapter="addNewChapter" @deleteChapter="deleteChapter" @addNewLevel="addNewLevel"
-      @deleteLevel="deleteLevel" @toggleBonus="toggleBonus"/>
+      @deleteLevel="deleteLevel" @toggleBonus="toggleBonus" @editAxiom="editAxiom"/>
     <PlayScreen v-if="showPlayScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
       :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openLevelSelection="openLevelSelection"
       @finishLevel="finishLevel" />
     <TextInputWindow v-if="showTextInput" :title="textEditTitle" :placeholder="textEditPlaceholder"
       @close="showTextInput = false" @updateText="updateText"/>
+    <AxiomEditor v-if="showAxiomEditor" :axiom="editedAxiom" :symbols="course.symbols" :variables="course.variables" :upTitle="axiomEditorUpTitle"
+      :lowTitle="axiomEditorLowTitle" :borderColor="axiomEditorBorderColor"/>
   </div>
 </template>
 
 <script setup lang="ts">
-import { AxiomData, ChapterData, CourseData, LevelData, LevelPointer, MoveData, SymbolData, SymbolType, SymbolPointer, TextEditPointer, TextEditTarget } from '@/scripts/Interfaces';
+import { AxiomData, ChapterData, CourseData, LevelData, LevelPointer, MoveData, SymbolData, SymbolType, SymbolPointer, TextEditPointer, TextEditTarget, AxiomEditPointer, AxiomEditTarget } from '@/scripts/Interfaces';
 import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef } from 'vue';
 import LevelSelection from '../menus/LevelSelection.vue';
 import PlayScreen from '../play/PlayScreen.vue';
 import TextInputWindow from '../UI/TextInputWindow.vue';
+import AxiomEditor from './AxiomEditor.vue';
 
 interface Props {
   editID: any;
@@ -35,6 +38,8 @@ const showNoteWindow: Ref<boolean> = ref(false);
 const noteMessage: Ref<string> = ref('');
 const textEditPointer: Ref<TextEditPointer | null> = ref(null);
 const course: Ref<CourseData | null> = ref(null);
+const showAxiomEditor: Ref<boolean> = ref(false);
+const axiomEditPointer: Ref<AxiomEditPointer | null> = ref(null);
 
 const textEditTitle: ComputedRef<string> = computed(() => {
   if (!textEditPointer.value || !course.value) {
@@ -129,6 +134,25 @@ const selectedDerivates: ComputedRef<AxiomData[]> = computed(() => {
   return derivates;
 });
 
+const editedAxiom: ComputedRef<AxiomData | null> = computed(() => {
+  if (!axiomEditPointer.value || !course.value) {
+    return null;
+  }
+  const chapterIndex: number = axiomEditPointer.value.levelPointer.chapterIndex;
+  const levelIndex: number = axiomEditPointer.value.levelPointer.levelIndex;
+  if (axiomEditPointer.value.target === AxiomEditTarget.CHAPTER) {
+    return course.value.chapters[chapterIndex].newAxioms[levelIndex];
+  }
+  if (axiomEditPointer.value.target === AxiomEditTarget.LEVEL) {
+    return course.value.chapters[chapterIndex].levels[levelIndex].goalAxiom;
+  }
+  return null;
+});
+
+const axiomEditorUpTitle: ComputedRef<string> = computed(() => axiomEditPointer.value?.target === AxiomEditTarget.CHAPTER ? 'OBEN' : 'START');
+const axiomEditorLowTitle: ComputedRef<string> = computed(() => axiomEditPointer.value?.target === AxiomEditTarget.CHAPTER ? 'UNTEN' : 'ZIEL');
+const axiomEditorBorderColor: ComputedRef<string> = computed(() => axiomEditPointer.value?.target === AxiomEditTarget.CHAPTER ? 'gray' : 'orange');
+
 onMounted(() => {
   fetchCourse();
   openLevelSelection();
@@ -213,6 +237,11 @@ function updateText(text: string): void {
       break;
   }
   saveEdit();
+}
+
+function editAxiom(pointer: AxiomEditPointer): void {
+  axiomEditPointer.value = pointer;
+  showAxiomEditor.value = true;
 }
 
 function addMove(move: MoveData): void {
