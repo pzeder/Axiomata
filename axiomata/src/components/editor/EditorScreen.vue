@@ -307,7 +307,7 @@ function deleteChapter(chapterIndex: number) {
   saveEdit();
 }
 
-function addSymbol(symbol: SymbolData): void {
+function updateSymbol(pointer: SymbolPointer, symbol: SymbolData): void {
   if (!course.value) {
     return
   }

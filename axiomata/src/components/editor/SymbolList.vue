@@ -9,9 +9,10 @@
             </div>
         </div>
         <div class="symbol-add-button">
-            <TextButton :text="addButtonText" background="lightgreen" @click="showSymbolEditor = true" />
+            <TextButton :text="addButtonText" background="lightgreen" @click="editSymbol(symbols.length)" />
         </div> 
     </div>
+    <SymbolEditor v-if="showSymbolEditor" :type="type" />
 </template>
 
 <script setup lang="ts">
@@ -19,6 +20,7 @@ import { defineProps, defineEmits, Ref, ref, ComputedRef, computed } from 'vue';
 import SymbolComp from '@/components/axiom/SymbolComp.vue';
 import { SymbolData, SymbolType } from '@/scripts/Interfaces';
 import TextButton from '../UI/TextButton.vue';
+import SymbolEditor from '../editor/SymbolEditor.vue';
 
 interface Props {
     symbols: SymbolData[] | undefined;
@@ -37,6 +39,13 @@ const addButtonText: ComputedRef<string> = computed(() =>
 
 function varTagColor(symbol: SymbolData): string {
     return symbol.varTarget ? 'orange' : 'gray';
+}
+
+function editSymbol(index: number): void {
+    if (!props.symbols) {
+        return;
+    }
+    
 }
 </script>
 

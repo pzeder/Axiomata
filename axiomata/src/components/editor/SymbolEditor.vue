@@ -20,8 +20,6 @@
       </div>
     </div>
   </div>
-  <TextInput v-if="showTextInput" title="Symboltext ändern" :placeholder="editSymbol.text" @updateText="setText"
-    @click="showTextInput = false" />
 </template>
 
 <script setup lang="ts">
@@ -29,8 +27,7 @@ import { SymbolData, SymbolType } from '@/scripts/Interfaces';
 import { Ref, ref, defineEmits, defineProps } from 'vue';
 import ColorEditor from './ColorEditor.vue';
 import SymbolComp from '@/components/axiom/SymbolComp.vue';
-import ValueSlider from './ValueSlider.vue';
-import TextInput from '../TextInput.vue';
+import ValueSlider from '../UI/ValueSlider.vue';
 
 interface Props {
   type: SymbolType;
