@@ -11,10 +11,10 @@
       @close="showTextInput = false" @updateText="updateText" />
     <AxiomEditor v-if="showAxiomEditor" :axiom="editedAxiom" :symbols="course.symbols" :variables="course.variables"
       :upTitle="axiomEditorUpTitle" :lowTitle="axiomEditorLowTitle" :borderColor="axiomEditorBorderColor"
-      @close="showAxiomEditor = false" @editSymbol="editSymbol" />
+      @close="showAxiomEditor = false" @editSymbol="editSymbol" @toggleVarTarget="toggleVarTarget"
+      @deleteSymbol="deleteSymbol" @updateAxiom="updateAxiom" />
     <SymbolEditor v-if="showSymbolEditor && editedSymbol" :symbol="editedSymbol" @updateSymbol="updateSymbol"
       @close="showSymbolEditor = false" />
-    <div> {{ editSymbolPointer }}</div>
   </div>"
 </template>
 
@@ -270,6 +270,26 @@ function updateText(text: string): void {
 function editAxiom(pointer: AxiomEditPointer): void {
   axiomEditPointer.value = pointer;
   showAxiomEditor.value = true;
+}
+
+function updateAxiom(axiom: AxiomData): void {
+  if (!course.value || !axiomEditPointer.value) {
+    return;
+  }
+  const chapterIndex: number = axiomEditPointer.value.levelPointer.chapterIndex;
+  const levelIndex: number = axiomEditPointer.value.levelPointer.levelIndex;
+  switch (axiomEditPointer.value.target) {
+    case AxiomEditTarget.CHAPTER:
+      course.value.chapters[chapterIndex].newAxioms.splice(levelIndex, 1, axiom);
+      break;
+    case AxiomEditTarget.LEVEL:
+      course.value.chapters[chapterIndex].levels[levelIndex].goalAxiom = axiom;
+      break;
+    default:
+      return;
+  }
+  console.log(axiom);
+  saveEdit();
 }
 
 function addMove(move: MoveData): void {

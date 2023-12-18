@@ -52,7 +52,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     axiom: () => ({ upperSequence: [], lowerSequence: [] })
 });
-const emit = defineEmits(['deleteSymbol', 'saveAxiom', 'close', 'toggleVarTarget', 'editSymbol']);
+const emit = defineEmits(['deleteSymbol', 'updateAxiom', 'close', 'toggleVarTarget', 'editSymbol']);
 
 const upperSeqSelected: Ref<boolean> = ref(true);
 const axiom: Ref<AxiomData> = ref({
@@ -83,7 +83,8 @@ function removeFromLowerSeq(index: number): void {
 }
 
 function confirm(): void {
-    emit('saveAxiom', axiom.value);
+    console.log(axiom.value);
+    emit('updateAxiom', axiom.value);
     emit('close');
 }
 </script>
