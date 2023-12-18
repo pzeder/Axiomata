@@ -31,7 +31,7 @@ export interface ChapterData {
 
 export interface LevelData {
     title: string;
-    goalAxiom: AxiomData;
+    goalAxiom: AxiomData | null;
     moveHistory: MoveData[];
     bestSolution: MoveData[] | null;
     bonus: boolean;

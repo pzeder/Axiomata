@@ -75,7 +75,7 @@ const textEditPlaceholder: ComputedRef<string> = computed(() => {
 });
   
 const invalidLevel = (level: LevelData): boolean =>
-  level.goalAxiom.upperSequence.length === 0 || level.goalAxiom.lowerSequence.length === 0;
+  level.goalAxiom?.upperSequence.length === 0 || level.goalAxiom?.lowerSequence.length === 0;
 
 const invalidChapter = (chapter: ChapterData): boolean =>
   chapter.levels.length === 0 || chapter.levels.some(invalidLevel);
@@ -119,8 +119,9 @@ const selectedDerivates: ComputedRef<AxiomData[]> = computed(() => {
   const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
   const levelIndex: number = selectedLevelPointer.value.levelIndex;
   const addGoalAxiom = (ch: number, lvl: number) => {
-    if (course.value?.chapters[ch].levels[lvl].bonus) {
-      derivates.push(course.value.chapters[ch].levels[lvl].goalAxiom);
+    if (course.value?.chapters[ch].levels[lvl].bonus && course.value?.chapters[ch].levels[lvl].goalAxiom) {
+      const goalAxiom: AxiomData = course.value?.chapters[ch].levels[lvl].goalAxiom as AxiomData;
+      derivates.push(goalAxiom);
     }
   }
   for (let ch = 0; ch < chapterIndex; ch++) {
@@ -340,10 +341,10 @@ function deleteSymbol(symbolPointer: SymbolPointer): void {
     return sp;
   };
 
-  const cleanAxiom = (axiom: AxiomData): AxiomData => {
+  const cleanAxiom = (axiom: AxiomData | null): AxiomData | null => {
     const poisonedSymbol = (sp: SymbolPointer): boolean => sp.type === symbolPointer.type && sp.index === symbolPointer.index;
-    if (axiom.upperSequence.some(poisonedSymbol) || axiom.lowerSequence.some(poisonedSymbol)) {
-      return ({ upperSequence: [], lowerSequence: [] });
+    if (!axiom || axiom.upperSequence.some(poisonedSymbol) || axiom.lowerSequence.some(poisonedSymbol)) {
+      return null;
     }
     return ({
       upperSequence: axiom.upperSequence.map(cleanSymbol),
@@ -359,11 +360,9 @@ function deleteSymbol(symbolPointer: SymbolPointer): void {
     bonus: lvl.bonus
   });
 
-  const nonEmpty = (axiom: AxiomData): boolean => (axiom.upperSequence.length > 0 && axiom.lowerSequence.length > 0);
-
   const cleanChapter = (ch: ChapterData): ChapterData => ({
     title: ch.title,
-    newAxioms: ch.newAxioms.map(cleanAxiom).filter(nonEmpty),
+    newAxioms: ch.newAxioms.map(cleanAxiom).filter((axiom): axiom is AxiomData => axiom !== null),
     levels: ch.levels.map(cleanLevel)
   });
 
@@ -393,10 +392,7 @@ function addNewLevel(chapterIndex: number, levelIndex: number) {
   }
   const newLevel: LevelData = ({
     title: 'Neues Level',
-    goalAxiom: {
-      upperSequence: [],
-      lowerSequence: []
-    },
+    goalAxiom: null,
     moveHistory: [],
     bestSolution: null,
     bonus: false

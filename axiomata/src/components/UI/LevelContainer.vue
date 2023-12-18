@@ -3,7 +3,7 @@
     <div class="axiom-placeholder" v-if="editable && !level.goalAxiom"> 
       <TextButton text="START / ZIEL festlegen" background="white"/>
     </div>
-    <AxiomContainer class="goal-axiom" v-if="axiomValid(level.goalAxiom)" :width=10 :height=10 :axiom="level.goalAxiom" :symbols="course.symbols"
+    <AxiomContainer class="goal-axiom" v-if="level.goalAxiom" :width=10 :height=10 :axiom="level.goalAxiom" :symbols="course.symbols"
       :variables="course.variables" :background="levelColor"
       :borderColor="levelColor"/>
     <div class="level-title"> Level {{ levelNumber }} </div>
