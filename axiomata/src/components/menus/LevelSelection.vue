@@ -40,9 +40,4 @@ const emit = defineEmits(['openLevel', 'openHomeScreen', 'editText', 'addNewChap
   display: grid;
   place-items: left;
 }
-
-.chapter-list {
-  width: 100vw;
-  display: grid;
-}
 </style>

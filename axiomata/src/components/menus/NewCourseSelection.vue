@@ -10,7 +10,7 @@
             :variables="header.variables" background="white" borderColor="rgb(70, 179, 215)" />
           <div class="new-course-title"> {{ header.title }} </div>
         </div>
-        <TextButton text="Löschen" @click.stop="deleteCourse(header.courseID)" />
+        <TextButton class="course-delete-button" text="Löschen" @click.stop="deleteCourse(header.courseID)" />
       </div>
     </transition-group>
   </div>
@@ -144,6 +144,10 @@ async function deleteCourse(courseID: any): Promise<void> {
 
 .header-axiom {
   flex: 1;
+}
+
+.course-delete-button {
+  margin-left: 1vw;
 }
 
 .course-list-enter-active,

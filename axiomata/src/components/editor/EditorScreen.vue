@@ -1,9 +1,14 @@
 <template>
   <div v-if="course">
-    <LevelSelection v-if="showLevelSelection" :course="course" :frontLevelPointer="null" :editable="true"
-      @editText="editText" @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" @addNewChapter="addNewChapter"
-      @deleteChapter="deleteChapter" @addNewLevel="addNewLevel" @deleteLevel="deleteLevel" @toggleBonus="toggleBonus"
-      @editAxiom="editAxiom" @deleteAxiom="deleteAxiom" />
+    <div v-if="showLevelSelection">
+      <div class="sidebar-left">
+        <HomeButton @click="emit('openHomeScreen')" />
+      </div>
+      <CourseContainer :course="course" :frontLevelPointer="null" :editable="true" @editText="editText"
+        @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" @addNewChapter="addNewChapter"
+        @deleteChapter="deleteChapter" @addNewLevel="addNewLevel" @deleteLevel="deleteLevel" @toggleBonus="toggleBonus"
+        @editAxiom="editAxiom" @deleteAxiom="deleteAxiom" />
+    </div>
     <PlayScreen v-if="showPlayScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
       :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openLevelSelection="openLevelSelection"
       @finishLevel="finishLevel" />
@@ -22,11 +27,12 @@
 import { AxiomData, ChapterData, CourseData, LevelData, LevelPointer, MoveData, SymbolData, SymbolType, SymbolPointer, TextEditPointer, TextEditTarget, AxiomEditPointer, AxiomEditTarget } from '@/scripts/Interfaces';
 import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef } from 'vue';
-import LevelSelection from '../menus/LevelSelection.vue';
 import PlayScreen from '../play/PlayScreen.vue';
 import TextInputWindow from '../UI/TextInputWindow.vue';
 import AxiomEditor from './AxiomEditor.vue';
 import SymbolEditor from './SymbolEditor.vue';
+import CourseContainer from '../UI/CourseContainer.vue';
+import HomeButton from '../menus/HomeButton.vue';
 
 interface Props {
   editID: any;
@@ -463,22 +469,6 @@ function deleteLevel(chapterIndex: number, levelIndex: number) {
   saveEdit();
 }
 
-function setLevelTitle(chapterIndex: number, levelIndex: number, title: string) {
-  if (!course.value) {
-    return;
-  }
-  course.value.chapters[chapterIndex].levels[levelIndex].title = title;
-  saveEdit();
-}
-
-function setGoalAxiom(chapterIndex: number, levelIndex: number, axiom: AxiomData) {
-  if (!course.value) {
-    return;
-  }
-  course.value.chapters[chapterIndex].levels[levelIndex].goalAxiom = axiom;
-  saveEdit();
-}
-
 function toggleVarTarget(symbol: SymbolPointer): void {
   if (!course.value) {
     return;
@@ -525,3 +515,13 @@ async function submitCourse(): Promise<void> {
   }
 }
 </script>
+
+<style>
+.sidebar-left {
+  position: fixed;
+  left: 2vw;
+  top: 2vw;
+  display: grid;
+  place-items: left;
+}
+</style>

@@ -10,7 +10,7 @@
           <div class="savestate-progression-display" :style="{ color: progressionColor(header) }"> Levels gelöst: <br> {{
             header.solvedLevels }} / {{ header.totalLevels }}</div>
         </div>
-        <TextButton text="Löschen" @click.stop="deleteSaveState(header.saveID)" />
+        <TextButton class="savestate-delete-button" text="Löschen" @click.stop="deleteSaveState(header.saveID)" />
       </div>
     </transition-group>
   </div>
@@ -138,6 +138,10 @@ function progressionColor(header: SaveStateHeader): string {
   flex: 1;
 }
 
+.savestate-delete-button {
+  margin-left: 1vw;
+}
+
 .savestate-list-enter-active,
 .savestate-list-leave-active {
   transition: all 0.5s ease;
@@ -156,4 +160,5 @@ function progressionColor(header: SaveStateHeader): string {
 
 .savestate-list-leave-active {
   position: absolute;
-}</style>
+}
+</style>

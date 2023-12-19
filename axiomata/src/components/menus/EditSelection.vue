@@ -11,7 +11,7 @@
             :variables="header.variables" background="white" borderColor="rgb(70, 179, 215)" />
           <div class="edit-title"> {{ header.title }} </div>
         </div>
-        <TextButton text="Löschen" @click.stop="deleteEdit(header.editID)" />
+        <TextButton class="edit-delete-button" text="Löschen" @click.stop="deleteEdit(header.editID)" />
       </div>
     </transition-group>
   </div>
@@ -164,6 +164,10 @@ async function deleteEdit(editID: any): Promise<void> {
   padding-left: 4vw;
   color: rgb(44, 44, 44);
   ;
+}
+
+.edit-delete-button {
+  margin-left: 1vw;
 }
 
 .header-axiom {
