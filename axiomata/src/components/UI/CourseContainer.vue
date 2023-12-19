@@ -5,28 +5,22 @@
       <TextButton v-if="editable" text="Titel ändern" background="yellow"
         @click="emit('editText', { target: TextEditTarget.COURSE, index: -1 })" />
     </div>
-    <transition-group name="chapter-list" tag="div">
-      <div v-for="(chapter, chapterIndex) in course.chapters" :key="chapter.title">
-        <div class="new-chapter-button">
-          <TextButton v-if="editable" text="Neues Kapitel hinzufügen" background="lightblue"
-            @click="emit('addNewChapter', chapterIndex)" />
-        </div>
-        <ChapterContainer :course="course" :chapterIndex="chapterIndex" :chapter="chapter"
-          :frontLevelPointer="frontLevelPointer" :editable="editable"
-          @openLevel="(levelIndex) => emit('openLevel', chapterIndex, levelIndex)"
-          @editText="emit('editText', { target: TextEditTarget.CHAPTER, index: chapterIndex })"
-          @deleteChapter="emit('deleteChapter', chapterIndex)"
-          @addNewLevel="(levelIndex) => emit('addNewLevel', chapterIndex, levelIndex)"
-          @deleteLevel="(levelIndex) => emit('deleteLevel', chapterIndex, levelIndex)"
-          @toggleBonus="(levelIndex) => emit('toggleBonus', chapterIndex, levelIndex)"
-          @editAxiom="(pointer) => emit('editAxiom', pointer)"
-          @deleteAxiom="(index) => emit('deleteAxiom', chapterIndex, index)" />
-      </div>
-    </transition-group>
-    <div class="new-chapter-button">
+    <div class="chapter-list" v-for="(chapter, chapterIndex) in course.chapters" :key="chapter.title">
       <TextButton v-if="editable" text="Neues Kapitel hinzufügen" background="lightblue"
-        :style="{ width: 16.5 + 'vw', marginLeft: -8.5 + 'vw' }" @click="emit('addNewChapter', course.chapters.length)" />
+        @click="emit('addNewChapter', chapterIndex)" />
+      <ChapterContainer :course="course" :chapterIndex="chapterIndex" :chapter="chapter"
+        :frontLevelPointer="frontLevelPointer" :editable="editable"
+        @openLevel="(levelIndex) => emit('openLevel', chapterIndex, levelIndex)"
+        @editText="emit('editText', { target: TextEditTarget.CHAPTER, index: chapterIndex })"
+        @deleteChapter="emit('deleteChapter', chapterIndex)"
+        @addNewLevel="(levelIndex) => emit('addNewLevel', chapterIndex, levelIndex)"
+        @deleteLevel="(levelIndex) => emit('deleteLevel', chapterIndex, levelIndex)"
+        @toggleBonus="(levelIndex) => emit('toggleBonus', chapterIndex, levelIndex)"
+        @editAxiom="(pointer) => emit('editAxiom', pointer)"
+        @deleteAxiom="(index) => emit('deleteAxiom', chapterIndex, index)" />
     </div>
+    <TextButton v-if="editable" text="Neues Kapitel hinzufügen" background="lightblue"
+      @click="emit('addNewChapter', course.chapters.length)" />
   </div>
 </template>
 
@@ -51,22 +45,17 @@ const emit = defineEmits(['editText', 'openLevel', 'addNewChapter', 'deleteChapt
 
 <style>
 .course-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: grid;
+  place-items: center;
   margin-top: 10vw;
   margin-bottom: 10vw;
-}
-
-.new-chapter-button {
-  width: 20vw;
-  margin-left: 8.5vw;
 }
 
 .course-title-package {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 1.5vw;
 }
 
 .course-title {
@@ -75,5 +64,10 @@ const emit = defineEmits(['editText', 'openLevel', 'addNewChapter', 'deleteChapt
   font-size: 9vw;
   color: rgb(44, 44, 44);
   user-select: none;
+}
+
+.chapter-list {
+  display: grid;
+  place-items: center;
 }
 </style>

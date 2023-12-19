@@ -7,12 +7,8 @@
       :symbols="course.symbols" :variables="course.variables" :background="levelColor" :borderColor="levelColor"
       @selectAxiom="emit('editAxiom')" />
     <div class="level-title"> Level {{ levelNumber }} </div>
-    <div class="edit-bonus-tag" v-if="editable">
-      <TextButton :text="bonusTagText" :background="bonusTagColor" @click="emit('toggleBonus')" />
-    </div>
-    <div class="test-button" v-if="editable">
-      <TextButton text="Testen" background="lightgreen" />
-    </div>
+    <TextButton class="level-button" :text="bonusTagText" :background="bonusTagColor" @click="emit('toggleBonus')" />
+    <TextButton class="level-button" text="Testen" background="lightgreen" />
   </div>
 </template>
 
@@ -97,7 +93,7 @@ function handleClick(): void {
   color: rgb(44, 44, 44);
 }
 
-.test-button {
+.level-button {
   margin-right: 2vw;
 }
 </style>

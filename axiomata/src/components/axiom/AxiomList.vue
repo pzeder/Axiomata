@@ -5,7 +5,7 @@
         <AxiomContainer :width="containerWidth" :height="containerWidth" :axiom="axiom" :symbols="symbols"
           :variables="variables" @selectAxiom="emit('editAxiom', index)" />
         <div class="axiom-delete-button" v-if="editable">
-          <TextButton text="Löschen" @click="emit('deleteAxiom', index)" />
+          <TextButton class="axiom-delete-button" text="Löschen" @click="emit('deleteAxiom', index)" />
         </div>
       </div>
       <div class="axiom-add-button" v-if="editable">
@@ -64,12 +64,12 @@ const containerWidth: ComputedRef<number> = computed(() => Math.min(props.contai
   display: grid;
   place-items: center;
   padding: 2vw;
-  margin-left: -1vw;
 }
 
 .axiom-delete-button {
   display: grid;
   place-items: center;
-  margin-top: -2vw;
+  margin-top: -1vw;
+  margin-bottom: 1vw;
 }
 </style>

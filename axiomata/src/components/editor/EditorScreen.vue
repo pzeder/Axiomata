@@ -15,7 +15,7 @@
       @toggleVarTarget="toggleVarTarget" @deleteSymbol="deleteSymbol" @updateAxiom="updateAxiom" />
     <SymbolEditor v-if="showSymbolEditor && editedSymbol" :symbol="editedSymbol" @updateSymbol="updateSymbol"
       @close="showSymbolEditor = false" />
-  </div>"
+  </div>
 </template>
 
 <script setup lang="ts">

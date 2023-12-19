@@ -9,23 +9,17 @@
       :symbols="course.symbols" :variables="course.variables" :maxWidth=40 :containerWidth=10 :editable="editable"
       @editAxiom="(index) => emit('editAxiom', { target: AxiomEditTarget.CHAPTER, levelPointer: { chapterIndex: chapterIndex, levelIndex: index } })"
       @deleteAxiom="(index) => emit('deleteAxiom', index)" />
-    <transition-group name="level-list" tag="div">
-      <div v-for="( level, levelIndex ) in  chapter.levels " :key="levelIndex">
-        <div class="new-level-button" v-if="editable">
-          <TextButton text="Neues Level hinzufügen" background="orange" @click="emit('addNewLevel', levelIndex)" />
-        </div>
-        <div class="level-package">
-          <LevelContainer :course="course" :chapterIndex="chapterIndex" :levelIndex="levelIndex" :level="level"
-            :frontLevelPointer="frontLevelPointer" :editable="editable" @openLevel="emit('openLevel', levelIndex)"
-            @toggleBonus="emit('toggleBonus', levelIndex)"
-            @editAxiom="emit('editAxiom', { target: AxiomEditTarget.LEVEL, levelPointer: { chapterIndex: chapterIndex, levelIndex: levelIndex } })" />
-          <TextButton v-if="editable" text="Löschen" @click="emit('deleteLevel', levelIndex)" />
-        </div>
+    <div class="level-list" v-for="( level, levelIndex ) in  chapter.levels " :key="levelIndex">
+      <TextButton text="Neues Level hinzufügen" background="orange" @click="emit('addNewLevel', levelIndex)" />
+      <div class="level-package">
+        <LevelContainer :course="course" :chapterIndex="chapterIndex" :levelIndex="levelIndex" :level="level"
+          :frontLevelPointer="frontLevelPointer" :editable="editable" @openLevel="emit('openLevel', levelIndex)"
+          @toggleBonus="emit('toggleBonus', levelIndex)"
+          @editAxiom="emit('editAxiom', { target: AxiomEditTarget.LEVEL, levelPointer: { chapterIndex: chapterIndex, levelIndex: levelIndex } })" />
+        <TextButton v-if="editable" text="Löschen" @click="emit('deleteLevel', levelIndex)" />
       </div>
-    </transition-group>
-    <div class="new-level-button" v-if="editable" :style="{ marginLeft: -11.1 + 'vw' }">
-      <TextButton text="Neues Level hinzufügen" background="orange" @click="emit('addNewLevel', chapter.levels.length)" />
     </div>
+    <TextButton text="Neues Level hinzufügen" background="orange" @click="emit('addNewLevel', chapter.levels.length)" />
   </div>
 </template>
 
@@ -55,6 +49,7 @@ const emit = defineEmits(['openLevel', 'editText', 'deleteChapter',
 .chapter-container {
   display: grid;
   place-items: center;
+  justify-content: center;
   margin-bottom: 2vw;
 }
 
@@ -62,6 +57,8 @@ const emit = defineEmits(['openLevel', 'editText', 'deleteChapter',
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 1.5vw;
+  margin-bottom: 1vw;
 }
 
 .chapter-title {
@@ -70,17 +67,17 @@ const emit = defineEmits(['openLevel', 'editText', 'deleteChapter',
   flex: 3;
   color: lightblue;
   text-align: center;
-  margin-bottom: 1vw;
 }
 
-.new-level-button {
-  width: 20vw;
-  margin-left: 8.5vw;
+.level-list {
+  display: grid;
+  place-items: center;
 }
 
 .level-package {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 1vw;
 }
 </style>
