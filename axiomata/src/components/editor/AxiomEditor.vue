@@ -1,32 +1,35 @@
 <template>
     <div class="backdrop-axiom-editor" />
     <div class="axiom-editor-screen">
-        <div class="axiom-editor">
-            <div :style="{ marginTop: (upperSeqSelected ? -15 : 15) + 'vw', color: 'orange', fontSize: 2 + 'vw' }">
-                >>> </div>
-            <div class="sequence-editors">
-                <SequenceContainer :title="upTitle" :width=30 :height=15 :maxFill="0.6" :maxSymbolWidthRatio="0.2"
-                    :sequence="axiom?.upperSequence" :symbols="symbols" :variables="variables" :borderColor="borderColor"
-                    @click="upperSeqSelected = true" @symbolClicked="removeFromUpperSeq" />
-                <SequenceContainer :title="lowTitle" :width=30 :height=15 :maxFill="0.6" :maxSymbolWidthRatio="0.2"
-                    :sequence="axiom?.lowerSequence" :symbols="symbols" :variables="variables" :borderColor="borderColor"
-                    @click="upperSeqSelected = false" @symbolClicked="removeFromLowerSeq" />
+        <div class="axiom-editor-window">
+            <div class="axiom-editor-title"> {{ title }} </div>
+            <div class="axiom-editor">
+                <div class="selection-tag" :style="{ marginTop: (upperSeqSelected ? -15 : 15) + 'vw' }"> >>> </div>
+                <div class="sequence-editors">
+                    <SequenceContainer :header="headerUp" :width=30 :height=15 :maxFill="0.6" :maxSymbolWidthRatio="0.2"
+                        :sequence="axiom?.upperSequence" :symbols="symbols" :variables="variables"
+                        :borderColor="borderColor" @click="upperSeqSelected = true" @symbolClicked="removeFromUpperSeq" />
+                    <SequenceContainer :header="headerLow" :width=30 :height=15 :maxFill="0.6" :maxSymbolWidthRatio="0.2"
+                        :sequence="axiom?.lowerSequence" :symbols="symbols" :variables="variables"
+                        :borderColor="borderColor" @click="upperSeqSelected = false" @symbolClicked="removeFromLowerSeq" />
+                </div>
+                <SymbolList class="symbol-list" :symbols="symbols" :type="SymbolType.TERMINAL"
+                    :showVarTags="variables !== undefined && variables.length > 0"
+                    @deleteSymbol="(symbol) => deleteSymbol(symbol)"
+                    @symbolClicked="(symbol) => addSymbolToSequence(symbol)"
+                    @toggleVarTarget="(symbol) => emit('toggleVarTarget', symbol)"
+                    @editSymbol="(pointer) => emit('editSymbol', pointer)" />
+                <SymbolList class="symbol-list" :symbols="variables" :type="SymbolType.VARIABLE" :showVarTags="false"
+                    @editSymbol="(pointer) => emit('editSymbol', pointer)" @deleteSymbol="(symbol) => deleteSymbol(symbol)"
+                    @symbolClicked="(symbol) => addSymbolToSequence(symbol)" />
             </div>
-            <SymbolList :symbols="symbols" :type="SymbolType.TERMINAL"
-                :showVarTags="variables !== undefined && variables.length > 0"
-                @deleteSymbol="(symbol) => deleteSymbol(symbol)" @symbolClicked="(symbol) => addSymbolToSequence(symbol)"
-                @toggleVarTarget="(symbol) => emit('toggleVarTarget', symbol)"
-                @editSymbol="(pointer) => emit('editSymbol', pointer)" />
-            <SymbolList :symbols="variables" :type="SymbolType.VARIABLE" :showVarTags="false"
-                @editSymbol="(pointer) => emit('editSymbol', pointer)" @deleteSymbol="(symbol) => deleteSymbol(symbol)"
-                @symbolClicked="(symbol) => addSymbolToSequence(symbol)" />
-        </div>
-        <div class="button-container">
-            <div class="axiom-editor-button">
-                <TextButton text="Abbrechen" background="red" @click="emit('close')" />
-            </div>
-            <div class="axiom-editor-button" v-if="axiomValid(axiom)">
-                <TextButton text="Speichern" background="lightgreen" @click="confirm" />
+            <div class="button-container">
+                <div class="axiom-editor-button">
+                    <TextButton text="Abbrechen" background="red" @click="emit('close')" />
+                </div>
+                <div class="axiom-editor-button" v-if="axiomValid(axiom)">
+                    <TextButton text="Speichern" background="lightgreen" @click="confirm" />
+                </div>
             </div>
         </div>
     </div>
@@ -41,11 +44,12 @@ import { axiomValid } from '@/scripts/AxiomMethods';
 import TextButton from '../UI/TextButton.vue';
 
 interface Props {
+    title: string;
     axiom: AxiomData | null;
     symbols: SymbolData[] | undefined;
     variables: SymbolData[] | undefined;
-    upTitle: string;
-    lowTitle: string;
+    headerUp: string;
+    headerLow: string;
     borderColor: string;
 }
 
@@ -111,28 +115,48 @@ function confirm(): void {
     z-index: 301;
 }
 
+.axiom-editor-window {
+    display: grid;
+    place-items: center;
+    justify-content: center;
+    background: lightblue;
+    border: 0.5vw solid rgb(44, 44, 44);
+    border-radius: 1vw;
+    width: 90vw;
+}
+
+.axiom-editor-title {
+    width: 100vw;
+    font-size: 3vw;
+    color: rgb(105, 128, 168);
+    text-align: center;
+    padding: 1vw;
+}
+
 .axiom-editor {
     display: flex;
     place-items: center;
 }
 
+.selection-tag {
+    color: rgb(125, 155, 205);
+    font-size: 2vw;
+    margin-left: 0.5vw;
+    margin-right: 0.5vw;
+}
+
+.symbol-list {
+    margin-left: 0.5vw;
+    margin-right: 0.5vw;
+}
+
 .button-container {
     display: flex;
+    padding: 2vw;
 }
 
 .axiom-editor-button {
     display: grid;
     place-items: center;
-}
-
-.axiom-save-button {
-    display: grid;
-    place-items: center;
-    border: 0.2vw solid black;
-    border-radius: 2vw;
-    font-size: 2vw;
-    padding: 3vw;
-    background: green;
-    user-select: none;
 }
 </style>

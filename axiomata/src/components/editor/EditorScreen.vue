@@ -9,10 +9,10 @@
       @finishLevel="finishLevel" />
     <TextInputWindow v-if="showTextInput" :title="textEditTitle" :placeholder="textEditPlaceholder"
       @close="showTextInput = false" @updateText="updateText" />
-    <AxiomEditor v-if="showAxiomEditor" :axiom="editedAxiom" :symbols="course.symbols" :variables="course.variables"
-      :upTitle="axiomEditorUpTitle" :lowTitle="axiomEditorLowTitle" :borderColor="axiomEditorBorderColor"
-      @close="showAxiomEditor = false" @editSymbol="editSymbol" @toggleVarTarget="toggleVarTarget"
-      @deleteSymbol="deleteSymbol" @updateAxiom="updateAxiom" />
+    <AxiomEditor v-if="showAxiomEditor" :title="axiomEditorTitle" :axiom="editedAxiom" :symbols="course.symbols"
+      :variables="course.variables" :headerUp="axiomEditorHeaderUp" :headerLow="axiomEditorHeaderLow"
+      :borderColor="axiomEditorBorderColor" @close="showAxiomEditor = false" @editSymbol="editSymbol"
+      @toggleVarTarget="toggleVarTarget" @deleteSymbol="deleteSymbol" @updateAxiom="updateAxiom" />
     <SymbolEditor v-if="showSymbolEditor && editedSymbol" :symbol="editedSymbol" @updateSymbol="updateSymbol"
       @close="showSymbolEditor = false" />
   </div>"
@@ -184,8 +184,9 @@ const editedAxiom: ComputedRef<AxiomData | null> = computed(() => {
   return ({ upperSequence: [], lowerSequence: [] });
 });
 
-const axiomEditorUpTitle: ComputedRef<string> = computed(() => axiomEditPointer.value?.target === AxiomEditTarget.CHAPTER ? 'OBEN' : 'START');
-const axiomEditorLowTitle: ComputedRef<string> = computed(() => axiomEditPointer.value?.target === AxiomEditTarget.CHAPTER ? 'UNTEN' : 'ZIEL');
+const axiomEditorTitle: ComputedRef<string> = computed(() => axiomEditPointer.value?.target === AxiomEditTarget.CHAPTER ? 'Tauschregel gestalten' : 'Level gestalten');
+const axiomEditorHeaderUp: ComputedRef<string> = computed(() => axiomEditPointer.value?.target === AxiomEditTarget.CHAPTER ? 'OBEN' : 'START');
+const axiomEditorHeaderLow: ComputedRef<string> = computed(() => axiomEditPointer.value?.target === AxiomEditTarget.CHAPTER ? 'UNTEN' : 'ZIEL');
 const axiomEditorBorderColor: ComputedRef<string> = computed(() => axiomEditPointer.value?.target === AxiomEditTarget.CHAPTER ? 'gray' : 'orange');
 
 onMounted(() => {
