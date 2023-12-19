@@ -4,7 +4,7 @@
     <div :style="{ display: 'flex' }">
       <div class="axiom-package" v-for="(axiom, index) in axioms" :key="index">
         <AxiomContainer :width="containerWidth" :height="containerWidth" :axiom="axiom" :symbols="symbols"
-          :variables="variables" />
+          :variables="variables" @selectAxiom="emit('editAxiom', index)" />
         <div class="axiom-delete-button" v-if="editable">
           <TextButton text="Löschen" @click="emit('deleteAxiom', index)" />
         </div>
