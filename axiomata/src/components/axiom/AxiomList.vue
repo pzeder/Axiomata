@@ -1,6 +1,5 @@
 <template>
   <div class="axiom-list">
-    <div class="axiom-list-title" v-if="title !== ''"> {{ title }} </div>
     <div :style="{ display: 'flex' }">
       <div class="axiom-package" v-for="(axiom, index) in axioms" :key="index">
         <AxiomContainer :width="containerWidth" :height="containerWidth" :axiom="axiom" :symbols="symbols"
@@ -19,11 +18,10 @@
 <script setup lang="ts">
 import { ComputedRef, computed, defineProps, defineEmits, withDefaults } from 'vue';
 import AxiomContainer from '@/components/axiom/AxiomContainer.vue';
-import { AxiomData, AxiomEditTarget, SymbolData } from '@/scripts/Interfaces';
+import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import TextButton from '../UI/TextButton.vue';
 
 interface Props {
-  title: string;
   axioms: AxiomData[];
   symbols: SymbolData[];
   variables: SymbolData[];
@@ -66,6 +64,7 @@ const containerWidth: ComputedRef<number> = computed(() => Math.min(props.contai
   display: grid;
   place-items: center;
   padding: 2vw;
+  margin-left: -1vw;
 }
 
 .axiom-delete-button {

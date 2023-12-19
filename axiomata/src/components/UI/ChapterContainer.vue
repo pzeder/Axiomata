@@ -17,7 +17,8 @@
         <div class="level-package">
           <LevelContainer :course="course" :chapterIndex="chapterIndex" :levelIndex="levelIndex" :level="level"
             :frontLevelPointer="frontLevelPointer" :editable="editable" @openLevel="emit('openLevel', levelIndex)"
-            @toggleBonus="emit('toggleBonus', levelIndex)" />
+            @toggleBonus="emit('toggleBonus', levelIndex)"
+            @editAxiom="emit('editAxiom', { target: AxiomEditTarget.LEVEL, levelPointer: { chapterIndex: chapterIndex, levelIndex: levelIndex } })" />
           <TextButton v-if="editable" text="Löschen" @click="emit('deleteLevel', levelIndex)" />
         </div>
       </div>

@@ -14,7 +14,7 @@
         <TextButton text="Löschen" @click.stop="deleteEdit(header.editID)" />
       </div>
     </transition-group>
-  </div>T
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -188,4 +188,5 @@ async function deleteEdit(editID: any): Promise<void> {
 
 .edit-list-leave-active {
   position: absolute;
-}</style>
+}
+</style>

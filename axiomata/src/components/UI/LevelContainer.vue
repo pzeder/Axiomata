@@ -1,14 +1,14 @@
 <template>
   <div class="level-container" @click="handleClick" :style="{ backgroundColor: levelColor }">
-    <div class="axiom-placeholder" v-if="editable && !level.goalAxiom"> 
-      <TextButton text="START / ZIEL festlegen" background="white"/>
+    <div class="axiom-placeholder" v-if="editable && !level.goalAxiom">
+      <TextButton text="START / ZIEL festlegen" background="white" @click="emit('editAxiom')" />
     </div>
-    <AxiomContainer class="goal-axiom" v-if="level.goalAxiom" :width=10 :height=10 :axiom="level.goalAxiom" :symbols="course.symbols"
-      :variables="course.variables" :background="levelColor"
-      :borderColor="levelColor"/>
+    <AxiomContainer class="goal-axiom" v-if="level.goalAxiom" :width=10 :height=10 :axiom="level.goalAxiom"
+      :symbols="course.symbols" :variables="course.variables" :background="levelColor" :borderColor="levelColor"
+      @selectAxiom="emit('editAxiom')" />
     <div class="level-title"> Level {{ levelNumber }} </div>
     <div class="edit-bonus-tag" v-if="editable">
-      <TextButton :text="bonusTagText" :background="bonusTagColor" @click="emit('toggleBonus')"/>
+      <TextButton :text="bonusTagText" :background="bonusTagColor" @click="emit('toggleBonus')" />
     </div>
     <div class="test-button" v-if="editable">
       <TextButton text="Testen" background="lightgreen" />
@@ -21,7 +21,6 @@ import { defineProps, defineEmits, ComputedRef, computed } from 'vue';
 import AxiomContainer from '../axiom/AxiomContainer.vue';
 import { CourseData, LevelData, LevelPointer } from '@/scripts/Interfaces';
 import TextButton from './TextButton.vue';
-import { axiomValid } from '@/scripts/AxiomMethods';
 
 interface Props {
   course: CourseData;
@@ -33,10 +32,10 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['openLevel', 'toggleBonus']);
+const emit = defineEmits(['openLevel', 'toggleBonus', 'editAxiom']);
 
 const levelNumber: ComputedRef<number> = computed(() => {
-  return props.course.chapters.slice(0, props.chapterIndex).map(c => c.levels.length).reduce((acc, val) =>  acc + val, 1) + props.levelIndex;
+  return props.course.chapters.slice(0, props.chapterIndex).map(c => c.levels.length).reduce((acc, val) => acc + val, 1) + props.levelIndex;
 });
 
 const bonusTagText: ComputedRef<string> = computed(() => props.level.bonus ? 'BONUS' : 'NORMAL');
@@ -44,7 +43,7 @@ const bonusTagColor: ComputedRef<string> = computed(() => props.level.bonus ? 'g
 
 const isFrontLevel: ComputedRef<boolean> = computed(() => props.frontLevelPointer?.chapterIndex === props.chapterIndex && props.frontLevelPointer?.levelIndex === props.levelIndex);
 
-const levelColor: ComputedRef<string> = computed(() => isFrontLevel.value ? 'orange' : (props.level.bestSolution ? 'lightgreen' : 'rgb(150,150,150)')); 
+const levelColor: ComputedRef<string> = computed(() => isFrontLevel.value ? 'orange' : (props.level.bestSolution ? 'lightgreen' : 'rgb(150,150,150)'));
 
 function handleClick(): void {
   if (props.editable) {
