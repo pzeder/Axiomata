@@ -42,8 +42,9 @@ onMounted(() => {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 3vw;
-  background: #ffffff;
+  height: 1vw;
+  border-radius: 1vw;
+  background: #959595;
   outline: none;
   opacity: 0.7;
   -webkit-transition: .2s;
@@ -57,8 +58,9 @@ onMounted(() => {
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 3vw;
+  width: 2vw;
   height: 3vw;
+  border-radius: 2vw;
   cursor: pointer;
   background: var(--slider-thumb-color);
 }

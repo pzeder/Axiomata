@@ -1,22 +1,24 @@
 <template>
   <div class="backdrop" />
   <div class="edit-symbol-container">
-    <div>
+    <div class="symbol-editor-border">
       <div class="title-container">
-        <div class="edit-symbol-title"> Neues Symbol erstellen </div>
+        <div class="edit-symbol-title"> Symbol gestalten </div>
       </div>
-      <div class="flex-container">
-        <ColorEditor title="Hintergrundfarbe" :color="editSymbol.backgroundColor" @changeColor="setBackgroundColor" />
-        <div class="middle">
-          <SymbolComp :symbolWidth=20 :symbol="editSymbol" @click="showTextInput = true" />
-          <div class="font-size-title"> Schriftgrösse </div>
-          <ValueSlider :minValue=1 :defaultValue="editSymbol.fontSize" :maxValue=100 @changeValue="setFontSize" />
+      <div class="symbol-editor-window">
+        <div class="flex-container">
+          <ColorEditor title="Hintergrundfarbe" :color="editSymbol.backgroundColor" @changeColor="setBackgroundColor" />
+          <div class="middle">
+            <SymbolComp :symbolWidth=20 :symbol="editSymbol" @click="showTextInput = true" />
+            <div class="font-size-title"> Schriftgrösse </div>
+            <ValueSlider :minValue=1 :defaultValue="editSymbol.fontSize" :maxValue=100 @changeValue="setFontSize" />
+          </div>
+          <ColorEditor title="Schriftfarbe" :color="editSymbol.textColor" @changeColor="setTextColor" />
         </div>
-        <ColorEditor title="Schriftfarbe" :color="editSymbol.textColor" @changeColor="setTextColor" />
-      </div>
-      <div class="button-container">
-        <div class="cancel-button" @click="emit('close')"> abbrechen </div>
-        <div class="ok-symbol-button" @click="confirm"> ok </div>
+        <div class="button-container">
+          <TextButton text="Abbrechen" @click="emit('close')" />
+          <TextButton text="Speichern" background="lightgreen" @click="confirm" />
+        </div>
       </div>
     </div>
   </div>
@@ -31,6 +33,7 @@ import ColorEditor from './ColorEditor.vue';
 import SymbolComp from '@/components/axiom/SymbolComp.vue';
 import ValueSlider from '../UI/ValueSlider.vue';
 import TextInputWindow from '../UI/TextInputWindow.vue';
+import TextButton from '../UI/TextButton.vue';
 
 interface Props {
   symbol: SymbolData;
@@ -94,6 +97,11 @@ function confirm(): void {
   z-index: 400;
 }
 
+.symbol-editor-border {
+  border: 0.5vw solid rgb(44, 44, 44);
+  border-radius: 1.5vw;
+}
+
 .title-container {
   display: grid;
   place-items: center;
@@ -106,20 +114,23 @@ function confirm(): void {
   width: 100%;
   display: grid;
   place-items: center;
-  border-radius: 2vw;
+  border-radius: 1vw;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
+}
+
+.symbol-editor-window {
+  background-color: white;
+  border-radius: 1vw;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  padding: 2vw;
 }
 
 .flex-container {
   display: flex;
   justify-content: center;
   gap: 2vw;
-  background-color: rgb(192, 191, 191);
-  border-radius: 1vw;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  padding: 2vw;
 }
 
 .middle {
@@ -136,25 +147,5 @@ function confirm(): void {
   display: flex;
   place-items: center;
   justify-content: center;
-}
-
-.cancel-button {
-  width: 10vw;
-  height: 5vh;
-  background-color: red;
-  display: grid;
-  place-items: center;
-  user-select: none;
-  font-size: 1.5vw;
-}
-
-.ok-symbol-button {
-  width: 10vw;
-  height: 5vh;
-  background-color: green;
-  display: grid;
-  place-items: center;
-  user-select: none;
-  font-size: 1.5vw;
 }
 </style>
