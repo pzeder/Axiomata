@@ -172,12 +172,16 @@ const editedAxiom: ComputedRef<AxiomData | null> = computed(() => {
   const chapterIndex: number = axiomEditPointer.value.levelPointer.chapterIndex;
   const levelIndex: number = axiomEditPointer.value.levelPointer.levelIndex;
   if (axiomEditPointer.value.target === AxiomEditTarget.CHAPTER) {
-    return course.value.chapters[chapterIndex].newAxioms[levelIndex];
+    if (levelIndex < course.value.chapters[chapterIndex].newAxioms.length) {
+      return course.value.chapters[chapterIndex].newAxioms[levelIndex];
+    }
   }
   if (axiomEditPointer.value.target === AxiomEditTarget.LEVEL) {
-    return course.value.chapters[chapterIndex].levels[levelIndex].goalAxiom;
+    if (levelIndex < course.value.chapters[chapterIndex].levels.length) {
+      return course.value.chapters[chapterIndex].levels[levelIndex].goalAxiom;
+    }
   }
-  return null;
+  return ({ upperSequence: [], lowerSequence: [] });
 });
 
 const axiomEditorUpTitle: ComputedRef<string> = computed(() => axiomEditPointer.value?.target === AxiomEditTarget.CHAPTER ? 'OBEN' : 'START');
@@ -276,6 +280,7 @@ function updateAxiom(axiom: AxiomData): void {
   if (!course.value || !axiomEditPointer.value) {
     return;
   }
+  console.log(axiomEditPointer.value);
   const chapterIndex: number = axiomEditPointer.value.levelPointer.chapterIndex;
   const levelIndex: number = axiomEditPointer.value.levelPointer.levelIndex;
   switch (axiomEditPointer.value.target) {

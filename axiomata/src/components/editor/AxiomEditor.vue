@@ -83,7 +83,6 @@ function removeFromLowerSeq(index: number): void {
 }
 
 function confirm(): void {
-    console.log(axiom.value);
     emit('updateAxiom', axiom.value);
     emit('close');
 }

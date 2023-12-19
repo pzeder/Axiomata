@@ -7,12 +7,11 @@
           :variables="variables" />
         <div class="axiom-delete-button" v-if="editable">
           <TextButton text="Löschen" background="red" @click="emit('deleteAxiom', index)" />
-        </div> 
+        </div>
       </div>
       <div class="axiom-add-button" v-if="editable">
-        <TextButton text="Tauschregel hinzufügen" background="lightgreen" 
-        @click="emit('editAxiom')"/> 
-      </div> 
+        <TextButton text="Tauschregel hinzufügen" background="lightgreen" @click="emit('editAxiom', axioms.length)" />
+      </div>
     </div>
   </div>
 </template>
@@ -20,7 +19,7 @@
 <script setup lang="ts">
 import { ComputedRef, computed, defineProps, defineEmits, withDefaults } from 'vue';
 import AxiomContainer from '@/components/axiom/AxiomContainer.vue';
-import { AxiomData, SymbolData } from '@/scripts/Interfaces';
+import { AxiomData, AxiomEditTarget, SymbolData } from '@/scripts/Interfaces';
 import TextButton from '../UI/TextButton.vue';
 
 interface Props {
@@ -36,7 +35,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   editable: () => false
 });
-const emit = defineEmits(['editNewAxiom', 'deleteAxiom', 'editAxiom']);
+const emit = defineEmits(['deleteAxiom', 'editAxiom']);
 
 const maxContainerWidth: ComputedRef<number> = computed(() => props.maxWidth / props.axioms.length);
 const containerWidth: ComputedRef<number> = computed(() => Math.min(props.containerWidth, maxContainerWidth.value));
@@ -72,8 +71,6 @@ const containerWidth: ComputedRef<number> = computed(() => Math.min(props.contai
 .axiom-delete-button {
   display: grid;
   place-items: center;
-  background: red;
-  padding: 1vw;
   margin-top: -2vw;
 }
 </style>
