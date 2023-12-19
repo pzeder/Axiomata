@@ -6,7 +6,7 @@
         <AxiomContainer :width="containerWidth" :height="containerWidth" :axiom="axiom" :symbols="symbols"
           :variables="variables" />
         <div class="axiom-delete-button" v-if="editable">
-          <TextButton text="Löschen" background="red" @click="emit('deleteAxiom', index)" />
+          <TextButton text="Löschen" @click="emit('deleteAxiom', index)" />
         </div>
       </div>
       <div class="axiom-add-button" v-if="editable">
