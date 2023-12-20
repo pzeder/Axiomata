@@ -1,5 +1,7 @@
 <template>
-  <HomeButton @click="emit('openHomeScreen')" />
+  <div class="sidebar-left">
+    <TextButton class="sidebar-button" text="Home" background="white" @click="emit('openHomeScreen')" />
+  </div>
   <div class="savestate-list">
     <transition-group name="savestate-list" tag="div">
       <div class="flex-box" v-for="header in saveStateHeaders" :key="header.saveID">
@@ -19,7 +21,6 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref, defineProps, defineEmits } from 'vue';
 import axios from 'axios';
-import HomeButton from './HomeButton.vue';
 import { AxiomData, SymbolData } from '@/scripts/Interfaces';
 import AxiomContainer from '../axiom/AxiomContainer.vue';
 import TextButton from '../UI/TextButton.vue';
@@ -84,6 +85,20 @@ function progressionColor(header: SaveStateHeader): string {
 </script>
 
 <style>
+.sidebar-left {
+  position: fixed;
+  left: 2vw;
+  top: 2vw;
+  display: grid;
+  place-items: left;
+}
+
+.sidebar-button {
+  width: 4vw;
+  height: 3vw;
+  margin-bottom: 1vw;
+}
+
 .savestate-list {
   display: grid;
   place-items: center;
