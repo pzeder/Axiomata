@@ -2,9 +2,9 @@
   <div class="screen-container">
     <div class="victory-container">
       <div class="victory-text"> Level geschafft! </div>
-      <div class="victory-button-container"> 
-        <div class="victory-button" @click="emit('openLevelMenu')"> Zurück zum Menü </div>
-        <div v-if="hasNextLevel" class="victory-button" @click="emit('nextLevel')"> Nächstes Level </div> 
+      <div class="victory-button-container">
+        <div class="victory-button" @click="emit('openLevelSelection')"> Zurück zum Menü </div>
+        <div v-if="hasNextLevel" class="victory-button" @click="emit('nextLevel')"> Nächstes Level </div>
       </div>
     </div>
   </div>
@@ -18,7 +18,7 @@ interface Props {
 }
 const props = defineProps<Props>();
 
-const emit = defineEmits(['openLevelMenu', 'nextLevel']);
+const emit = defineEmits(['openLevelSelection', 'nextLevel']);
 </script>
 
 <style>

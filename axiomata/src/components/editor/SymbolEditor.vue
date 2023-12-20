@@ -147,5 +147,6 @@ function confirm(): void {
   display: flex;
   place-items: center;
   justify-content: center;
+  gap: 1vw;
 }
 </style>

@@ -1,6 +1,9 @@
 <template>
   <div v-if="course">
-    <LevelSelection v-if="showLevelSelection" :course="course" :frontLevelPointer="frontLevelPointer"
+    <div class="sidebar-left" v-if="showLevelSelection">
+      <TextButton class="sidebar-button" text="Home" background='white' @click="emit('openHomeScreen')" />
+    </div>
+    <CourseContainer v-if="showLevelSelection" :course="course" :frontLevelPointer="frontLevelPointer"
       @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" />
     <PlayScreen v-if="showPlayScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
       :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openLevelSelection="openLevelSelection"
@@ -15,8 +18,9 @@ import { AxiomData, ChapterData, CourseData, LevelData, LevelPointer, MoveData }
 import axios from 'axios';
 import { Ref, ref, defineProps, defineEmits, onMounted, computed, ComputedRef } from 'vue';
 import VictoryWindow from './VictoryWindow.vue';
-import LevelSelection from '../menus/LevelSelection.vue';
 import PlayScreen from './PlayScreen.vue';
+import CourseContainer from '../UI/CourseContainer.vue';
+import TextButton from '../UI/TextButton.vue';
 
 interface Props {
   saveID: any;
@@ -92,7 +96,7 @@ const selectedDerivates: ComputedRef<AxiomData[]> = computed(() => {
   const levelIndex: number = selectedLevelPointer.value.levelIndex;
   const addGoalAxiom = (ch: number, lvl: number) => {
     if (course.value?.chapters[ch].levels[lvl].bonus) {
-      derivates.push(course.value.chapters[ch].levels[lvl].goalAxiom);
+      derivates.push(course.value.chapters[ch].levels[lvl].goalAxiom as AxiomData);
     }
   }
   for (let ch = 0; ch < chapterIndex; ch++) {
@@ -215,3 +219,19 @@ function incrementSelectedLevelPointer(): void {
   }
 }
 </script>
+
+<style>
+.sidebar-left {
+  position: fixed;
+  left: 2vw;
+  top: 2vw;
+  display: grid;
+  place-items: left;
+}
+
+.sidebar-button {
+  width: 4vw;
+  height: 3vw;
+  margin-bottom: 1vw;
+}
+</style>

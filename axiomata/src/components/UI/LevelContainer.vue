@@ -7,8 +7,9 @@
       :symbols="course.symbols" :variables="course.variables" :background="levelColor" :borderColor="levelColor"
       @selectAxiom="emit('editAxiom')" />
     <div class="level-title"> Level {{ levelNumber }} </div>
-    <TextButton class="level-button" :text="bonusTagText" :background="bonusTagColor" @click="emit('toggleBonus')" />
-    <TextButton class="level-button" text="Testen" background="lightgreen" />
+    <TextButton v-if="editable" class="level-button" :text="bonusTagText" :background="bonusTagColor"
+      @click="emit('toggleBonus')" />
+    <TextButton v-if="editable" class="level-button" text="Testen" background="lightgreen" />
   </div>
 </template>
 

@@ -20,6 +20,8 @@ const props = withDefaults(defineProps<Props>(), {
 .text-button {
   display: grid;
   place-items: center;
+  justify-content: center;
+  text-align: center;
   font-size: 1vw;
   padding: 1vw;
   border: 0.3vw solid rgb(44, 44, 44);

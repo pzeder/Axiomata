@@ -10,7 +10,8 @@
       @editAxiom="(index) => emit('editAxiom', { target: AxiomEditTarget.CHAPTER, levelPointer: { chapterIndex: chapterIndex, levelIndex: index } })"
       @deleteAxiom="(index) => emit('deleteAxiom', index)" />
     <div class="level-list" v-for="( level, levelIndex ) in  chapter.levels " :key="levelIndex">
-      <TextButton text="Neues Level hinzufügen" background="orange" @click="emit('addNewLevel', levelIndex)" />
+      <TextButton v-if="editable" text="Neues Level hinzufügen" background="orange"
+        @click="emit('addNewLevel', levelIndex)" />
       <div class="level-package">
         <LevelContainer :course="course" :chapterIndex="chapterIndex" :levelIndex="levelIndex" :level="level"
           :frontLevelPointer="frontLevelPointer" :editable="editable" @openLevel="emit('openLevel', levelIndex)"
@@ -19,7 +20,8 @@
         <TextButton v-if="editable" text="Löschen" @click="emit('deleteLevel', levelIndex)" />
       </div>
     </div>
-    <TextButton text="Neues Level hinzufügen" background="orange" @click="emit('addNewLevel', chapter.levels.length)" />
+    <TextButton v-if="editable" text="Neues Level hinzufügen" background="orange"
+      @click="emit('addNewLevel', chapter.levels.length)" />
   </div>
 </template>
 

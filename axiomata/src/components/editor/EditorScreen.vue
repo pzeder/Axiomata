@@ -2,7 +2,9 @@
   <div v-if="course">
     <div v-if="showLevelSelection">
       <div class="sidebar-left">
-        <HomeButton @click="emit('openHomeScreen')" />
+        <TextButton class="sidebar-button" text="Home" background='white' @click="emit('openHomeScreen')" />
+        <TextButton class="sidebar-button" text="Kurs hochladen" :background="courseValid ? 'lightgreen' : 'gray'"
+          @click="submitCourse" />
       </div>
       <CourseContainer :course="course" :frontLevelPointer="null" :editable="true" @editText="editText"
         @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" @addNewChapter="addNewChapter"
@@ -33,6 +35,7 @@ import AxiomEditor from './AxiomEditor.vue';
 import SymbolEditor from './SymbolEditor.vue';
 import CourseContainer from '../UI/CourseContainer.vue';
 import HomeButton from '../menus/HomeButton.vue';
+import TextButton from '../UI/TextButton.vue';
 
 interface Props {
   editID: any;
@@ -523,5 +526,11 @@ async function submitCourse(): Promise<void> {
   top: 2vw;
   display: grid;
   place-items: left;
+}
+
+.sidebar-button {
+  width: 4vw;
+  height: 3vw;
+  margin-bottom: 1vw;
 }
 </style>

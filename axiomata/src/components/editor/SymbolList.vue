@@ -61,6 +61,7 @@ function varTagColor(symbol: SymbolData): string {
     display: flex;
     padding-left: 1vw;
     padding-right: 1vw;
+    gap: 1vw;
 }
 
 .symbol-delete-button {
@@ -72,7 +73,6 @@ function varTagColor(symbol: SymbolData): string {
 .var-target-tag {
     font-size: 2vw;
     padding: 1vw;
-    margin-left: 2vw;
     display: grid;
     place-items: center;
     user-select: none;
