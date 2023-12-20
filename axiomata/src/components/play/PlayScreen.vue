@@ -13,13 +13,14 @@
               :variables="variables" :highlights="workHighlights" borderColor="rgb(89, 204, 245)" />
           </div>
           <div :style="{ display: 'grid', placeItems: 'center', width: goalContainerWidth + 'vw' }">
-            <SequenceContainer class="goal-window" :header="'START'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
-              :maxSymbolWidthRatio="0.33" :sequence="level && level.goalAxiom ? level.goalAxiom.upperSequence : null"
-              :variables="variables" :symbols="symbols" borderColor="orange" />
+            <SequenceContainer class="goal-window" :header="'START'" :width="goalWidth" :height="goalHeight"
+              :maxFill="0.8" :maxSymbolWidthRatio="0.2"
+              :sequence="level && level.goalAxiom ? level.goalAxiom.upperSequence : null" :variables="variables"
+              :symbols="symbols" borderColor="orange" />
             <TextButton text="Rückgängig" @click="{ emit('undoMove'); dropAxiom() }"
               :background="level && level.moveHistory && level.moveHistory.length > 0 ? 'white' : 'red'" />
-            <SequenceContainer class="goal-window" :header="'ZIEL'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
-              :maxSymbolWidthRatio="0.33" :sequence="level && level.goalAxiom ? level.goalAxiom.lowerSequence : null"
+            <SequenceContainer class="goal-window" :header="'ZIEL'" :width="goalWidth" :height="goalHeight" :maxFill="0.8"
+              :maxSymbolWidthRatio="0.2" :sequence="level && level.goalAxiom ? level.goalAxiom.lowerSequence : null"
               :variables="variables" :symbols="symbols" borderColor="orange" :footer="goalMatch ? 'Geschafft!' : ''"
               @click="handleGoalClick" />
           </div>
@@ -80,8 +81,9 @@ const workbenchWidth: ComputedRef<number> = computed(() => 100 - axiomBarWidth.v
 const workbenchHeight: ComputedRef<number> = computed(() => 100 / screenRatio.value - (headBarHeight.value + derivateBarHeight.value) + 1); // + 1 because of margin-top of workbench
 const workbenchMaxFill: Ref<number> = ref(0.6);
 const workbenchMaxSymbolWidthRatio: Ref<number> = ref(0.05);
-const goalContainerWidth: Ref<number> = ref(15);
-const goalWidth: Ref<number> = ref(10);
+const goalContainerWidth: Ref<number> = ref(20);
+const goalWidth: Ref<number> = ref(20);
+const goalHeight: Ref<number> = ref(10);
 const workSymbolWidth: ComputedRef<number> = computed(() => {
   if (!workSequence.value) {
     return 0;
