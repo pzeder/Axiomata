@@ -7,7 +7,7 @@
       @openLevel="openLevel" @openHomeScreen="emit('openHomeScreen')" />
     <PlayScreen v-if="showPlayScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
       :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openLevelSelection="openLevelSelection"
-      @finishLevel="finishLevel" />
+      @finishLevel="finishLevel" @undoMove="undoMove" />
     <VictoryWindow v-if="showVictoryWindow" :hasNextLevel="hasNextLevel" @openLevelSelection="openLevelSelection"
       @nextLevel="nextLevel" />
   </div>
@@ -179,6 +179,16 @@ function addMove(move: MoveData): void {
   const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
   const levelIndex: number = selectedLevelPointer.value.levelIndex;
   course.value.chapters[chapterIndex].levels[levelIndex].moveHistory.push(move);
+  saveGame();
+}
+
+function undoMove(): void {
+  if (!selectedLevelPointer.value || !course.value) {
+    return;
+  }
+  const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
+  const levelIndex: number = selectedLevelPointer.value.levelIndex;
+  course.value.chapters[chapterIndex].levels[levelIndex].moveHistory.pop();
   saveGame();
 }
 

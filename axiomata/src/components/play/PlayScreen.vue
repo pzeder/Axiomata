@@ -16,6 +16,8 @@
             <SequenceContainer class="goal-window" :header="'START'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
               :maxSymbolWidthRatio="0.33" :sequence="level && level.goalAxiom ? level.goalAxiom.upperSequence : null"
               :variables="variables" :symbols="symbols" borderColor="orange" />
+            <TextButton text="Rückgängig" @click="{ emit('undoMove'); dropAxiom() }"
+              :background="level && level.moveHistory && level.moveHistory.length > 0 ? 'white' : 'red'" />
             <SequenceContainer class="goal-window" :header="'ZIEL'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
               :maxSymbolWidthRatio="0.33" :sequence="level && level.goalAxiom ? level.goalAxiom.lowerSequence : null"
               :variables="variables" :symbols="symbols" borderColor="orange" :footer="goalMatch ? 'Geschafft!' : ''"
@@ -46,6 +48,7 @@ import { AxiomData, LevelData, SymbolPointer, SymbolData, MoveData, SymbolType }
 import { Ref, ref, defineProps, defineEmits, onMounted, onBeforeUnmount, computed, ComputedRef } from 'vue';
 import { axiomHeight, axiomWidth } from '@/scripts/AxiomMethods';
 import BonusAxiomWindow from './BonusAxiomWindow.vue';
+import TextButton from '../UI/TextButton.vue';
 
 interface Props {
   symbols: SymbolData[] | undefined;
@@ -56,7 +59,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['openLevelSelection', 'finishLevel', 'addMove', 'nextLevel']);
+const emit = defineEmits(['openLevelSelection', 'finishLevel', 'addMove', 'nextLevel', 'undoMove']);
 
 const showCursorAxiom: Ref<boolean> = ref(false);
 const showBonusAxiom: Ref<boolean> = ref(false);
