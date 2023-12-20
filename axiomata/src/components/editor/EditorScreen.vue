@@ -13,7 +13,7 @@
     </div>
     <PlayScreen v-if="showPlayScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
       :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openLevelSelection="openLevelSelection"
-      @finishLevel="finishLevel" />
+      @finishLevel="finishLevel" @undoMove="undoMove"/>
     <TextInputWindow v-if="showTextInput" :title="textEditTitle" :placeholder="textEditPlaceholder"
       @close="showTextInput = false" @updateText="updateText" />
     <AxiomEditor v-if="showAxiomEditor" :title="axiomEditorTitle" :axiom="editedAxiom" :symbols="course.symbols"
@@ -215,7 +215,10 @@ async function fetchCourse(): Promise<void> {
   }
 }
 
-function openLevel(chapterIndex: number, levelIndex: number) {
+function openLevel(chapterIndex: number, levelIndex: number): void {
+  if (!course.value || !course.value.chapters[chapterIndex].levels[levelIndex].goalAxiom) {
+    return;
+  }
   selectedLevelPointer.value = { chapterIndex: chapterIndex, levelIndex: levelIndex };
   openPlayScreen();
 }
@@ -228,11 +231,6 @@ function openPlayScreen(): void {
 function openLevelSelection(): void {
   hideAll();
   showLevelSelection.value = true;
-}
-
-function openVictoryWindow(): void {
-  hideAll();
-  showVictoryWindow.value = true;
 }
 
 function hideAll(): void {
@@ -310,6 +308,16 @@ function addMove(move: MoveData): void {
   const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
   const levelIndex: number = selectedLevelPointer.value.levelIndex;
   course.value.chapters[chapterIndex].levels[levelIndex].moveHistory.push(move);
+  saveEdit();
+}
+
+function undoMove(): void {
+  if (!selectedLevelPointer.value || !course.value) {
+    return;
+  }
+  const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
+  const levelIndex: number = selectedLevelPointer.value.levelIndex;
+  course.value.chapters[chapterIndex].levels[levelIndex].moveHistory.pop();
   saveEdit();
 }
 
