@@ -4,7 +4,7 @@
     <div class="note-container">
       <div v-html="sanatizedText" />
       <div class="note-ok-button-container">
-        <div class="note-ok-button" @click="emit('close')"> OK </div>
+        <TextButton text="OK" background="lightgreen" @click="emit('close')" />
       </div>
     </div>
   </div>
@@ -13,6 +13,7 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, ComputedRef, computed } from 'vue';
 import DOMPurify from 'dompurify';
+import TextButton from './TextButton.vue';
 
 interface Props {
   text: string;
@@ -53,10 +54,11 @@ const sanatizedText: ComputedRef<string> = computed(() => DOMPurify.sanitize(pro
   color: black;
   background: orange;
   border: 0.5vw solid black;
-  border-radius: 0.5vw;
+  border-radius: 1vw;
   width: 30vw;
   padding: 2vw;
   text-align: center;
+  gap: 1.5vw;
 }
 
 .note-ok-button-container {

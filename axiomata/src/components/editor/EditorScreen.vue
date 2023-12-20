@@ -22,6 +22,7 @@
       @toggleVarTarget="toggleVarTarget" @deleteSymbol="deleteSymbol" @updateAxiom="updateAxiom" />
     <SymbolEditor v-if="showSymbolEditor && editedSymbol" :symbol="editedSymbol" @updateSymbol="updateSymbol"
       @close="showSymbolEditor = false" />
+    <NoteWindow v-if="showNoteWindow" :text="noteMessage" @close="showNoteWindow = false" />
   </div>
 </template>
 
@@ -35,6 +36,7 @@ import AxiomEditor from './AxiomEditor.vue';
 import SymbolEditor from './SymbolEditor.vue';
 import CourseContainer from '../UI/CourseContainer.vue';
 import TextButton from '../UI/TextButton.vue';
+import NoteWindow from '../UI/NoteWindow.vue';
 
 interface Props {
   editID: any;
@@ -492,7 +494,7 @@ async function submitCourse(): Promise<void> {
           'Du musst den Titel ändern, damit es mit dem Hochladen klappt.';
       } else {
         noteMessage.value = 'Der Kurs <span style="color: green;">"' +
-          course.value.title + '" </span> wurde erfolgreich hochgeladen. Er ist jetzt unter diesem Namen  für alle verfügbar. <br> <br> Viel Spass!'
+          course.value.title + '" </span> wurde erfolgreich hochgeladen. Er ist jetzt für alle verfügbar. <br> <br> Viel Spass!'
       }
       showNoteWindow.value = true;
     } else {
