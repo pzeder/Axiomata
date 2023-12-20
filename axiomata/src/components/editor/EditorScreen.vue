@@ -112,11 +112,8 @@ const textEditPlaceholder: ComputedRef<string> = computed(() => {
   }
 });
 
-const invalidLevel = (level: LevelData): boolean =>
-  level.goalAxiom?.upperSequence.length === 0 || level.goalAxiom?.lowerSequence.length === 0;
-
 const invalidChapter = (chapter: ChapterData): boolean =>
-  chapter.levels.length === 0 || chapter.levels.some(invalidLevel);
+  chapter.levels.length === 0 || chapter.levels.some(level => level.bestSolution === null);
 
 const courseValid: ComputedRef<boolean> = computed(() => {
   if (!course.value || course.value.chapters.length === 0) {
@@ -318,23 +315,14 @@ function finishLevel(): void {
   if (!selectedLevelPointer.value || !course.value) {
     return;
   }
-  openVictoryWindow();
+  openLevelSelection();
   const chapterIndex: number = selectedLevelPointer.value.chapterIndex;
   const levelIndex: number = selectedLevelPointer.value.levelIndex;
   const level: LevelData = course.value.chapters[chapterIndex].levels[levelIndex];
   if (!level.bestSolution || level.moveHistory.length < level.bestSolution.length) {
     course.value.chapters[chapterIndex].levels[levelIndex].bestSolution = level.moveHistory;
   }
-  course.value.chapters[chapterIndex].levels[levelIndex].moveHistory = [level.moveHistory[0]];
-  saveEdit();
-}
-
-function setCourseTitle(text: string): void {
-  showTextInput.value = false;
-  if (text.length === 0 || !course.value) {
-    return;
-  }
-  course.value.title = text;
+  course.value.chapters[chapterIndex].levels[levelIndex].moveHistory = [];
   saveEdit();
 }
 
