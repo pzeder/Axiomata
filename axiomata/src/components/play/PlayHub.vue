@@ -193,7 +193,7 @@ function finishLevel(): void {
   if (!level.bestSolution || level.moveHistory.length < level.bestSolution.length) {
     course.value.chapters[chapterIndex].levels[levelIndex].bestSolution = level.moveHistory;
   }
-  course.value.chapters[chapterIndex].levels[levelIndex].moveHistory = [level.moveHistory[0]];
+  course.value.chapters[chapterIndex].levels[levelIndex].moveHistory = [];
   saveGame();
 }
 

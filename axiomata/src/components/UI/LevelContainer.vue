@@ -9,7 +9,7 @@
     <div class="level-title"> Level {{ levelNumber }} </div>
     <TextButton v-if="editable" class="level-button" :text="bonusTagText" :background="bonusTagColor"
       @click="emit('toggleBonus')" />
-    <TextButton v-if="editable" class="level-button" text="Testen" background="lightgreen" />
+    <TextButton v-if="editable" class="level-button" text="Testen" background="lightgreen" @click="emit('openLevel')" />
   </div>
 </template>
 

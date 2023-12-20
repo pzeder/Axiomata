@@ -34,7 +34,6 @@ import TextInputWindow from '../UI/TextInputWindow.vue';
 import AxiomEditor from './AxiomEditor.vue';
 import SymbolEditor from './SymbolEditor.vue';
 import CourseContainer from '../UI/CourseContainer.vue';
-import HomeButton from '../menus/HomeButton.vue';
 import TextButton from '../UI/TextButton.vue';
 
 interface Props {
@@ -290,7 +289,6 @@ function updateAxiom(axiom: AxiomData): void {
   if (!course.value || !axiomEditPointer.value) {
     return;
   }
-  console.log(axiomEditPointer.value);
   const chapterIndex: number = axiomEditPointer.value.levelPointer.chapterIndex;
   const levelIndex: number = axiomEditPointer.value.levelPointer.levelIndex;
   switch (axiomEditPointer.value.target) {
@@ -303,7 +301,6 @@ function updateAxiom(axiom: AxiomData): void {
     default:
       return;
   }
-  console.log(axiom);
   saveEdit();
 }
 

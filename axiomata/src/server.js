@@ -37,7 +37,7 @@ app.get('/courseHeaders', async (req, res) => {
       variables: course.variables
     }));
 
-    res.json({courseHeaders: courseHeaders});
+    res.json({ courseHeaders: courseHeaders });
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -79,10 +79,7 @@ app.post('/newSaveState', async (req, res) => {
     const emptyLevel = (lvl) => ({
       title: lvl.title,
       goalAxiom: lvl.goalAxiom,
-      moveHistory: [{
-        axiom: null,
-        sequence: lvl.goalAxiom.upperSequence
-      }],
+      moveHistory: [],
       bestSolution: null,
       bonus: lvl.bonus
     });
@@ -127,7 +124,7 @@ app.get('/saveStateHeaders', async (req, res) => {
     });
 
     const saveStateHeaders = saveStates.map(getHeader);
-    res.json({saveStateHeaders: saveStateHeaders})
+    res.json({ saveStateHeaders: saveStateHeaders })
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -220,7 +217,7 @@ app.post('/newEdit', async (req, res) => {
     }
     const result = await db.collection('Edits').insertOne(newEdit);
     if (result.acknowledged === true && result.insertedId) {
-      const edits = await db.collection('Edits').find().toArray();  
+      const edits = await db.collection('Edits').find().toArray();
       res.json({ editID: result.insertedId })
     } else {
       res.status(500).json({ error: 'Insert failed' });
@@ -271,7 +268,7 @@ app.get('/edits', async (req, res) => {
       variables: course.variables
     }));
 
-    res.json({editHeaders: editHeaders});
+    res.json({ editHeaders: editHeaders });
   } catch (error) {
     res.status(500).json({ error: error });
   }

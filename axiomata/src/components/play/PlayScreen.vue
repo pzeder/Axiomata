@@ -14,11 +14,12 @@
           </div>
           <div :style="{ display: 'grid', placeItems: 'center', width: goalContainerWidth + 'vw' }">
             <SequenceContainer class="goal-window" :header="'START'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
-              :maxSymbolWidthRatio="0.33" :sequence="level ? level.goalAxiom.upperSequence : null" :variables="variables"
-              :symbols="symbols" borderColor="orange" />
+              :maxSymbolWidthRatio="0.33" :sequence="level && level.goalAxiom ? level.goalAxiom.upperSequence : null"
+              :variables="variables" :symbols="symbols" borderColor="orange" />
             <SequenceContainer class="goal-window" :header="'ZIEL'" :width="goalWidth" :height="goalWidth" :maxFill="0.6"
-              :maxSymbolWidthRatio="0.33" :sequence="level ? level.goalAxiom.lowerSequence : null" :variables="variables"
-              :symbols="symbols" borderColor="orange" :footer="goalMatch ? 'Geschafft!' : ''" @click="handleGoalClick" />
+              :maxSymbolWidthRatio="0.33" :sequence="level && level.goalAxiom ? level.goalAxiom.lowerSequence : null"
+              :variables="variables" :symbols="symbols" borderColor="orange" :footer="goalMatch ? 'Geschafft!' : ''"
+              @click="handleGoalClick" />
           </div>
         </div>
         <AxiomBar :title="'Bonus-Regeln'" :background="'rgb(187, 231, 247)'" :width="derivateBarWidth"
@@ -89,7 +90,7 @@ const workSymbolWidth: ComputedRef<number> = computed(() => {
 
 // Level variables
 const goalMatch: ComputedRef<boolean> = computed(() => {
-  if (!workSequence.value || !props.level || workSequence.value?.length !== props.level?.goalAxiom.lowerSequence.length) {
+  if (!workSequence.value || !props.level || workSequence.value?.length !== props.level.goalAxiom?.lowerSequence.length) {
     return false;
   }
   for (let i = 0; i < workSequence.value.length; i++) {
@@ -121,8 +122,11 @@ const cursorAxiomDocked: Ref<boolean> = ref(false);
 const varMap: Ref<Map<number, SymbolPointer>> = ref(new Map<number, SymbolPointer>());
 
 const workSequence: ComputedRef<SymbolPointer[] | null> = computed(() => {
-  if (!props.level) {
+  if (!props.level || !props.level.goalAxiom) {
     return null;
+  }
+  if (props.level.moveHistory.length === 0) {
+    return props.level.goalAxiom.upperSequence;
   }
   const lastIndex: number = props.level.moveHistory.length - 1;
   const lastMove: MoveData = props.level.moveHistory[lastIndex];
@@ -208,7 +212,7 @@ function dropNormalAxiom(): void {
 }
 
 function dropBonusAxiom(): void {
-  if (!props.level) {
+  if (!props.level || !props.level.goalAxiom) {
     return;
   }
 
