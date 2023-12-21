@@ -13,7 +13,7 @@
     </div>
     <PlayScreen v-if="showPlayScreen" :symbols="course?.symbols" :variables="course?.variables" :axioms="selectedAxioms"
       :derivates="selectedDerivates" :level="selectedLevel" @addMove="addMove" @openLevelSelection="openLevelSelection"
-      @finishLevel="finishLevel" @undoMove="undoMove"/>
+      @finishLevel="finishLevel" @undoMove="undoMove" />
     <TextInputWindow v-if="showTextInput" :title="textEditTitle" :placeholder="textEditPlaceholder"
       @close="showTextInput = false" @updateText="updateText" />
     <AxiomEditor v-if="showAxiomEditor" :title="axiomEditorTitle" :axiom="editedAxiom" :symbols="course.symbols"
@@ -378,30 +378,32 @@ function updateSymbol(symbol: SymbolData): void {
   saveEdit();
 }
 
-function deleteSymbol(symbolPointer: SymbolPointer): void {
+function deleteSymbol(deletedSymbolPointer: SymbolPointer): void {
   if (!course.value) {
     return
   }
 
-  if (symbolPointer.type === SymbolType.TERMINAL) {
-    course.value.symbols.splice(symbolPointer.index, 1);
+  if (deletedSymbolPointer.type === SymbolType.TERMINAL) {
+    course.value.symbols.splice(deletedSymbolPointer.index, 1);
   } else {
-    course.value.variables.splice(symbolPointer.index, 1);
+    course.value.variables.splice(deletedSymbolPointer.index, 1);
   }
 
-  const cleanSymbol = (sp: SymbolPointer): SymbolPointer => {
-    if (sp.type === symbolPointer.type) {
+  const cleanSymbol = (symbolPointer: SymbolPointer): SymbolPointer => {
+    if (symbolPointer.type === deletedSymbolPointer.type) {
       return ({
-        type: sp.type,
-        index: (sp.index < symbolPointer.index) ? sp.index : sp.index - 1
+        type: symbolPointer.type,
+        index: (symbolPointer.index < deletedSymbolPointer.index) ? symbolPointer.index : symbolPointer.index - 1
       });
     }
-    return sp;
+    return symbolPointer;
   };
 
+  const isDeletedSymbol = (pointer: SymbolPointer): boolean =>
+    pointer.type === deletedSymbolPointer.type && pointer.index === deletedSymbolPointer.index;
+
   const cleanAxiom = (axiom: AxiomData | null): AxiomData | null => {
-    const poisonedSymbol = (sp: SymbolPointer): boolean => sp.type === symbolPointer.type && sp.index === symbolPointer.index;
-    if (!axiom || axiom.upperSequence.some(poisonedSymbol) || axiom.lowerSequence.some(poisonedSymbol)) {
+    if (!axiom || axiom.upperSequence.some(isDeletedSymbol) || axiom.lowerSequence.some(isDeletedSymbol)) {
       return null;
     }
     return ({
@@ -410,11 +412,18 @@ function deleteSymbol(symbolPointer: SymbolPointer): void {
     });
   };
 
+  const cleanHistory = (moves: MoveData[]): MoveData[] =>
+    moves.some(m => m.axiom.upperSequence.some(isDeletedSymbol) || m.axiom.lowerSequence.some(isDeletedSymbol))
+      ? [] : moves.map(m => ({ axiom: cleanAxiom(m.axiom), sequence: m.sequence.map(cleanSymbol) } as MoveData));
+
+  const cleanSolution = (moves: MoveData[] | null): MoveData[] | null =>
+    !moves ? null : (cleanHistory(moves as MoveData[]).length > 0 ? cleanHistory(moves as MoveData[]) : null);
+
   const cleanLevel = (lvl: LevelData): LevelData => ({
     title: lvl.title,
     goalAxiom: cleanAxiom(lvl.goalAxiom),
-    moveHistory: lvl.moveHistory,
-    bestSolution: lvl.bestSolution,
+    moveHistory: cleanHistory(lvl.moveHistory),
+    bestSolution: cleanSolution(lvl.bestSolution),
     bonus: lvl.bonus
   });
 
