@@ -413,7 +413,7 @@ function deleteSymbol(deletedSymbolPointer: SymbolPointer): void {
   };
 
   const cleanHistory = (moves: MoveData[]): MoveData[] =>
-    moves.some(m => m.axiom.upperSequence.some(isDeletedSymbol) || m.axiom.lowerSequence.some(isDeletedSymbol))
+    moves.some(m => m.axiom.upperSequence.some(isDeletedSymbol) || m.axiom.lowerSequence.some(isDeletedSymbol) || m.sequence.some(isDeletedSymbol))
       ? [] : moves.map(m => ({ axiom: cleanAxiom(m.axiom), sequence: m.sequence.map(cleanSymbol) } as MoveData));
 
   const cleanSolution = (moves: MoveData[] | null): MoveData[] | null =>
