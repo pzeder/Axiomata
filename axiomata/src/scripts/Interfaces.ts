@@ -38,7 +38,7 @@ export interface LevelData {
 }
 
 export interface MoveData {
-    axiom: AxiomData | null,
+    axiom: AxiomData,
     sequence: SymbolPointer[]
 }
 
